@@ -166,8 +166,8 @@ pip-log.txt
 # Unity3d Specific
 ###################
 
-Library/*
-Temp/*
+*/Library
+*/Temp
 *.exe
 *.vcproject
 *.sln
