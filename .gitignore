@@ -171,3 +171,7 @@ pip-log.txt
 *.exe
 *.vcproject
 *.sln
+*.csproj
+*.pidb
+*.unityproj
+*.userprefs
