@@ -161,3 +161,13 @@ pip-log.txt
 
 # Mac crap
 .DS_Store
+
+###################
+# Unity3d Specific
+###################
+
+Library/*
+Temp/*
+*.exe
+*.vcproject
+*.sln
