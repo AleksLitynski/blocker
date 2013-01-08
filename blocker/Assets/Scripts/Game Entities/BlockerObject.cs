@@ -2,11 +2,16 @@ using UnityEngine;
 using System.Collections;
 
 public class BlockerObject : MonoBehaviour {
-
+	
+	[HideInInspector]
     public ConnectionManager connectionManager;
+	[HideInInspector]
     public PlayerManager     playerManager;
+	[HideInInspector]
     public NetPlayer netPlayer;
+	[HideInInspector]
     public InputDispatcher inputDispatcher;
+	[HideInInspector]
     public InputReceiver inputReceiver;
 
     void Start()

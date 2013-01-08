@@ -11,11 +11,11 @@ public class InputDispatcher : BlockerObject
             if (curPlayer.KeyboardPlayer)
             {
                 collection.forward = 0;
-                if(Input.GetButton("W")) collection.forward += 1;
-                if(Input.GetButton("S")) collection.forward -= 1;
+                if(Input.GetKeyDown("w")) collection.forward += 1;
+                if(Input.GetKeyDown("s")) collection.forward -= 1;
                 collection.straff = 0;
-                if (Input.GetButton("D")) collection.straff += 1;
-                if (Input.GetButton("A")) collection.straff -= 1;
+                if (Input.GetKeyDown("d")) collection.straff += 1;
+                if (Input.GetKeyDown("a")) collection.straff -= 1;
                 collection.turnRight = Input.GetAxis("mouseX");
                 collection.turnUp = Input.GetAxis("mouseY");
                 collection.jump = Input.GetKeyDown(KeyCode.Space);

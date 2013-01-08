@@ -1,7 +1,9 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-public class ConnectionManager : BlockerObject {
+public class ConnectionManager : BlockerObject 
+{
+	[HideInInspector]
     public GUISkin skin;
 	string serverAddress = "bigwhite.student.rit.edu";
 
