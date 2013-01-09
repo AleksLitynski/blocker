@@ -1,10 +1,15 @@
 using UnityEngine;
 using System.Collections;
 
-public class InputReceiver : BlockerObject {
-
+public class InputReceiver : BlockerObject 
+{
+	
+	public void AddInput(float f, float s, float tR, float tU, bool j, bool f1, bool f2, bool sp, bool c, int localNumber)
+    {
+		AddInput(f, s, tR, tU, j, f1, f2, sp, c, localNumber, new NetworkMessageInfo());	
+    }
 	[RPC]
-    public void AddInput(float f, float s, float tR, float tU, bool j, bool f1, bool f2, bool sp, bool c, int localNumber, NetworkMessageInfo incomingInfo=new NetworkMessageInfo())
+    public void AddInput(float f, float s, float tR, float tU, bool j, bool f1, bool f2, bool sp, bool c, int localNumber, NetworkMessageInfo incomingInfo)
     {
         NetworkMessageInfoLocalWrapper info = new NetworkMessageInfoLocalWrapper(incomingInfo);
 
@@ -18,4 +23,6 @@ public class InputReceiver : BlockerObject {
             }
         }
     }
+	
+    
 }

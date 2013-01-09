@@ -26,7 +26,7 @@ public class InputDispatcher : BlockerObject
             }
             else if (curPlayer.MobilePlayer)
             {
-                Debug.Log("Fuk awf we dunt sppt moblly yrt");
+                Debug.Log("We don't support mobile. Yet.");
             }
             else if (curPlayer.ControllerNumber >= 1 && curPlayer.ControllerNumber <= 4)
             {

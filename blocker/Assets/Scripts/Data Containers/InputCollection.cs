@@ -16,7 +16,11 @@ public class InputCollection {
 
 
     public InputCollection(){}
-    public InputCollection(NetPlayer player, float f=0.0f, float s=0.0f, float tR=0.0f, float tU=0.0f, bool j=false, bool f1=false, bool f2=false, bool sp=false, bool c=false)
+	public InputCollection(NetPlayer player)
+	{
+        netPlayer = player;
+	}
+    public InputCollection(NetPlayer player, float f, float s, float tR, float tU, bool j, bool f1, bool f2, bool sp, bool c)
     {
         forward = f;
         straff = s;

@@ -3,13 +3,10 @@ using System.Collections.Generic;
 
 public class ConnectionManager : BlockerObject 
 {
-	[HideInInspector]
-    public GUISkin skin;
 	string serverAddress = "bigwhite.student.rit.edu";
 
     void OnGUI()
     {
-        GUI.skin = Resources.Load("MetalGUISkin") as GUISkin;
         if (Network.peerType == NetworkPeerType.Disconnected)
         {
             GUILayout.Window(0, new Rect(0, 0, 200, 140), drawWindow, "Connection Settings");

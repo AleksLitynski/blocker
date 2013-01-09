@@ -11,10 +11,14 @@ public class PlayerManager : BlockerObject {
 
     public List<NetPlayer> players = new List<NetPlayer>();
     public List<NetPlayer> localPlayers = new List<NetPlayer>();
-
-
+	
+	
+	void AddNewPlayerRequest()
+	{
+		AddNewPlayerRequest(new NetworkMessageInfo());
+	}
     [RPC]
-    void AddNewPlayerRequest(NetworkMessageInfo incomingInfo=new NetworkMessageInfo())
+    void AddNewPlayerRequest(NetworkMessageInfo incomingInfo)
     {
         NetworkMessageInfoLocalWrapper info = new NetworkMessageInfoLocalWrapper(incomingInfo);
         int lowestAvailableValue = 0;   //find the lowest available localPlayerNumber of the players on the machine asking to add a player. 
@@ -68,9 +72,14 @@ public class PlayerManager : BlockerObject {
             GameObject.Find(newPlayer.name + "/Camera").active = false;
         }
     }
-
+	
+	
+	public void RemovePlayerRequest(int numOnComputer)
+    {
+        RemovePlayerRequest(numOnComputer, new NetworkMessageInfo());
+    }
     [RPC]
-    public void RemovePlayerRequest(int numOnComputer, NetworkMessageInfo incomingInfo = new NetworkMessageInfo())
+    public void RemovePlayerRequest(int numOnComputer, NetworkMessageInfo incomingInfo)
     {
         NetworkMessageInfoLocalWrapper info = new NetworkMessageInfoLocalWrapper(incomingInfo);
         networkView.RPC("RemovePlayer", RPCMode.Others, info.sender, numOnComputer);
@@ -99,7 +108,6 @@ public class PlayerManager : BlockerObject {
 
     void OnGUI()
     {
-        GUI.skin = Resources.Load("MetalGUISkin") as GUISkin;
         if (Network.peerType == NetworkPeerType.Server || Network.peerType == NetworkPeerType.Client)
         {
             GUILayout.Window(1, new Rect(Screen.width - 200, 0, 200, localPlayers.Count * 35 + 35), drawWindow2, "Add/Remove Player");
