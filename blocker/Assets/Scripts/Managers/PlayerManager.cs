@@ -5,7 +5,8 @@ using System.Collections.Generic;
 //tells all players to add new player
 //adds new player
 //lays out splitscreen players
-public class PlayerManager : BlockerObject {
+public class PlayerManager : BlockerObject 
+{
 
     public GameObject playerModel;
 
@@ -135,11 +136,21 @@ public class PlayerManager : BlockerObject {
         }
         for (int i = 0; i < localPlayers.Count; i++)
         {
-            if (GUILayout.Button("Drop Player " + localPlayers[i].localPlayerNumber))
-            {
-                networkView.RPC("RemovePlayerRequest", RPCMode.Server, localPlayers[i].localPlayerNumber);
-                if (Network.peerType == NetworkPeerType.Server) this.RemovePlayerRequest(localPlayers[i].localPlayerNumber);
-            }
+			GUILayout.BeginHorizontal();
+	            if (GUILayout.Button("Drop Player " + localPlayers[i].localPlayerNumber))
+	            {
+	                networkView.RPC("RemovePlayerRequest", RPCMode.Server, localPlayers[i].localPlayerNumber);
+	                if (Network.peerType == NetworkPeerType.Server) this.RemovePlayerRequest(localPlayers[i].localPlayerNumber);
+	            }
+				if(GUILayout.Button("KB"))
+				{
+					foreach(NetPlayer player in localPlayers)
+					{
+						player.KeyboardPlayer = false;
+					}
+					localPlayers[i].KeyboardPlayer = true;
+				}
+			GUILayout.EndHorizontal();
         }
     }
 

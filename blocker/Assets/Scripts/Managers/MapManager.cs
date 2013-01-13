@@ -9,7 +9,7 @@ public class MapManager : BlockerObject
 {
     void OnPlayerConnected (NetworkPlayer player)
     {
-        //send player map to lead
+        //send player map to load
 
         //send player characters to load
         for (var i = 0; i < playerManager.players.Count; i++)

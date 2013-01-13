@@ -5,11 +5,11 @@ public class NetPlayer : NetObject
 {
     public int localPlayerNumber;
     public NetworkPlayer networkPlayer;
-    public bool isKeyboardPlayer;
 
-    bool _keyboardPlayer;
-    bool _mobilePlayer;
-    int _controllerNumber;
+    bool _keyboardPlayer = false;
+    bool _mobilePlayer = false;
+    int _controllerNumber = -1;
+	
 
     public bool KeyboardPlayer
     {
@@ -69,5 +69,40 @@ public class NetPlayer : NetObject
         }
         return toReturn;
     }
+	
+	void Update()
+	{
+		
+	}
+	
+	public void move(InputCollection col)
+	{
+			
+		rigidbody.velocity = new Vector3(rigidbody.velocity.x + col.straff, rigidbody.velocity.y, rigidbody.velocity.z + col.forward);
+		rigidbody.angularVelocity = new Vector3(rigidbody.angularVelocity.x/2 + 0.0f, rigidbody.angularVelocity.y/2 + col.turnRight, rigidbody.angularVelocity.z/2 + col.turnUp);
+		
+		/*
+		if(col.jump)
+		{
+			
+		}
+		if(col.fireOne)
+		{
+			
+		}
+		if(col.fireTwo)
+		{
+			
+		}
+		if(col.sprint)
+		{
+			
+		}
+		if(col.crouch)
+		{
+			
+		}*/
+		
+	}
 
 }

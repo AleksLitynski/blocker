@@ -45,4 +45,9 @@ public class InputCollection {
             receiver.AddInput(forward, straff, turnRight, turnUp, jump, fireOne, fireTwo, sprint, crouch, netPlayer.localPlayerNumber);
         }
     }
+	
+	public void move()
+	{
+		netPlayer.move(this);
+	}
 }
