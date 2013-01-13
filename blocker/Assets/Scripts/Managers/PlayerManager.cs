@@ -14,10 +14,7 @@ public class PlayerManager : BlockerObject
     public List<NetPlayer> localPlayers = new List<NetPlayer>();
 	
 	
-	void AddNewPlayerRequest()
-	{
-		AddNewPlayerRequest(new NetworkMessageInfo());
-	}
+	
     [RPC]
     void AddNewPlayerRequest(NetworkMessageInfo incomingInfo)
     {
@@ -42,6 +39,10 @@ public class PlayerManager : BlockerObject
         networkView.RPC("AddNewPlayer", RPCMode.Others, info.sender, lowestAvailableValue);
         if (Network.peerType == NetworkPeerType.Server) this.AddNewPlayer(info.sender, lowestAvailableValue);
     }
+	void AddNewPlayerRequest()
+	{
+		AddNewPlayerRequest(new NetworkMessageInfo());
+	}
 
     [RPC]
     void AddNewPlayer(NetworkPlayer computer, int numOnComputer)
@@ -75,16 +76,17 @@ public class PlayerManager : BlockerObject
     }
 	
 	
-	public void RemovePlayerRequest(int numOnComputer)
-    {
-        RemovePlayerRequest(numOnComputer, new NetworkMessageInfo());
-    }
+	
     [RPC]
     public void RemovePlayerRequest(int numOnComputer, NetworkMessageInfo incomingInfo)
     {
         NetworkMessageInfoLocalWrapper info = new NetworkMessageInfoLocalWrapper(incomingInfo);
         networkView.RPC("RemovePlayer", RPCMode.Others, info.sender, numOnComputer);
         if (Network.peerType == NetworkPeerType.Server) this.RemovePlayer(info.sender, numOnComputer);
+    }
+	public void RemovePlayerRequest(int numOnComputer)
+    {
+        RemovePlayerRequest(numOnComputer, new NetworkMessageInfo());
     }
 
     [RPC]

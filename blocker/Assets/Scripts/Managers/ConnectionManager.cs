@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 public class ConnectionManager : BlockerObject 
 {
-	string serverAddress = "bigwhite.student.rit.edu";
+	public string serverAddress = "bigwhite.student.rit.edu";
 
     void OnGUI()
     {
