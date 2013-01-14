@@ -45,8 +45,8 @@ function Update ()
 			{
 				playerStats.curGun.SendMessage("Fire", key);
 			}
-			
 		}
+		
 		//change gun
 		for(var i = 0; i < 9; i++)
 		{

@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections;
 
 [RequireComponent(typeof(Rigidbody))]
+[RequireComponent(typeof(NetworkView))]
 public class NetObject : MonoBehaviour {
 
     public NetObject netObject;
