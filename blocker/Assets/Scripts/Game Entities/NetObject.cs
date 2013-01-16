@@ -18,6 +18,7 @@ public class NetObject : MonoBehaviour {
 	{
 		rigidbody.position = pos;
 		rigidbody.rotation = Quaternion.Euler(rot);
+		
 	}
 	
 	void Update()

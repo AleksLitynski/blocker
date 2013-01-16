@@ -82,7 +82,6 @@ public class NetPlayer : NetObject
 	public void move(InputCollection col)
 	{
 		
-		
 		Quaternion rotation = Quaternion.LookRotation(Vector3.Cross(transform.right, objectStats.unitOppGrav), objectStats.unitOppGrav);
 		rotation = Quaternion.RotateTowards(transform.rotation, rotation, objectStats.maxGravRoll);
 		rotation = rotation * Quaternion.Euler(0,col.turnRight,0);
@@ -125,5 +124,15 @@ public class NetPlayer : NetObject
 	{
 		playerArms.Rotate(new Vector3(rotation,0,0));
 	}
+	
+	
+	/*
+	void OnTriggerEnter(Collider c)
+	{
+		if(Network.peerType == NetworkPeerType.Server)
+		{
+			c.gameObject.GetComponent<RaceCheckpoint>().
+		}	
+	}*/
 
 }

@@ -10,6 +10,8 @@ public class InputReceiver : BlockerObject
     {
         NetworkMessageInfoLocalWrapper info = new NetworkMessageInfoLocalWrapper(incomingInfo);
 		
+		Debug.Log(info.sender + " " + localNumber);
+		
 		//build the inputCollection backup on the recieving end
         InputCollection sentCollection = new InputCollection();
         foreach (NetPlayer player in playerManager.players)
