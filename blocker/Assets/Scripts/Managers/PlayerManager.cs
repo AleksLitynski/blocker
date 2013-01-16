@@ -47,7 +47,6 @@ public class PlayerManager : BlockerObject
     [RPC]
     void AddNewPlayer(NetworkPlayer computer, int numOnComputer)
     {
-
         GameObject newPlayer = Instantiate(playerModel, Vector3.zero, Quaternion.identity) as GameObject;
         newPlayer.name = "player " + computer.ToString() + "-" + numOnComputer;
         (newPlayer.GetComponent("NetPlayer") as NetPlayer).networkPlayer = computer;
@@ -75,6 +74,11 @@ public class PlayerManager : BlockerObject
         {
             GameObject.Find(newPlayer.name + "/Arms/Camera").active = false;
         }
+		
+		if(localPlayers.Count > 0)
+		{
+			gameObject.camera.enabled = false;
+		}
     }
 	
 	
@@ -94,6 +98,7 @@ public class PlayerManager : BlockerObject
     [RPC]
     public void RemovePlayer(NetworkPlayer computer, int numOnComputer)
     {
+		
         for (int i = 0; i < players.Count; i++)
         {
             NetPlayer player = players[i].GetComponent("NetPlayer") as NetPlayer;
@@ -109,6 +114,10 @@ public class PlayerManager : BlockerObject
                 break;
             }
         }
+		if(localPlayers.Count == 0)
+		{
+			gameObject.camera.enabled = true;	
+		}
     }
 
     void OnGUI()
