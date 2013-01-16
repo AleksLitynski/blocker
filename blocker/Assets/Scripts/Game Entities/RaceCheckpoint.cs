@@ -7,12 +7,17 @@ public class RaceCheckpoint : MonoBehaviour
 	
 	// game variables
 	public int orderInRace;
+	public int currentPoints = 0;
+	public int maxPoints = 1;
+	public int scoreReward = 1;
+	public int hitby;
 	
 	// physics variables
 	public CollisionType collisionType;
 	
 	// utility variables
-	bool unpack = false;
+	private bool unpack = false;
+	public bool hit = false;
 	
 	void Start()
 	{

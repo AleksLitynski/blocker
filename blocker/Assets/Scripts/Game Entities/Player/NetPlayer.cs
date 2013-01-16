@@ -13,6 +13,8 @@ public class NetPlayer : NetObject
     bool _mobilePlayer = false;
     int _controllerNumber = -1;
 	
+	public int playerID = Random.Range (0,10000); // fix the shit out of this
+	
 	void Start()
 	{
 		playerArms = transform.FindChild("Arms");
@@ -125,6 +127,7 @@ public class NetPlayer : NetObject
 		playerArms.Rotate(new Vector3(rotation,0,0));
 	}
 	
+<<<<<<< HEAD
 	
 	/*
 	void OnTriggerEnter(Collider c)
@@ -135,4 +138,18 @@ public class NetPlayer : NetObject
 		}	
 	}*/
 
+=======
+	void OnTriggerEnter(Collider c)
+	{
+		// tell the checkpoint it was hit
+		if (Network.peerType == NetworkPeerType.Server)
+		{
+			if (c.gameObject.name == "Checkpoint")
+			{
+				c.gameObject.GetComponent<RaceCheckpoint>().hit = true;
+				c.gameObject.GetComponent<RaceCheckpoint>().hitby = playerID;
+			}
+		}
+	}
+>>>>>>> Czechpoints v2.0
 }
