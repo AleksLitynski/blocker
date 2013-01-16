@@ -127,18 +127,8 @@ public class NetPlayer : NetObject
 		playerArms.Rotate(new Vector3(rotation,0,0));
 	}
 	
-<<<<<<< HEAD
 	
-	/*
-	void OnTriggerEnter(Collider c)
-	{
-		if(Network.peerType == NetworkPeerType.Server)
-		{
-			c.gameObject.GetComponent<RaceCheckpoint>().
-		}	
-	}*/
 
-=======
 	void OnTriggerEnter(Collider c)
 	{
 		// tell the checkpoint it was hit
@@ -151,5 +141,4 @@ public class NetPlayer : NetObject
 			}
 		}
 	}
->>>>>>> Czechpoints v2.0
 }

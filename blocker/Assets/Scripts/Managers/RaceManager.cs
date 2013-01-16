@@ -1,8 +1,10 @@
 using UnityEngine;
 using System.Collections;
 
-public class RaceManager: MonoBehaviour 
+public class RaceManager: BlockerObject 
 {
+	public GameObject indicator;
+	
 	public enum SameOrderRule {AllowSameValue, UseUniqueValue};
 	public SameOrderRule sameOrderRule = SameOrderRule.UseUniqueValue;
 	
@@ -29,10 +31,13 @@ public class RaceManager: MonoBehaviour
 		{
 			RaceCheckpoint raceCheckpoint = checkpoints[i].GetComponent<RaceCheckpoint>();
 			
+			if (raceCheckpoint.orderInRace == index)
+			{
+				indicator.transform.position = new Vector3(checkpoints[i].transform.position.x, indicator.transform.position.y, checkpoints[i].transform.position.z);
+			}
+			
 			if (raceCheckpoint.hit)
 			{
-				// reset the hit detection
-				raceCheckpoint.hit = false;
 				// check if this is the next checkpoint. if so, advance the checkpoint
 				// toward its maxPoints (default starting at 0 going to 1), give player points,
 				// and advance the index to the next checkpoint.
@@ -51,6 +56,9 @@ public class RaceManager: MonoBehaviour
 						// reset currentPoints and advance the index
 						raceCheckpoint.currentPoints = 0;
 						advanceIndex();
+						
+						// reset the hit detection
+						raceCheckpoint.hit = false;
 					}
 				}
 			}

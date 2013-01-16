@@ -4,7 +4,6 @@ using System.Collections;
 public class InputReceiver : BlockerObject 
 {
 	
-	
 	[RPC]
     public void AddInput(float f, float s, float tR, float tU, bool j, bool f1, bool f2, bool sp, bool c, int localNumber, NetworkMessageInfo incomingInfo)
     {

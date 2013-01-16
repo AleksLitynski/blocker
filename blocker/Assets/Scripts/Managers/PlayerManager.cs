@@ -128,7 +128,10 @@ public class PlayerManager : BlockerObject
     {
         for (int i = 0; i < players.Count; i++)
         {
-            GUILayout.Label(players[i].gameObject.name);
+			GUILayout.BeginHorizontal();
+            	GUILayout.Label(players[i].gameObject.name);
+				GUILayout.Label(""+raceManager.playerScores[players[i].playerID]);
+			GUILayout.EndHorizontal();
         }
     }
     void drawWindow2(int windowID)
