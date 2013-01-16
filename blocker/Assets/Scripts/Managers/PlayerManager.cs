@@ -53,6 +53,8 @@ public class PlayerManager : BlockerObject
         (newPlayer.GetComponent("NetPlayer") as NetPlayer).networkPlayer = computer;
         (newPlayer.GetComponent("NetPlayer") as NetPlayer).localPlayerNumber = numOnComputer;
         newPlayer.transform.parent = GameObject.Find("/World/RootTeam").transform;
+		
+		newPlayer.transform.position = GameObject.Find("Spawn").transform.position;
 
         if (numOnComputer == 0)
         {
@@ -71,7 +73,7 @@ public class PlayerManager : BlockerObject
         }
         else
         {
-            GameObject.Find(newPlayer.name + "/Camera").active = false;
+            GameObject.Find(newPlayer.name + "/Arms/Camera").active = false;
         }
     }
 	
@@ -144,7 +146,7 @@ public class PlayerManager : BlockerObject
 	                networkView.RPC("RemovePlayerRequest", RPCMode.Server, localPlayers[i].localPlayerNumber);
 	                if (Network.peerType == NetworkPeerType.Server) this.RemovePlayerRequest(localPlayers[i].localPlayerNumber);
 	            }
-				if(GUILayout.Button("KB"))
+				if(GUILayout.Button("KB " + localPlayers[i].localPlayerNumber))
 				{
 					foreach(NetPlayer player in localPlayers)
 					{
@@ -231,11 +233,11 @@ public class PlayerManager : BlockerObject
 
                 if (favorHorizontal)
                 {
-                    (GameObject.Find(localPlayers[pos].name + "/Camera").camera as Camera).rect = new Rect(j * width, i * height, width, height);
+                    (GameObject.Find(localPlayers[pos].name + "Arms/Camera").camera as Camera).rect = new Rect(j * width, i * height, width, height);
                 }
                 else
                 {
-                    (GameObject.Find(localPlayers[pos].name + "/Camera").camera as Camera).rect = new Rect(i * height, j * width, height, width);
+                    (GameObject.Find(localPlayers[pos].name + "Arms/Camera").camera as Camera).rect = new Rect(i * height, j * width, height, width);
                 }
                 pos++;
             }

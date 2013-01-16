@@ -23,8 +23,7 @@ public class InputReceiver : BlockerObject
 		
 		sentCollection.netPlayer.move(sentCollection);
 		
-		sentCollection.netPlayer.networkView.RPC("setPlayerPos", RPCMode.Others, sentCollection.netPlayer.transform.position);
-		sentCollection.netPlayer.networkView.RPC("setPlayerRot", RPCMode.Others, sentCollection.netPlayer.transform.rotation.eulerAngles);	
+		sentCollection.netPlayer.networkView.RPC("setTransform", RPCMode.Others, sentCollection.netPlayer.transform.position, sentCollection.netPlayer.transform.rotation.eulerAngles);
     }
 	public void AddInput(float f, float s, float tR, float tU, bool j, bool f1, bool f2, bool sp, bool c, int localNumber)
     {

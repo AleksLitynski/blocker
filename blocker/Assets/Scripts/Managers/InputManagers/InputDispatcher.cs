@@ -10,7 +10,6 @@ public class InputDispatcher : BlockerObject
             InputCollection collection = new InputCollection(curPlayer);
             if (curPlayer.KeyboardPlayer)
             {
-				
                 collection.forward = 0;
                 if(Input.GetKey("w")) collection.forward += 1;
                 if(Input.GetKey("s")) collection.forward -= 1;
