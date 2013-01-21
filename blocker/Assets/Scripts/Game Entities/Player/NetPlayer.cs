@@ -98,7 +98,7 @@ public class NetPlayer : NetObject
 				col.turnUp = 0.0f;
 			}
 			playerArms.Rotate(new Vector3(-col.turnUp,0,0));
-			networkView.RPC ("setArmRotation", RPCMode.Others, -col.turnUp);
+		//	networkView.RPC ("setArmRotation", RPCMode.Others, -col.turnUp);
 		}
 		
 		
@@ -121,11 +121,11 @@ public class NetPlayer : NetObject
 	    rigidbody.AddForce(playerMotion * Time.deltaTime * 1000);
 	}
 	
-	[RPC]
+	/*[RPC]
 	void setArmRotation(float rotation)
 	{
 		playerArms.Rotate(new Vector3(rotation,0,0));
-	}
+	}*/
 	
 	
 

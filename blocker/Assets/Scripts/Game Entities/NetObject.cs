@@ -2,7 +2,6 @@ using UnityEngine;
 using System.Collections;
 
 [RequireComponent(typeof(Rigidbody))]
-[RequireComponent(typeof(NetworkView))]
 public class NetObject : MonoBehaviour {
 
     public NetObject netObject;
@@ -13,9 +12,9 @@ public class NetObject : MonoBehaviour {
         netObject = this;
 	}
 	
-	[RPC]
-	void setTransform(Vector3 pos, Vector3 rot, NetworkMessageInfo info)
+	public void setTransform(Vector3 pos, Vector3 rot)
 	{
+		Debug.Log(gameObject.name);
 		rigidbody.isKinematic = true;
 		transform.position = pos;
 		transform.rotation = Quaternion.Euler(rot);

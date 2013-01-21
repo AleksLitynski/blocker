@@ -54,6 +54,7 @@ public class PlayerManager : BlockerObject
         newPlayer.transform.parent = GameObject.Find("/World/RootTeam").transform;
 		
 		newPlayer.transform.position = GameObject.Find("Spawn").transform.position;
+		
 
         if (numOnComputer == 0)
         {
