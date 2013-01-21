@@ -14,10 +14,11 @@ public class NetObject : MonoBehaviour {
 	}
 	
 	[RPC]
-	void setTransform(Vector3 pos, Vector3 rot)
+	void setTransform(Vector3 pos, Vector3 rot, NetworkMessageInfo info)
 	{
-		rigidbody.position = pos;
-		rigidbody.rotation = Quaternion.Euler(rot);
+		rigidbody.isKinematic = true;
+		transform.position = pos;
+		transform.rotation = Quaternion.Euler(rot);
 		
 	}
 	
