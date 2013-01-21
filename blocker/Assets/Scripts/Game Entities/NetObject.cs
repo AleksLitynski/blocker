@@ -3,8 +3,10 @@ using System.Collections;
 
 [RequireComponent(typeof(Rigidbody))]
 public class NetObject : MonoBehaviour {
-
+	
+	[HideInInspector]
     public NetObject netObject;
+	[HideInInspector]
 	public ObjectStats objectStats = new ObjectStats();
 	
 	void Start () 
@@ -27,7 +29,7 @@ public class NetObject : MonoBehaviour {
 			objectStats.unitOppGrav = -1 * objectStats.grav.normalized;
 		}
 		
-		if(!Physics.Raycast(transform.position, -transform.up, collider.bounds.size.y/1.8f)) //, LayerMask.NameToLayer("Player")
+		if(!Physics.Raycast(transform.position, -transform.up, collider.bounds.size.y/1.8f))
 		{
 			objectStats.gravVelo += objectStats.grav * Time.deltaTime;
 			rigidbody.AddForce(objectStats.gravVelo);
@@ -37,6 +39,18 @@ public class NetObject : MonoBehaviour {
 			objectStats.gravVelo = Vector3.zero;
 		}
 		
+	}
+	
+	public void move(Vector3 disp, Quaternion rotate, Quaternion forcedRotation)
+	{
+		
+		
+		rotate = Quaternion.RotateTowards(transform.rotation, rotate, objectStats.maxGravRoll);
+		rotate = rotate * forcedRotation;
+		rigidbody.rotation = rotate;
+		
+		
+	    rigidbody.AddForce(disp * Time.deltaTime * 1000);
 	}
 	
 

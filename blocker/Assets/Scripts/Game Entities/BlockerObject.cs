@@ -6,7 +6,7 @@ public class BlockerObject : MonoBehaviour {
 	[HideInInspector]
     public ConnectionManager connectionManager;
 	[HideInInspector]
-    public PlayerManager     playerManager;
+    public PlayerManager playerManager;
 	[HideInInspector]
     public NetPlayer netPlayer;
 	[HideInInspector]
