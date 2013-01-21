@@ -13,7 +13,9 @@ public class RaceCheckpoint : MonoBehaviour
 	public int hitby;
 	
 	// physics variables
-	public CollisionType collisionType;
+	public CollisionType collisionType = CollisionType.Box;
+	public Vector3 scale;
+	public Collider myCollider;
 	
 	// utility variables
 	private bool unpack = false;
@@ -30,6 +32,12 @@ public class RaceCheckpoint : MonoBehaviour
 		{
 			init();
 		}
+		switch(collisionType)
+		{
+		case CollisionType.Box:
+			if (scale != (myCollider as BoxCollider).size) (myCollider as BoxCollider).size = scale;
+			break;
+		}
 	}
 	
 	// relying on Start() is weird sometimes, so i safeguard it with a method that might
@@ -41,21 +49,18 @@ public class RaceCheckpoint : MonoBehaviour
 		switch(collisionType)
 		{
 		case CollisionType.Box:			
-			this.gameObject.AddComponent<BoxCollider>();
-			BoxCollider bc = this.gameObject.GetComponent<BoxCollider>();
-			bc.isTrigger = true;
+			myCollider = this.gameObject.AddComponent<BoxCollider>();
+			myCollider.isTrigger = true;
 			break;
 		case CollisionType.Cylinder:	
-			this.gameObject.AddComponent<CapsuleCollider>();
-			CapsuleCollider cc = this.gameObject.GetComponent<CapsuleCollider>();
-			cc.isTrigger = true;
+			myCollider = this.gameObject.AddComponent<CapsuleCollider>();
+			myCollider.isTrigger = true;
 			// kill the endcaps so the collider is actually a cylinder.
 			//cc.radius = 0; //doesnt do what you want it to
 			break;
 		case CollisionType.Sphere:		
-			this.gameObject.AddComponent<SphereCollider>();
-			SphereCollider sc = this.gameObject.GetComponent<SphereCollider>();
-			sc.isTrigger = true;
+			myCollider = this.gameObject.AddComponent<SphereCollider>();
+			myCollider.isTrigger = true;
 			break;
 		}
 		
