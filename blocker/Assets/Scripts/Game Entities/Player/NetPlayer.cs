@@ -7,7 +7,8 @@ public class NetPlayer : NetObject
     public NetworkPlayer networkPlayer;
 	public PlayerStats playerStats = new PlayerStats();
 	
-	private Transform playerArms;
+	[HideInInspector]
+	public Transform playerArms;
 
     bool _keyboardPlayer = false;
     bool _mobilePlayer = false;
@@ -15,7 +16,7 @@ public class NetPlayer : NetObject
 	
 	public int playerID = Random.Range (0,10000); // fix the shit out of this
 	
-	void Start()
+	void Awake()
 	{
 		playerArms = transform.FindChild("Arms");
 	}
@@ -98,7 +99,6 @@ public class NetPlayer : NetObject
 				col.turnUp = 0.0f;
 			}
 			playerArms.Rotate(new Vector3(-col.turnUp,0,0));
-		//	networkView.RPC ("setArmRotation", RPCMode.Others, -col.turnUp);
 		}
 		
 		
@@ -121,11 +121,7 @@ public class NetPlayer : NetObject
 	    rigidbody.AddForce(playerMotion * Time.deltaTime * 1000);
 	}
 	
-	/*[RPC]
-	void setArmRotation(float rotation)
-	{
-		playerArms.Rotate(new Vector3(rotation,0,0));
-	}*/
+	
 	
 	
 
