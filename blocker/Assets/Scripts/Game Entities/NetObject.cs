@@ -50,7 +50,7 @@ public class NetObject : MonoBehaviour {
 		rigidbody.rotation = rotate;
 		
 		
-	    rigidbody.AddForce(disp * Time.deltaTime * 1000);
+	    rigidbody.AddForce(disp * Time.deltaTime);
 	}
 	
 

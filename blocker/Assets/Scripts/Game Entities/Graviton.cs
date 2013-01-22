@@ -5,7 +5,7 @@ public class Graviton : NetObject
 {
 	public bool pointGravity = true;
 	public bool plateGravity = true;
-	public float bigG = 0.001f;
+	public float bigG = 1;
 	
 	public void Awake()
 	{
@@ -15,57 +15,59 @@ public class Graviton : NetObject
 		rigidbody.angularDrag = 0;
 		rigidbody.isKinematic = true;
 		rigidbody.useGravity = false;
-		rigidbody.mass = 300;
+		rigidbody.mass = 10;
 		
 		if(collider)
 		{
 			plateGravity = !collider.isTrigger; //if the player can walk into it, its a point gravity
 			pointGravity = !plateGravity;
 		}
+		
+		Debug.Log(rigidbody);
 	}
 	
 	
-	public void OnControllerColliderHit(ControllerColliderHit hit)
+	public void OnCollisionStay(Collision collisionInfo)
 	{
-		collisionDispatch(hit.controller.gameObject, hit.normal);
+		if(plateGravity)
+		{
+			Vector3 normal = Vector3.zero;
+			foreach(var contact in collisionInfo.contacts)
+			{
+				normal += contact.normal;
+			}
+			normal = normal / collisionInfo.contacts.Length;
+		//	normal = new Vector3(Mathf.Round(normal.x), Mathf.Round(normal.y), Mathf.Round(normal.z));
+			surfaceHit(collisionInfo.gameObject, normal);
+		}
 	}
-	
+	/*
 	public void OnTriggerStay (Collider other) 
 	{
-		collisionDispatch(other.gameObject, Vector3.zero);
-	}
-	
-	public void collisionDispatch(GameObject other, Vector3 hitNormal)
-	{
-		if(other.tag == "Player" && other.name == "player " + Network.player.ToString())
+		if(pointGravity)
 		{
-			if(pointGravity)
-			{
-				pointHit(other);
-			}
-			if(plateGravity)
-			{
-				surfaceHit(other, hitNormal);
-			}
+			pointHit(other.gameObject);
 		}
 	}
 	
-	public void pointHit(GameObject player)
+	public void pointHit(GameObject other)
 	{	
 		
-		var top = rigidbody.mass * player.rigidbody.mass;
-		var bottom = Mathf.Sqrt(Vector3.Distance(transform.position, player.transform.position));
-		var magnitude = bigG * player.rigidbody.mass * (top/bottom);
+		var top = rigidbody.mass * other.rigidbody.mass;
+		var bottom = Mathf.Sqrt(Vector3.Distance(transform.position, other.transform.position));
+		var magnitude = bigG * other.rigidbody.mass * (top/bottom);
 		
-		var direction = (player.transform.position - transform.position).normalized;
+		var direction = (other.transform.position - transform.position).normalized;
 		
 		
-		objectStats.grav = -magnitude * direction;
-	}
+		other.GetComponent<NetObject>().objectStats.grav = magnitude * direction;
+	}*/
 	
-	public void surfaceHit(GameObject player, Vector3 surfaceNormal)
+	public void surfaceHit(GameObject other, Vector3 surfaceNormal)
 	{
-		player.GetComponent<NetPlayer>().netObject.objectStats.grav = -(surfaceNormal * bigG * rigidbody.mass);
+		Debug.Log(other.GetComponent<NetObject>().objectStats.grav + " " + surfaceNormal);
+		
+		other.GetComponent<NetObject>().objectStats.grav = surfaceNormal * bigG * rigidbody.mass;
 	}
 	
 	

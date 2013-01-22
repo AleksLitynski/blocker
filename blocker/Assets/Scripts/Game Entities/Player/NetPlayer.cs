@@ -107,7 +107,7 @@ public class NetPlayer : NetObject
 		{
 			if(Physics.Raycast(transform.position, -transform.up, collider.bounds.size.y/1.8f))
 			{
-				playerMotion += playerStats.jump * objectStats.unitOppGrav * 10;
+				playerMotion += playerStats.jump * objectStats.unitOppGrav;
 			}
 			
 			var toRotateLine = Quaternion.FromToRotation(objectStats.unitOppGrav, objectStats.normalOfLastHit);
