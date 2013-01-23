@@ -44,6 +44,11 @@ public class InputDispatcher : BlockerObject
         }
     }
 	
+	public override void Start()
+	{
+		base.Start();	
+	}
+	
 	
 	
 

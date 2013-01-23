@@ -4,7 +4,7 @@ using System.Collections.Generic;
 public class ConnectionManager : BlockerObject 
 {
 	//public string serverAddress = "bigwhite.student.rit.edu";
-	string gameName = "Blocker v 1.0.134523576";
+	string gameName = "Blocker v 0.1";
 
     void OnGUI()
     {

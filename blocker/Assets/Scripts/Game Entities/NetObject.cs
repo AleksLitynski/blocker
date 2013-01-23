@@ -11,11 +11,13 @@ public class NetObject : BlockerObject {
 	public ObjectStats objectStats;
 	
 	
-	void Start ()
+	public override void Start ()
     {
-		this.tag = "netObject";
+		gameObject.tag = "netObject";
         netObject = this;
 		objectStats = gameObject.GetComponent<ObjectStats>();
+		
+		base.Start();
 	}
 	
 	public void setTransform(Vector3 pos, Vector3 rot)
@@ -26,7 +28,7 @@ public class NetObject : BlockerObject {
 		
 	}
 	
-	void FixedUpdate()
+	public virtual void FixedUpdate()
 	{
 		if(Network.peerType == NetworkPeerType.Server)
 		{
@@ -39,20 +41,21 @@ public class NetObject : BlockerObject {
 			{
 				rigidbody.AddForce((objectStats.grav * Time.deltaTime), ForceMode.Impulse);//rigidbody.velocity + 
 			}
-			networkView.RPC("setTransform", RPCMode.Others, transform.position, transform.rotation.eulerAngles, this.name);
+			world.networkView.RPC("setTransform", RPCMode.Others, transform.position, transform.rotation.eulerAngles, this.name);
                
 		}
-		
 		
 	}
 	
 	public void move(Vector3 disp, Quaternion forcedRotation)
 	{
-		
-		Quaternion rotate = Quaternion.LookRotation(Vector3.Cross(transform.right, objectStats.unitOppGrav), objectStats.unitOppGrav);
-		rotate = Quaternion.RotateTowards(transform.rotation, rotate, objectStats.maxGravRoll);
-		rotate = rotate * forcedRotation;
-		rigidbody.rotation = rotate;
+		if(objectStats != null)
+		{
+			Quaternion rotate = Quaternion.LookRotation(Vector3.Cross(transform.right, objectStats.unitOppGrav), objectStats.unitOppGrav);
+			rotate = Quaternion.RotateTowards(transform.rotation, rotate, objectStats.maxGravRoll);
+			rotate = rotate * forcedRotation;
+			rigidbody.rotation = rotate;
+		}
 		
 		
 	    rigidbody.AddRelativeForce(disp * Time.deltaTime);

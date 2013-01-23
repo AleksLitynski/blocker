@@ -25,6 +25,10 @@ public class Graviton : BlockerObject
 		
 	}
 	
+	public override void Start()
+	{
+		base.Start ();	
+	}
 	
 	public void OnCollisionStay(Collision collisionInfo)
 	{

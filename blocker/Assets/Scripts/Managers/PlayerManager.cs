@@ -13,6 +13,10 @@ public class PlayerManager : BlockerObject
     public List<NetPlayer> players = new List<NetPlayer>();
     public List<NetPlayer> localPlayers = new List<NetPlayer>();
 	
+	public override void Start()
+	{
+		base.Start();	
+	}
 	
 	
     [RPC]

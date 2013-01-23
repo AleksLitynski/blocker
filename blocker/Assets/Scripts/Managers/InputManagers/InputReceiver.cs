@@ -42,7 +42,7 @@ public class InputReceiver : BlockerObject
 	[RPC]
 	public void setTransform(Vector3 pos, Vector3 rot, string objName)
 	{
-		foreach (GameObject obj in GameObject.FindGameObjectsWithTag("gameObject"))
+		foreach (GameObject obj in GameObject.FindGameObjectsWithTag("netObject"))
         {
             if (obj.name == objName)
             {

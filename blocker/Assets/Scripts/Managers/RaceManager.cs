@@ -16,12 +16,12 @@ public class RaceManager: BlockerObject
 	
 	// utility variables
 	bool unpack = false;
-	NetworkView networkView;
 	
 	// Use this for initialization
-	void Start () 
+	public override void Start () 
 	{
 		init();
+		base.Start();
 	}
 	
 	// Update is called once per frame
@@ -81,7 +81,6 @@ public class RaceManager: BlockerObject
 	void init()
 	{
 		// create a temp array to hold all the checkpoint objects
-		Debug.Log("butt");
 		checkpoints = GameObject.FindGameObjectsWithTag("RaceCheckpoint");
 		
 		RaceCheckpoint[] temp = new RaceCheckpoint[checkpoints.Length];
@@ -125,9 +124,6 @@ public class RaceManager: BlockerObject
 			if (temp[i].orderInRace > maxIndex) maxIndex = temp[i].orderInRace;
 			if (temp[i].orderInRace < index) index = temp[i].orderInRace;
 		}
-		
-		// get reference to the World's networkview
-		networkView = this.gameObject.GetComponent<NetworkView>();
 		
 		unpack = true;	
 		
@@ -186,6 +182,10 @@ public class RaceManager: BlockerObject
 		RaceCheckpoint rc = checkpoints[i].GetComponent<RaceCheckpoint>();
 		
 		// find the mofo that hit this bro and give that sucka some dough
-		GameObject.Find(rc.hitby).GetComponent<PlayerStats>().score += rc.scoreReward;
+		GameObject hitBy = GameObject.Find(rc.hitby);
+		if(hitBy  != null)
+		{
+			hitBy.GetComponent<PlayerStats>().score += rc.scoreReward;
+		}
 	}
 }

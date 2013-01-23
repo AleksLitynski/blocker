@@ -115,7 +115,10 @@ public class NetPlayer : NetObject
 		move(playerMotion, Quaternion.Euler(0,col.turnRight,0));
 	}
 	
-	
+	public override void Start()
+	{
+		base.Start ();
+	}	
 	
 	
 
