@@ -53,8 +53,8 @@ public class RaceManager: BlockerObject
 						{
 							raceCheckpoint.currentPoints++;
 							// find the player, get their netplayer component, and give em some points
-							GameObject.Find(raceCheckpoint.hitby).GetComponent<NetPlayer>().playerStats.score += raceCheckpoint.scoreReward;
-							Debug.Log(GameObject.Find(raceCheckpoint.hitby).GetComponent<NetPlayer>().playerStats.score);
+							networkView.RPC ("givePoints", RPCMode.All, i);
+							//GameObject.Find(raceCheckpoint.hitby).GetComponent<NetPlayer>().playerStats.score += raceCheckpoint.scoreReward;
 						}
 						else //if (raceCheckpoint.currentPoints == raceCheckpoint.maxPoints)
 						{
@@ -126,6 +126,7 @@ public class RaceManager: BlockerObject
 			if (temp[i].orderInRace < index) index = temp[i].orderInRace;
 		}
 		
+		// get reference to the World's networkview
 		networkView = this.gameObject.GetComponent<NetworkView>();
 		
 		unpack = true;	
@@ -175,5 +176,16 @@ public class RaceManager: BlockerObject
 	void setCheckpoint(int newIndex)
 	{
 		index = newIndex;
+	}
+	
+	[RPC]
+	// this function uses the index of the loop to give points to the hitby of checkpoints[i]
+	void givePoints(int i)
+	{
+		// get the component script
+		RaceCheckpoint rc = checkpoints[i].GetComponent<RaceCheckpoint>();
+		
+		// find the mofo that hit this bro and give that sucka some dough
+		GameObject.Find(rc.hitby).GetComponent<PlayerStats>().score += rc.scoreReward;
 	}
 }
