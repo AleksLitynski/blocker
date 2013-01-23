@@ -28,17 +28,18 @@ public class InputDispatcher : BlockerObject
             {
                 Debug.Log("We don't support mobile. Yet.");
             }
-            else if (curPlayer.ControllerNumber >= 1 && curPlayer.ControllerNumber <= 4)
+            else if (curPlayer.ControllerNumber >= 0 && curPlayer.ControllerNumber <= 3)
             {
-                collection.forward = Input.GetAxis("L_YAxis_" + curPlayer.ControllerNumber);
-                collection.straff = Input.GetAxis("L_XAxis_" + curPlayer.ControllerNumber);
-                collection.turnRight = Input.GetAxis("R_XAxis_" + curPlayer.ControllerNumber);
-                collection.turnUp = Input.GetAxis("R_YAxis_" + curPlayer.ControllerNumber);
-                collection.jump = Input.GetAxis("A_" + curPlayer.ControllerNumber) != 0;
-                collection.fireOne = Input.GetAxis("TriggersR_" + curPlayer.ControllerNumber) != 0;
-                collection.fireTwo = Input.GetAxis("TriggersL_" + curPlayer.ControllerNumber) != 0;
-                collection.sprint = Input.GetAxis("L_XAxis_" + curPlayer.ControllerNumber) != 0;
-                collection.crouch = Input.GetAxis("L_XAxis_" + curPlayer.ControllerNumber) != 0;
+				int num = curPlayer.ControllerNumber + 1;
+                collection.forward = -Input.GetAxis("L_YAxis_" + num);
+                collection.straff = Input.GetAxis("L_XAxis_" + num);
+                collection.turnRight = Input.GetAxis("R_XAxis_" + num);
+                collection.turnUp = -Input.GetAxis("R_YAxis_" + num);
+                collection.jump = Input.GetAxis("A_" + num) != 0;
+                collection.fireOne = Input.GetAxis("TriggersR_" + num) != 0;
+                collection.fireTwo = Input.GetAxis("TriggersL_" + num) != 0;
+                collection.sprint = Input.GetAxis("L_XAxis_" + num) != 0;
+                collection.crouch = Input.GetAxis("L_XAxis_" + num) != 0;
             }
             collection.sendToServerVia(networkView, inputReceiver);
         }
