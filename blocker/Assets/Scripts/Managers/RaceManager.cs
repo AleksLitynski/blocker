@@ -29,7 +29,6 @@ public class RaceManager: BlockerObject
 	public GameObject[] checkpoints;
 	public int index;
 	public int maxIndex;
-	public GameObject indicator;
 	public int scoreToWin;
 	
 	// utility variables
@@ -54,11 +53,6 @@ public class RaceManager: BlockerObject
 			{
 				RaceCheckpoint raceCheckpoint = checkpoints[i].GetComponent<RaceCheckpoint>();
 				
-				// put the indicator over the current checkpoint
-				if (raceCheckpoint.orderInRace == index)
-				{
-					indicator.transform.position = new Vector3(checkpoints[i].transform.position.x, indicator.transform.position.y, checkpoints[i].transform.position.z);
-				}
 				
 				if (raceCheckpoint.hitby != null)
 				{
@@ -102,6 +96,11 @@ public class RaceManager: BlockerObject
 		checkpoints = GameObject.FindGameObjectsWithTag("RaceCheckpoint");
 		
 		RaceCheckpoint[] temp = new RaceCheckpoint[checkpoints.Length];
+		
+		foreach(GameObject point in checkpoints)
+		{
+			(point.GetComponent("Halo") as Behaviour).enabled = false;
+		}
 		
 		// loop through checkpoints and grab their scripts
 		for(int i = 0; i < temp.Length; i++)
@@ -149,6 +148,7 @@ public class RaceManager: BlockerObject
 	
 	void advanceIndex()
 	{
+		(checkpoints[index].GetComponent("Halo") as Behaviour).enabled = false;
 		RaceCheckpoint[] temp = new RaceCheckpoint[checkpoints.Length];
 		
 		// loop through checkpoints and grab their scripts
@@ -164,6 +164,7 @@ public class RaceManager: BlockerObject
 			{
 				if (temp[i].orderInRace < index) index = temp[i].orderInRace;
 			}
+			(checkpoints[index].GetComponent("Halo") as Behaviour).enabled = true;
 			return;
 		}
 		
@@ -184,6 +185,7 @@ public class RaceManager: BlockerObject
 			}
 			if (whilebreak) break;
 		}
+		(checkpoints[index].GetComponent("Halo") as Behaviour).enabled = true;
 	}
 	
 	[RPC]
