@@ -65,7 +65,7 @@ public class RaceManager: BlockerObject
 						{
 							raceCheckpoint.currentPoints++;
 							// find the player, get their netplayer component, and give em some points
-							networkView.RPC ("givePoints", RPCMode.All, i);
+							networkView.RPC ("givePoints", RPCMode.All, i, raceCheckpoint.hitby);
 							//GameObject.Find(raceCheckpoint.hitby).GetComponent<NetPlayer>().playerStats.score += raceCheckpoint.scoreReward;
 						}
 						else //if (raceCheckpoint.currentPoints == raceCheckpoint.maxPoints)
@@ -148,7 +148,6 @@ public class RaceManager: BlockerObject
 	
 	void advanceIndex()
 	{
-		Debug.Log(networkView);
 		networkView.RPC ("changeHalo",RPCMode.All,index, false);
 		RaceCheckpoint[] temp = new RaceCheckpoint[checkpoints.Length];
 		
@@ -193,6 +192,11 @@ public class RaceManager: BlockerObject
 	void OnPlayerConnected(NetworkPlayer player)
 	{
 		networkView.RPC("changeHalo", player, index, true);//actives players first checkpoint
+		
+		foreach(NetPlayer p in playerManager.players)
+		{
+			networkView.RPC ("setScore", player, p.gameObject.GetComponent<PlayerStats>().score, p.name);
+		}
 	}
 	
 	
@@ -203,17 +207,26 @@ public class RaceManager: BlockerObject
 		index = newIndex;
 	}
 	
+	[RPC]
+	void setScore(int score, string hitby)
+	{
+		GameObject hitBy = GameObject.Find(hitby);
+		
+		if(hitBy != null)
+		{
+			hitBy.GetComponent<PlayerStats>().score = score;
+		}
+	}
+	
 	// this function uses the index of the loop to give points to the hitby of checkpoints[i]
 	[RPC]
-	void givePoints(int i)
+	void givePoints(int i, string hitby)
 	{
 		// get the component script
 		RaceCheckpoint rc = checkpoints[i].GetComponent<RaceCheckpoint>();
 		
 		// find the mofo that hit this bro and give that sucka some dough
-		GameObject hitBy = GameObject.Find(rc.hitby);
-		
-		Debug.Log(hitBy);
+		GameObject hitBy = GameObject.Find(hitby);
 		
 		if(hitBy != null)
 		{
