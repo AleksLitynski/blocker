@@ -40,8 +40,8 @@ public class ConnectionManager : BlockerObject
 	{
 		
 		GUILayout.BeginVertical();
-			hostedGameName = GUILayout.TextField(hostedGameName, GUILayout.MinWidth (100));
-			hostedGameDescription = GUILayout.TextField(hostedGameDescription, GUILayout.MinWidth(200));
+			hostedGameName = GUILayout.TextField(hostedGameName, GUILayout.MaxWidth (200));
+			hostedGameDescription = GUILayout.TextField(hostedGameDescription, GUILayout.MaxWidth(200));
 			if(GUILayout.Button ("Host", GUILayout.MinWidth(50)))
 			{
 				createServer(hostedGameName, hostedGameDescription);
@@ -62,7 +62,7 @@ public class ConnectionManager : BlockerObject
 		MasterServer.RequestHostList(gameName);
 		GUILayout.BeginVertical();
 		HostData[] availableHosts = MasterServer.PollHostList();
-			GUILayout.Box("Available Servers", GUILayout.MinWidth(Screen.width));
+			GUILayout.Box("Available Servers", GUILayout.MinWidth(Screen.width - 200));
 			foreach (HostData host in availableHosts)
 			{
 				connectionRow(host);
