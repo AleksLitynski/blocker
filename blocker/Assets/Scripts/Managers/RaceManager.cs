@@ -12,6 +12,7 @@ public class RaceManager: BlockerObject
 	public int index;
 	public int maxIndex;
 	public GameObject indicator;
+	public int scoreToWin;
 	
 	// utility variables
 	bool unpack = false;
@@ -68,6 +69,10 @@ public class RaceManager: BlockerObject
 							raceCheckpoint.hitby = null;
 						}
 					}
+					else
+					{
+						raceCheckpoint.hitby = null;
+					}
 				}
 			}
 		}
@@ -76,11 +81,9 @@ public class RaceManager: BlockerObject
 	void init()
 	{
 		// create a temp array to hold all the checkpoint objects
-		try
-		{
-			checkpoints = GameObject.FindGameObjectsWithTag("RaceCheckpoint");
-		}
-		finally {}
+		Debug.Log("butt");
+		checkpoints = GameObject.FindGameObjectsWithTag("RaceCheckpoint");
+		
 		RaceCheckpoint[] temp = new RaceCheckpoint[checkpoints.Length];
 		
 		// loop through checkpoints and grab their scripts

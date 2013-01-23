@@ -14,12 +14,11 @@ public class RaceCheckpoint : MonoBehaviour
 	
 	// physics variables
 	public CollisionType collisionType = CollisionType.Box;
-	public Vector3 scale;
+	public Vector3 scale = new Vector3(1,1,1);
 	public Collider myCollider;
 	
 	// utility variables
 	private bool unpack = false;
-	public bool hit = false;
 	
 	void Start()
 	{
