@@ -66,7 +66,7 @@ public class Graviton : BlockerObject
 	{
 		//Debug.Log(other.GetComponent<NetObject>().objectStats.grav + " " + surfaceNormal);
 		
-		other.GetComponent<NetObject>().objectStats.grav = surfaceNormal * bigG * rigidbody.mass;
+		other.GetComponent<ObjectStats>().grav = surfaceNormal * bigG * rigidbody.mass;
 	}
 	
 	

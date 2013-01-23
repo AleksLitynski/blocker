@@ -13,6 +13,7 @@ public class NetObject : BlockerObject {
 	
 	void Start ()
     {
+		this.tag = "netObject";
         netObject = this;
 		objectStats = gameObject.GetComponent<ObjectStats>();
 	}
@@ -27,15 +28,21 @@ public class NetObject : BlockerObject {
 	
 	void FixedUpdate()
 	{
-		if(objectStats.grav != Vector3.zero)
+		if(Network.peerType == NetworkPeerType.Server)
 		{
-			objectStats.unitOppGrav = -1 * objectStats.grav.normalized;
+			if(objectStats.grav != Vector3.zero)
+			{
+				objectStats.unitOppGrav = -1 * objectStats.grav.normalized;
+			}
+			
+			if(!Physics.Raycast(transform.position, -transform.up, ((collider.bounds.size.x + collider.bounds.size.y + collider.bounds.size.z)/3)  * 1.1f)) //if not on the ground
+			{
+				rigidbody.AddForce((objectStats.grav * Time.deltaTime), ForceMode.Impulse);//rigidbody.velocity + 
+			}
+			networkView.RPC("setTransform", RPCMode.Others, transform.position, transform.rotation.eulerAngles, this.name);
+               
 		}
 		
-		if(!Physics.Raycast(transform.position, -transform.up, ((collider.bounds.size.x + collider.bounds.size.y + collider.bounds.size.z)/3)  * 1.1f)) //if not on the ground
-		{
-			rigidbody.AddForce((objectStats.grav * Time.deltaTime), ForceMode.Impulse);//rigidbody.velocity + 
-		}
 		
 	}
 	
