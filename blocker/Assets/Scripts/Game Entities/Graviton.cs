@@ -23,7 +23,6 @@ public class Graviton : NetObject
 			pointGravity = !plateGravity;
 		}
 		
-		Debug.Log(rigidbody);
 	}
 	
 	
@@ -65,7 +64,7 @@ public class Graviton : NetObject
 	
 	public void surfaceHit(GameObject other, Vector3 surfaceNormal)
 	{
-		Debug.Log(other.GetComponent<NetObject>().objectStats.grav + " " + surfaceNormal);
+		//Debug.Log(other.GetComponent<NetObject>().objectStats.grav + " " + surfaceNormal);
 		
 		other.GetComponent<NetObject>().objectStats.grav = surfaceNormal * bigG * rigidbody.mass;
 	}

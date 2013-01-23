@@ -9,7 +9,7 @@ public class NetObject : MonoBehaviour {
 	[HideInInspector]
 	public ObjectStats objectStats = new ObjectStats();
 	
-	void Start () 
+	void Start ()
     {
         netObject = this;
 	}
@@ -22,35 +22,35 @@ public class NetObject : MonoBehaviour {
 		
 	}
 	
-	void Update()
+	void FixedUpdate()
 	{
-		if(objectStats.grav != Vector3.zero)
-		{
+		//if(objectStats.grav != Vector3.zero)
+		//{
 			objectStats.unitOppGrav = -1 * objectStats.grav.normalized;
-		}
+		//}
 		
-		if(!Physics.Raycast(transform.position, -transform.up, collider.bounds.size.y/1.8f))
+		if(!Physics.Raycast(transform.position, -transform.up, collider.bounds.size.y/1.8f)) //if not on the ground
 		{
-			objectStats.gravVelo += objectStats.grav * Time.deltaTime;
-			rigidbody.AddForce(objectStats.gravVelo);
-		}
-		else
-		{
-			objectStats.gravVelo = Vector3.zero;
+			rigidbody.AddForce(objectStats.grav * Time.deltaTime);
 		}
 		
 	}
 	
-	public void move(Vector3 disp, Quaternion rotate, Quaternion forcedRotation)
+	public void move(Vector3 disp, Quaternion forcedRotation)
 	{
 		
 		
+		Quaternion rotate = Quaternion.LookRotation(Vector3.Cross(transform.right, objectStats.unitOppGrav), objectStats.unitOppGrav);
 		rotate = Quaternion.RotateTowards(transform.rotation, rotate, objectStats.maxGravRoll);
 		rotate = rotate * forcedRotation;
 		rigidbody.rotation = rotate;
 		
 		
-	    rigidbody.AddForce(disp * Time.deltaTime);
+	    rigidbody.AddRelativeForce(disp * Time.deltaTime);
+		
+		
+		Debug.DrawLine(transform.position, transform.position + rigidbody.velocity);
+		
 	}
 	
 

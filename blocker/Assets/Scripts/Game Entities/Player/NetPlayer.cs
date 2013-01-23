@@ -87,8 +87,7 @@ public class NetPlayer : NetObject
 	
 	public void move(InputCollection col)
 	{
-		
-		Quaternion rotation = Quaternion.LookRotation(Vector3.Cross(transform.right, objectStats.unitOppGrav), objectStats.unitOppGrav);
+		//rotate player arms
 		if(playerArms != null)
 		{
 			float armRot = playerArms.localRotation.eulerAngles.x - col.turnUp;
@@ -102,20 +101,21 @@ public class NetPlayer : NetObject
 		
 		
 		
-		Vector3 playerMotion = transform.TransformDirection(new Vector3(col.straff, 0, col.forward)) * playerStats.speed;//inial player speed
+		Vector3 playerMotion = new Vector3(col.straff, 0, col.forward) * playerStats.speed;//transform.TransformDirection(new Vector3(col.straff, 0, col.forward)) * playerStats.speed;//inial player speed
 		if(col.jump)
 		{
-			if(Physics.Raycast(transform.position, -transform.up, collider.bounds.size.y/1.8f))
+			if(Physics.Raycast(transform.position, -transform.up, ((collider.bounds.size.x + collider.bounds.size.y + collider.bounds.size.z)/3)  * 1.1f))
 			{
-				playerMotion += playerStats.jump * objectStats.unitOppGrav;
+				playerMotion += playerStats.jump * transform.up;//objectStats.unitOppGrav;
 			}
+			Debug.DrawLine(transform.position, transform.position + playerStats.jump * transform.up, Color.green);
 			
-			var toRotateLine = Quaternion.FromToRotation(objectStats.unitOppGrav, objectStats.normalOfLastHit);
-			playerMotion = toRotateLine * playerMotion;
+		//	var toRotateLine = Quaternion.FromToRotation(objectStats.unitOppGrav, objectStats.normalOfLastHit);
+		//	playerMotion = toRotateLine * playerMotion;
 		}
+		Debug.DrawLine(transform.position, transform.position - transform.up * (((collider.bounds.size.x + collider.bounds.size.y + collider.bounds.size.z)/3)  * 1.1f), Color.red);
 		
-		
-		move(playerMotion, rotation, Quaternion.Euler(0,col.turnRight,0));
+		move(playerMotion, Quaternion.Euler(0,col.turnRight,0));
 	}
 	
 	
