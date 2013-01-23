@@ -105,15 +105,13 @@ public class NetPlayer : NetObject
 		{
 			if(Physics.Raycast(transform.position, -transform.up, ((collider.bounds.size.x + collider.bounds.size.y + collider.bounds.size.z)/3)  * 1.1f))
 			{
-				playerMotion += playerStats.jump * transform.up;//objectStats.unitOppGrav;
+				playerMotion += playerStats.jump * Vector3.up;//objectStats.unitOppGrav; //JUMP IS NOT RELATIVE TO PLAYER
 			}
 			Debug.DrawLine(transform.position, transform.position + playerStats.jump * transform.up, Color.green);
 			
 		//	var toRotateLine = Quaternion.FromToRotation(objectStats.unitOppGrav, objectStats.normalOfLastHit);
 		//	playerMotion = toRotateLine * playerMotion;
 		}
-		Debug.DrawLine(transform.position, transform.position - transform.up * (((collider.bounds.size.x + collider.bounds.size.y + collider.bounds.size.z)/3)  * 1.1f), Color.red);
-		
 		move(playerMotion, Quaternion.Euler(0,col.turnRight,0));
 	}
 	

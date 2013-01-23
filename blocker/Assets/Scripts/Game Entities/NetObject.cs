@@ -10,6 +10,7 @@ public class NetObject : BlockerObject {
 	[HideInInspector]
 	public ObjectStats objectStats;
 	
+	
 	void Start ()
     {
         netObject = this;
@@ -26,14 +27,14 @@ public class NetObject : BlockerObject {
 	
 	void FixedUpdate()
 	{
-		//if(objectStats.grav != Vector3.zero)
-		//{
-			objectStats.unitOppGrav = -1 * objectStats.grav.normalized;
-		//}
-		
-		if(!Physics.Raycast(transform.position, -transform.up, collider.bounds.size.y/1.8f)) //if not on the ground
+		if(objectStats.grav != Vector3.zero)
 		{
-			rigidbody.AddForce(objectStats.grav * Time.deltaTime);
+			objectStats.unitOppGrav = -1 * objectStats.grav.normalized;
+		}
+		
+		if(!Physics.Raycast(transform.position, -transform.up, ((collider.bounds.size.x + collider.bounds.size.y + collider.bounds.size.z)/3)  * 1.1f)) //if not on the ground
+		{
+			rigidbody.AddForce((objectStats.grav * Time.deltaTime), ForceMode.Impulse);//rigidbody.velocity + 
 		}
 		
 	}
