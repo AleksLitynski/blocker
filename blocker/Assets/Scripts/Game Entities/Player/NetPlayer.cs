@@ -8,14 +8,8 @@ public class NetPlayer : NetObject
     public int localPlayerNumber;
 	[HideInInspector]
     public NetworkPlayer networkPlayer;
-<<<<<<< HEAD
-	//[HideInInspector]
-	public PlayerStats playerStats = new PlayerStats();
-=======
 	[HideInInspector]
 	public PlayerStats playerStats;
->>>>>>> Made playerStats and objectStats components.
-	
 	[HideInInspector]
 	public Transform playerArms;
 
