@@ -140,7 +140,7 @@ public class PlayerManager : BlockerObject
         {
 			GUILayout.BeginHorizontal();
             	GUILayout.Label(players[i].gameObject.name);
-				GUILayout.Label(""+raceManager.playerScores[players[i].playerID]);
+				GUILayout.Label(""+players[i].playerStats.score);
 			GUILayout.EndHorizontal();
         }
     }

@@ -3,17 +3,19 @@ using System.Collections;
 
 public class RaceManager: BlockerObject 
 {
-	public GameObject indicator;
-	
+	// enums
 	public enum SameOrderRule {AllowSameValue, UseUniqueValue};
 	public SameOrderRule sameOrderRule = SameOrderRule.UseUniqueValue;
 	
+	// game variables
 	public GameObject[] checkpoints;
-	public int[] playerScores;
 	public int index;
 	public int maxIndex;
+	public GameObject indicator;
 	
+	// utility variables
 	bool unpack = false;
+	NetworkView networkView;
 	
 	// Use this for initialization
 	void Start () 
@@ -26,39 +28,45 @@ public class RaceManager: BlockerObject
 	{
 		if (!unpack) init();
 		
-		// handle a player colliding with a checkpoint
-		for (int i = 0; i < checkpoints.Length; i++)
+		if (Network.peerType == NetworkPeerType.Server)
 		{
-			RaceCheckpoint raceCheckpoint = checkpoints[i].GetComponent<RaceCheckpoint>();
-			
-			if (raceCheckpoint.orderInRace == index)
+			// handle a player colliding with a checkpoint
+			for (int i = 0; i < checkpoints.Length; i++)
 			{
-				indicator.transform.position = new Vector3(checkpoints[i].transform.position.x, indicator.transform.position.y, checkpoints[i].transform.position.z);
-			}
-			
-			if (raceCheckpoint.hit)
-			{
-				// check if this is the next checkpoint. if so, advance the checkpoint
-				// toward its maxPoints (default starting at 0 going to 1), give player points,
-				// and advance the index to the next checkpoint.
+				RaceCheckpoint raceCheckpoint = checkpoints[i].GetComponent<RaceCheckpoint>();
+				
+				// put the indicator over the current checkpoint
 				if (raceCheckpoint.orderInRace == index)
 				{
-					raceCheckpoint.currentPoints++;
-					// hitby is a new playerID variable i added. it needs some work but its
-					// the most simple way i could think of to keep a reference to players.
-					// scoreReward is 1 by default.
-					// as for a more intense fix i guess we dynamically modify an array of 
-					// currently connected players? idk this could be ok as long as we dont
-					// let two players get the same id
-					playerScores[raceCheckpoint.hitby] += raceCheckpoint.scoreReward;
-					if (raceCheckpoint.currentPoints == raceCheckpoint.maxPoints)
+					indicator.transform.position = new Vector3(checkpoints[i].transform.position.x, indicator.transform.position.y, checkpoints[i].transform.position.z);
+				}
+				
+				if (raceCheckpoint.hitby != null)
+				{
+					// check if this is the next checkpoint. if so, advance the checkpoint
+					// toward its maxPoints (default starting at 0 going to 1), give player points,
+					// and advance the index to the next checkpoint.
+					if (raceCheckpoint.orderInRace == index)
 					{
-						// reset currentPoints and advance the index
-						raceCheckpoint.currentPoints = 0;
-						advanceIndex();
-						
-						// reset the hit detection
-						raceCheckpoint.hit = false;
+						if (raceCheckpoint.currentPoints < raceCheckpoint.maxPoints)
+						{
+							raceCheckpoint.currentPoints++;
+							// find the player, get their netplayer component, and give em some points
+							GameObject.Find(raceCheckpoint.hitby).GetComponent<NetPlayer>().playerStats.score += raceCheckpoint.scoreReward;
+							Debug.Log(GameObject.Find(raceCheckpoint.hitby).GetComponent<NetPlayer>().playerStats.score);
+						}
+						else //if (raceCheckpoint.currentPoints == raceCheckpoint.maxPoints)
+						{
+							// reset currentPoints and advance the index
+							raceCheckpoint.currentPoints = 0;
+							advanceIndex();
+							
+							// tell everyone about the new checkpoint.
+							networkView.RPC ("setCheckpoint", RPCMode.Others, index);
+							
+							// reset the hit detection
+							raceCheckpoint.hitby = null;
+						}
 					}
 				}
 			}
@@ -68,7 +76,11 @@ public class RaceManager: BlockerObject
 	void init()
 	{
 		// create a temp array to hold all the checkpoint objects
-		checkpoints = GameObject.FindGameObjectsWithTag("RaceCheckpoint");
+		try
+		{
+			checkpoints = GameObject.FindGameObjectsWithTag("RaceCheckpoint");
+		}
+		finally {}
 		
 		RaceCheckpoint[] temp = new RaceCheckpoint[checkpoints.Length];
 		
@@ -112,7 +124,8 @@ public class RaceManager: BlockerObject
 			if (temp[i].orderInRace < index) index = temp[i].orderInRace;
 		}
 		
-		playerScores = new int[10000];
+		networkView = this.gameObject.GetComponent<NetworkView>();
+		
 		unpack = true;	
 	}
 	
@@ -153,5 +166,11 @@ public class RaceManager: BlockerObject
 			}
 			if (whilebreak) break;
 		}
+	}
+	
+	[RPC]
+	void setCheckpoint(int newIndex)
+	{
+		index = newIndex;
 	}
 }

@@ -10,7 +10,7 @@ public class RaceCheckpoint : MonoBehaviour
 	public int currentPoints = 0;
 	public int maxPoints = 1;
 	public int scoreReward = 1;
-	public int hitby;
+	public string hitby;
 	
 	// physics variables
 	public CollisionType collisionType = CollisionType.Box;
@@ -32,6 +32,7 @@ public class RaceCheckpoint : MonoBehaviour
 		{
 			init();
 		}
+		// update the scale of the collision object.
 		switch(collisionType)
 		{
 		case CollisionType.Box:
@@ -65,5 +66,10 @@ public class RaceCheckpoint : MonoBehaviour
 		}
 		
 		unpack = true;	
+	}
+	
+	void CollideWithPlayer(string name)
+	{
+		hitby = name;
 	}
 }

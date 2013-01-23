@@ -7,7 +7,7 @@ public class NetPlayer : NetObject
     public int localPlayerNumber;
 	[HideInInspector]
     public NetworkPlayer networkPlayer;
-	[HideInInspector]
+	//[HideInInspector]
 	public PlayerStats playerStats = new PlayerStats();
 	
 	[HideInInspector]
@@ -16,8 +16,6 @@ public class NetPlayer : NetObject
     bool _keyboardPlayer = false;
     bool _mobilePlayer = false;
     int _controllerNumber = -1;
-	
-	public int playerID = Random.Range (0,10000); // fix the shit out of this // how about just take it out?
 	
 	void Awake()
 	{
@@ -127,11 +125,8 @@ public class NetPlayer : NetObject
 		// tell the checkpoint it was hit
 		if (Network.peerType == NetworkPeerType.Server)
 		{
-			if (c.gameObject.name == "Checkpoint")
-			{
-				c.gameObject.GetComponent<RaceCheckpoint>().hit = true;
-				c.gameObject.GetComponent<RaceCheckpoint>().hitby = playerID;
-			}
+			// Tell Dog I just died!
+			c.gameObject.SendMessage("CollideWithPlayer", this.gameObject.name);
 		}
 	}
 }
