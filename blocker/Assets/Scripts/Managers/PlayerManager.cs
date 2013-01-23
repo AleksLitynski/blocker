@@ -39,8 +39,7 @@ public class PlayerManager : BlockerObject
             i++;
             
         }
-
-        networkView.RPC("AddNewPlayer", RPCMode.Others, info.sender, lowestAvailableValue);
+		networkView.RPC("AddNewPlayer", RPCMode.Others, info.sender, lowestAvailableValue);
         if (Network.peerType == NetworkPeerType.Server) this.AddNewPlayer(info.sender, lowestAvailableValue);
     }
 	void AddNewPlayerRequest()

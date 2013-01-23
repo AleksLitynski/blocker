@@ -148,7 +148,8 @@ public class RaceManager: BlockerObject
 	
 	void advanceIndex()
 	{
-		networkView.RPC ("changeHalo",RPCMode.Others,index, false);
+		Debug.Log(networkView);
+		networkView.RPC ("changeHalo",RPCMode.All,index, false);
 		RaceCheckpoint[] temp = new RaceCheckpoint[checkpoints.Length];
 		
 		// loop through checkpoints and grab their scripts
@@ -164,7 +165,7 @@ public class RaceManager: BlockerObject
 			{
 				if (temp[i].orderInRace < index) index = temp[i].orderInRace;
 			}
-			networkView.RPC ("changeHalo",RPCMode.Others,index, true);
+			networkView.RPC ("changeHalo", RPCMode.All, index, true);
 			return;
 		}
 		
@@ -185,8 +186,16 @@ public class RaceManager: BlockerObject
 			}
 			if (whilebreak) break;
 		}
-		networkView.RPC ("changeHalo",RPCMode.Others,index,true);
+		networkView.RPC ("changeHalo", RPCMode.All, index, true);
 	}
+	
+	
+	void OnPlayerConnected(NetworkPlayer player)
+	{
+		networkView.RPC("changeHalo", player, index, true);//actives players first checkpoint
+	}
+	
+	
 	
 	[RPC]
 	void setCheckpoint(int newIndex)
@@ -216,7 +225,6 @@ public class RaceManager: BlockerObject
 	[RPC]
 	void changeHalo(int i, bool tf)
 	{
-		Debug.Log("Changing halo");
 		(checkpoints[i].GetComponent("Halo") as Behaviour).enabled = tf;
 	}
 }
