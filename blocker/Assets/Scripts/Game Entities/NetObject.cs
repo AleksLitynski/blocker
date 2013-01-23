@@ -2,16 +2,18 @@ using UnityEngine;
 using System.Collections;
 
 [RequireComponent(typeof(Rigidbody))]
-public class NetObject : MonoBehaviour {
+[RequireComponent(typeof(ObjectStats))]
+public class NetObject : BlockerObject {
 	
 	[HideInInspector]
     public NetObject netObject;
 	[HideInInspector]
-	public ObjectStats objectStats = new ObjectStats();
+	public ObjectStats objectStats;
 	
 	void Start ()
     {
         netObject = this;
+		objectStats = gameObject.GetComponent<ObjectStats>();
 	}
 	
 	public void setTransform(Vector3 pos, Vector3 rot)
@@ -38,7 +40,6 @@ public class NetObject : MonoBehaviour {
 	
 	public void move(Vector3 disp, Quaternion forcedRotation)
 	{
-		
 		
 		Quaternion rotate = Quaternion.LookRotation(Vector3.Cross(transform.right, objectStats.unitOppGrav), objectStats.unitOppGrav);
 		rotate = Quaternion.RotateTowards(transform.rotation, rotate, objectStats.maxGravRoll);

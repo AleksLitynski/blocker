@@ -1,14 +1,20 @@
 using UnityEngine;
 using System.Collections;
 
+[RequireComponent(typeof(PlayerStats))]
 public class NetPlayer : NetObject 
 {
 	[HideInInspector]
     public int localPlayerNumber;
 	[HideInInspector]
     public NetworkPlayer networkPlayer;
+<<<<<<< HEAD
 	//[HideInInspector]
 	public PlayerStats playerStats = new PlayerStats();
+=======
+	[HideInInspector]
+	public PlayerStats playerStats;
+>>>>>>> Made playerStats and objectStats components.
 	
 	[HideInInspector]
 	public Transform playerArms;
@@ -20,6 +26,7 @@ public class NetPlayer : NetObject
 	void Awake()
 	{
 		playerArms = transform.FindChild("Arms");
+		playerStats = gameObject.GetComponent<PlayerStats>();
 	}
 
     public bool KeyboardPlayer

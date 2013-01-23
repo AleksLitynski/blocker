@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class Graviton : NetObject 
+public class Graviton : BlockerObject 
 {
 	public bool pointGravity = true;
 	public bool plateGravity = true;

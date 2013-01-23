@@ -38,7 +38,6 @@ public class ConnectionManager : BlockerObject
 	string hostedGameDescription = "Default Description";
 	void ServerGUI()
 	{
-		Debug.Log("Is Called");
 		
 		GUILayout.BeginVertical();
 			hostedGameName = GUILayout.TextField(hostedGameName, GUILayout.MinWidth (100));

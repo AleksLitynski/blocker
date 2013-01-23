@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class PlayerStats 
+public class PlayerStats : MonoBehaviour
 {
 	public float speed = 500;
 	public float turnSpeed = 40;

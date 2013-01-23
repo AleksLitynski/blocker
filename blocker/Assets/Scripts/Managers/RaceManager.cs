@@ -76,12 +76,16 @@ public class RaceManager: BlockerObject
 	void init()
 	{
 		// create a temp array to hold all the checkpoint objects
+<<<<<<< HEAD
 		try
 		{
 			checkpoints = GameObject.FindGameObjectsWithTag("RaceCheckpoint");
 		}
 		finally {}
 		
+=======
+		checkpoints = GameObject.FindGameObjectsWithTag("RaceCheckpoint");
+>>>>>>> Made playerStats and objectStats components.
 		RaceCheckpoint[] temp = new RaceCheckpoint[checkpoints.Length];
 		
 		// loop through checkpoints and grab their scripts
@@ -127,6 +131,7 @@ public class RaceManager: BlockerObject
 		networkView = this.gameObject.GetComponent<NetworkView>();
 		
 		unpack = true;	
+		
 	}
 	
 	void advanceIndex()
