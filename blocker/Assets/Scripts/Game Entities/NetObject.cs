@@ -55,12 +55,13 @@ public class NetObject : BlockerObject {
 			rotate = Quaternion.RotateTowards(transform.rotation, rotate, objectStats.maxGravRoll);
 			rotate = rotate * forcedRotation;
 			rigidbody.rotation = rotate;
+			
 		}
 		
 		
 	    rigidbody.AddRelativeForce(disp * Time.deltaTime);
 		
-		
+		Debug.DrawRay(transform.position, transform.forward, Color.red, 10);
 		Debug.DrawLine(transform.position, transform.position + rigidbody.velocity);
 		
 	}

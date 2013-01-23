@@ -29,6 +29,7 @@ public class ConnectionManager : BlockerObject
 		if(GUI.Button(new Rect(0, 0, 120, 20), "Return to Lobby"))
 		{
 			Network.Disconnect();
+			Application.LoadLevel(Application.loadedLevel);
 		}
 		
 	}

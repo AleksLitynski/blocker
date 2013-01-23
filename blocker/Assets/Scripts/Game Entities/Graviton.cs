@@ -44,7 +44,7 @@ public class Graviton : BlockerObject
 			surfaceHit(collisionInfo.gameObject, normal);
 		}
 	}
-	/*
+	
 	public void OnTriggerStay (Collider other) 
 	{
 		if(pointGravity)
@@ -63,8 +63,8 @@ public class Graviton : BlockerObject
 		var direction = (other.transform.position - transform.position).normalized;
 		
 		
-		other.GetComponent<NetObject>().objectStats.grav = magnitude * direction;
-	}*/
+		other.GetComponent<ObjectStats>().grav = -magnitude * direction;
+	}
 	
 	public void surfaceHit(GameObject other, Vector3 surfaceNormal)
 	{
@@ -73,5 +73,10 @@ public class Graviton : BlockerObject
 		other.GetComponent<ObjectStats>().grav = surfaceNormal * bigG * rigidbody.mass;
 	}
 	
+	
+	public void CollideWithPlayer(string a)
+	{
+		
+	}
 	
 }

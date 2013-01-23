@@ -107,7 +107,7 @@ public class NetPlayer : NetObject
 			{
 				playerMotion += playerStats.jump * Vector3.up;//objectStats.unitOppGrav; //JUMP IS NOT RELATIVE TO PLAYER
 			}
-			Debug.DrawLine(transform.position, transform.position + playerStats.jump * transform.up, Color.green);
+			
 			
 		//	var toRotateLine = Quaternion.FromToRotation(objectStats.unitOppGrav, objectStats.normalOfLastHit);
 		//	playerMotion = toRotateLine * playerMotion;
@@ -120,8 +120,6 @@ public class NetPlayer : NetObject
 		base.Start ();
 	}	
 	
-	
-
 	void OnTriggerEnter(Collider c)
 	{
 		if (Network.peerType == NetworkPeerType.Server)
