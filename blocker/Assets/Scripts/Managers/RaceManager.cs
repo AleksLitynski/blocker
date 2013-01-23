@@ -148,7 +148,7 @@ public class RaceManager: BlockerObject
 	
 	void advanceIndex()
 	{
-		(checkpoints[index].GetComponent("Halo") as Behaviour).enabled = false;
+		networkView.RPC ("changeHalo",RPCMode.Others,index, false);
 		RaceCheckpoint[] temp = new RaceCheckpoint[checkpoints.Length];
 		
 		// loop through checkpoints and grab their scripts
@@ -164,7 +164,7 @@ public class RaceManager: BlockerObject
 			{
 				if (temp[i].orderInRace < index) index = temp[i].orderInRace;
 			}
-			(checkpoints[index].GetComponent("Halo") as Behaviour).enabled = true;
+			networkView.RPC ("changeHalo",RPCMode.Others,index, true);
 			return;
 		}
 		
@@ -185,7 +185,7 @@ public class RaceManager: BlockerObject
 			}
 			if (whilebreak) break;
 		}
-		(checkpoints[index].GetComponent("Halo") as Behaviour).enabled = true;
+		networkView.RPC ("changeHalo",RPCMode.Others,index,true);
 	}
 	
 	[RPC]
@@ -194,8 +194,8 @@ public class RaceManager: BlockerObject
 		index = newIndex;
 	}
 	
-	[RPC]
 	// this function uses the index of the loop to give points to the hitby of checkpoints[i]
+	[RPC]
 	void givePoints(int i)
 	{
 		// get the component script
@@ -203,9 +203,20 @@ public class RaceManager: BlockerObject
 		
 		// find the mofo that hit this bro and give that sucka some dough
 		GameObject hitBy = GameObject.Find(rc.hitby);
+		
+		Debug.Log(hitBy);
+		
 		if(hitBy != null)
 		{
 			hitBy.GetComponent<PlayerStats>().score += rc.scoreReward;
 		}
+	}
+	
+	// i is the index of the checkpoint to light
+	[RPC]
+	void changeHalo(int i, bool tf)
+	{
+		Debug.Log("Changing halo");
+		(checkpoints[i].GetComponent("Halo") as Behaviour).enabled = tf;
 	}
 }
