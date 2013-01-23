@@ -124,11 +124,19 @@ public class NetPlayer : NetObject
 
 	void OnTriggerEnter(Collider c)
 	{
-		// tell the checkpoint it was hit
 		if (Network.peerType == NetworkPeerType.Server)
 		{
 			// Tell Dog I just died!
-			c.gameObject.SendMessage("CollideWithPlayer", this.gameObject.name);
+			c.gameObject.SendMessage("PlayerEnter", this.gameObject.name);
+		}
+	}
+	
+	void OnTriggerExit(Collider c)
+	{
+		if (Network.peerType == NetworkPeerType.Server)
+		{
+			// Tell Dog I just died!
+			c.gameObject.SendMessage("PlayerExit", this.gameObject.name);
 		}
 	}
 }

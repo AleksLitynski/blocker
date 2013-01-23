@@ -4,8 +4,26 @@ using System.Collections;
 public class RaceManager: BlockerObject 
 {
 	// enums
+	// this rule determines if there are "optional paths" in the course.
+	// if you use "useuniquevalue", racemanager will create an system of
+	// ordered nodes for you. you wont have to change the order in the
+	// inspector.
 	public enum SameOrderRule {AllowSameValue, UseUniqueValue};
 	public SameOrderRule sameOrderRule = SameOrderRule.UseUniqueValue;
+	
+	// this rule determines which player wins the game: by having the
+	// most points by the end of a time limit, the most points by the
+	// time someone finishes the race, or being the first to finish the
+	// race.
+	public enum WinRule {MostPointsOverTime, MostPointsByFinish, FirstToFinish};
+	public WinRule winRule = WinRule.MostPointsByFinish;
+	
+	// this rule determines how the manager determines which node is 
+	// next when a node is "completed" (its maxpoints have been
+	// reached): choosing a random node, or choosing a node next by the
+	// order.
+	public enum NextNodeRule {RandomNode, OrderedNodes};
+	public NextNodeRule nextNodeRule = NextNodeRule.OrderedNodes;
 	
 	// game variables
 	public GameObject[] checkpoints;
@@ -183,7 +201,7 @@ public class RaceManager: BlockerObject
 		
 		// find the mofo that hit this bro and give that sucka some dough
 		GameObject hitBy = GameObject.Find(rc.hitby);
-		if(hitBy  != null)
+		if(hitBy != null)
 		{
 			hitBy.GetComponent<PlayerStats>().score += rc.scoreReward;
 		}

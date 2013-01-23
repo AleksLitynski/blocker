@@ -67,8 +67,13 @@ public class RaceCheckpoint : MonoBehaviour
 		unpack = true;	
 	}
 	
-	void CollideWithPlayer(string name)
+	// collision handling
+	void PlayerEnter(string name)
 	{
 		hitby = name;
+	}
+	void PlayerExit(string name)
+	{
+		hitby = null;	
 	}
 }
