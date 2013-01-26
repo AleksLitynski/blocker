@@ -7,10 +7,19 @@ using System.Collections.Generic;
 //also, unloads players and map on disconnect
 public class MapManager : BlockerObject
 {
+	public GameObject mapToUse;
+	GameObject loadedMap;
+	
+	void OnServerInitialized()
+	{
+		LoadMap (mapToUse.name);
+	}
+	
     void OnPlayerConnected (NetworkPlayer player)
     {
         //send player map to load
-
+		networkView.RPC("LoadMap", player, mapToUse.name);
+		
         //send player characters to load
         for (var i = 0; i < playerManager.players.Count; i++)
         {
@@ -23,7 +32,8 @@ public class MapManager : BlockerObject
     void OnDisconnectedFromServer(NetworkDisconnection info)
     {
         //remove the map
-
+		RemoveMap ();
+		
         //remove all characters
         playerManager.players = new List<NetPlayer>();
         playerManager.localPlayers = new List<NetPlayer>();
@@ -50,4 +60,19 @@ public class MapManager : BlockerObject
             }
         }
     }
+	
+	[RPC]
+	void LoadMap(string maptoLoad)
+	{
+		// instantiate the map on the local machine.
+		Debug.Log(maptoLoad);
+		loadedMap = Instantiate(Resources.Load("Maps/" + maptoLoad), Vector3.zero, Quaternion.identity) as GameObject;
+	}
+	
+	// making this an rpc seemed very reasonable to me
+	[RPC]
+	void RemoveMap()
+	{
+		Destroy (loadedMap);
+	}
 }
