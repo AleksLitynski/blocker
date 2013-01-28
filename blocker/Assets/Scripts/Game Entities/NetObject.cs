@@ -23,7 +23,7 @@ public class NetObject : BlockerObject {
 	public void setTransform(Vector3 pos, Vector3 rot)
 	{
 		rigidbody.isKinematic = true;
-		transform.position = Vector3.Lerp(transform.position, pos, Time.deltaTime);
+		transform.position = pos;
 		transform.rotation = Quaternion.Euler(rot);
 		
 	}
