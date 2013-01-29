@@ -30,6 +30,9 @@ public class RaceManager: BlockerObject
 	public int index;
 	public int maxIndex;
 	public int scoreToWin;
+	public int numWinners;				// make an overarching manager for this
+	public int currWinners;
+	public bool matchOver;
 	
 	// utility variables
 	bool unpack = false;
@@ -90,6 +93,14 @@ public class RaceManager: BlockerObject
 		}
 	}
 	
+	void OnGUI()
+	{
+		if (currWinners >= numWinners)
+		{
+			//GUI.
+		}
+	}
+	
 	void init()
 	{
 		// create a temp array to hold all the checkpoint objects
@@ -142,8 +153,9 @@ public class RaceManager: BlockerObject
 			if (temp[i].orderInRace < index) index = temp[i].orderInRace;
 		}
 		
-		unpack = true;	
+		matchOver = false;
 		
+		unpack = true;	
 	}
 	
 	void advanceIndex()
@@ -208,13 +220,13 @@ public class RaceManager: BlockerObject
 	}
 	
 	[RPC]
-	void setScore(int score, string hitby)
+	void setScore(int score, string playerName)
 	{
-		GameObject hitBy = GameObject.Find(hitby);
+		GameObject playerToFind = GameObject.Find(playerName);
 		
-		if(hitBy != null)
+		if(playerToFind != null)
 		{
-			hitBy.GetComponent<PlayerStats>().score = score;
+			playerToFind.GetComponent<PlayerStats>().score = score;
 		}
 	}
 	
@@ -225,12 +237,15 @@ public class RaceManager: BlockerObject
 		// get the component script
 		RaceCheckpoint rc = checkpoints[i].GetComponent<RaceCheckpoint>();
 		
-		// find the mofo that hit this bro and give that sucka some dough
-		GameObject hitBy = GameObject.Find(hitby);
+		// find the mofo that hit this dude and give that sucka some dough
+		GameObject playerToFind = GameObject.Find(hitby);
 		
-		if(hitBy != null)
+		if(playerToFind != null)
 		{
-			hitBy.GetComponent<PlayerStats>().score += rc.scoreReward;
+			playerToFind.GetComponent<PlayerStats>().score += rc.scoreReward;
+			
+			// add this guy to the hall of fame.
+			if (playerToFind.GetComponent<PlayerStats>().score > scoreToWin) currWinners++;
 		}
 	}
 	
