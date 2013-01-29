@@ -107,8 +107,6 @@ public class NetPlayer : NetObject
 			{
 				playerMotion += playerStats.jump * Vector3.up;//objectStats.unitOppGrav; //JUMP IS NOT RELATIVE TO PLAYER
 			}
-			
-			
 		//	var toRotateLine = Quaternion.FromToRotation(objectStats.unitOppGrav, objectStats.normalOfLastHit);
 		//	playerMotion = toRotateLine * playerMotion;
 		}

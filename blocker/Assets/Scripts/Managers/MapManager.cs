@@ -67,6 +67,7 @@ public class MapManager : BlockerObject
 		// instantiate the map on the local machine.
 		Debug.Log(maptoLoad);
 		loadedMap = Instantiate(Resources.Load("Maps/" + maptoLoad), Vector3.zero, Quaternion.identity) as GameObject;
+		loadedMap.AddComponent<WorldBounds>();
 	}
 	
 	// making this an rpc seemed very reasonable to me
