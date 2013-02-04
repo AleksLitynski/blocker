@@ -11,13 +11,13 @@ public class WorldBounds : MonoBehaviour
 	Collider collScript;
 	
 	// vars
-	Vector3 scale;
+	//Vector3 scale;
 	
 	void Awake()
 	{
 		// initialization
 		collisionType = CollisionType.Box;
-		scale = new Vector3();
+		//scale = new Vector3();
 		
 		setCollisionType(collisionType);
 	}

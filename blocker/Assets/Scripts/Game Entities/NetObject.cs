@@ -64,7 +64,7 @@ public class NetObject : BlockerObject {
 			}
 			if(Time.time % 1 == 0)
 			{
-				Debug.Log("considering a move at: " + Time.time);
+				//Debug.Log("considering a move at: " + Time.time);
 				prevVelo = rigidbody.velocity;	
 			}
 			

@@ -12,15 +12,12 @@ public class MapManager : BlockerObject
 	
 	void OnServerInitialized()
 	{
-		LoadMap (mapToUse.name);
+		
 	}
 	
     void OnPlayerConnected (NetworkPlayer player)
     {
-        //send player map to load
-		networkView.RPC("LoadMap", player, mapToUse.name);
-		
-        //send player characters to load
+		//send player characters to load
         for (var i = 0; i < playerManager.players.Count; i++)
         {
             NetworkPlayer computer = (playerManager.players[i].GetComponent("NetPlayer") as NetPlayer).networkPlayer;
@@ -61,11 +58,15 @@ public class MapManager : BlockerObject
         }
     }
 	
+	public void InitializeMapToUse()
+	{
+		networkView.RPC("LoadMap", RPCMode.AllBuffered, mapToUse.name);
+	}
+	
 	[RPC]
 	void LoadMap(string maptoLoad)
 	{
 		// instantiate the map on the local machine.
-		Debug.Log(maptoLoad);
 		loadedMap = Instantiate(Resources.Load("Maps/" + maptoLoad), Vector3.zero, Quaternion.identity) as GameObject;
 		loadedMap.AddComponent<WorldBounds>();
 	}

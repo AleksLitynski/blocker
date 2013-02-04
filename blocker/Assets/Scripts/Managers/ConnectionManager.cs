@@ -11,8 +11,8 @@ public class ConnectionManager : BlockerObject
         if (Network.peerType == NetworkPeerType.Disconnected)
         {
             GUILayout.BeginHorizontal();
-				ServerGUI();
-				ClientGUI();
+				//ServerGUI();
+				//ClientGUI();
 			GUILayout.EndHorizontal();
         }
         else
