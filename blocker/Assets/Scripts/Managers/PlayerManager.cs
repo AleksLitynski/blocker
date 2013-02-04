@@ -15,14 +15,12 @@ public class PlayerManager : BlockerObject
 	
 	public override void Start()
 	{
-		base.Start();	
+		base.Start();
 	}
 	
-	
     [RPC]
-    void AddNewPlayerRequest(NetworkMessageInfo incomingInfo)
+    public void AddNewPlayerRequest(NetworkMessageInfo info)
     {
-        NetworkMessageInfoLocalWrapper info = new NetworkMessageInfoLocalWrapper(incomingInfo);
         int lowestAvailableValue = 0;   //find the lowest available localPlayerNumber of the players on the machine asking to add a player. 
         int i = 0;
         while(i < players.Count)
@@ -42,10 +40,6 @@ public class PlayerManager : BlockerObject
 		networkView.RPC("AddNewPlayer", RPCMode.Others, info.sender, lowestAvailableValue);
         if (Network.peerType == NetworkPeerType.Server) this.AddNewPlayer(info.sender, lowestAvailableValue);
     }
-	void AddNewPlayerRequest()
-	{
-		AddNewPlayerRequest(new NetworkMessageInfo());
-	}
 
     [RPC]
     void AddNewPlayer(NetworkPlayer computer, int numOnComputer)
@@ -74,29 +68,18 @@ public class PlayerManager : BlockerObject
             localPlayers.Add((newPlayer.GetComponent("NetPlayer") as NetPlayer));
             UpdateCameraSplit();
         }
-        else
-        {
-            GameObject.Find(newPlayer.name + "/Arms/Camera").active = false;
-        }
-		
-		if(localPlayers.Count > 0)
-		{
-			gameObject.camera.enabled = false;
-		}
+        GameObject.Find(newPlayer.name + "/Arms/Camera").camera.enabled = false;
+        
+		HidePlayers();
     }
 	
 	
 	
     [RPC]
-    public void RemovePlayerRequest(int numOnComputer, NetworkMessageInfo incomingInfo)
+    public void RemovePlayerRequest(int numOnComputer, NetworkMessageInfo info)
     {
-        NetworkMessageInfoLocalWrapper info = new NetworkMessageInfoLocalWrapper(incomingInfo);
         networkView.RPC("RemovePlayer", RPCMode.Others, info.sender, numOnComputer);
         if (Network.peerType == NetworkPeerType.Server) this.RemovePlayer(info.sender, numOnComputer);
-    }
-	public void RemovePlayerRequest(int numOnComputer)
-    {
-        RemovePlayerRequest(numOnComputer, new NetworkMessageInfo());
     }
 
     [RPC]
@@ -120,61 +103,45 @@ public class PlayerManager : BlockerObject
         }
 		if(localPlayers.Count == 0)
 		{
-			gameObject.camera.enabled = true;	
+			setToWorldCamera();	
 		}
     }
-
-    void OnGUI()
-    {
-        if (Network.peerType == NetworkPeerType.Server || Network.peerType == NetworkPeerType.Client)
-        {
-            GUILayout.Window(1, new Rect(Screen.width - 200, 0, 200, localPlayers.Count * 35 + 35), drawWindow2, "Add/Remove Player");
-            if (players.Count > 0)
-            {
-                GUILayout.Window(3, new Rect(Screen.width - 300, 0, 100, localPlayers.Count * 20 + 20), drawWindow3, "Players");
-            }
-        }
-        
-    }
-
-    void drawWindow3(int a)
-    {
-        for (int i = 0; i < players.Count; i++)
-        {
-			GUILayout.BeginHorizontal();
-            	GUILayout.Label(players[i].gameObject.name);
-				GUILayout.Label(""+players[i].playerStats.score);
-			GUILayout.EndHorizontal();
-        }
-    }
-    void drawWindow2(int windowID)
-    {
-        if (GUILayout.Button("New Player"))
-        {
-            if (Network.peerType == NetworkPeerType.Client) networkView.RPC("AddNewPlayerRequest", RPCMode.Server);
-            if (Network.peerType == NetworkPeerType.Server) this.AddNewPlayerRequest();
-        }
-        for (int i = 0; i < localPlayers.Count; i++)
-        {
-			GUILayout.BeginHorizontal();
-	            if (GUILayout.Button("Drop Player " + localPlayers[i].localPlayerNumber))
-	            {
-	                networkView.RPC("RemovePlayerRequest", RPCMode.Server, localPlayers[i].localPlayerNumber);
-	                if (Network.peerType == NetworkPeerType.Server) this.RemovePlayerRequest(localPlayers[i].localPlayerNumber);
-	            }
-				if(GUILayout.Button("KB " + localPlayers[i].localPlayerNumber))
-				{
-					foreach(NetPlayer player in localPlayers)
-					{
-						player.KeyboardPlayer = false;
-					}
-					localPlayers[i].KeyboardPlayer = true;
-				}
-			GUILayout.EndHorizontal();
-        }
-    }
-
-    void UpdateCameraSplit()
+	
+	public void RevealPlayers()
+	{
+		foreach (NetPlayer player in players)
+		{
+			player.GetComponent<MeshRenderer>().enabled = true;
+			player.GetComponent<Rigidbody>().isKinematic = false;
+		}
+	}
+	public void HidePlayers()
+	{
+		foreach (NetPlayer player in players)
+		{
+			player.GetComponent<MeshRenderer>().enabled = false;
+			player.GetComponent<Rigidbody>().isKinematic = true;
+		}
+	}
+	
+	public void setToWorldCamera()
+	{
+		foreach(NetPlayer player in localPlayers)
+		{
+			player.transform.FindChild("Arms/Camera").camera.enabled = false;
+		}
+		world.camera.enabled = true;
+	}
+	public void setToLocalCameras()
+	{
+		foreach(NetPlayer player in localPlayers)
+		{
+			player.transform.FindChild("Arms/Camera").camera.enabled = true;
+		}
+		world.camera.enabled = false;
+	}
+	
+    public void UpdateCameraSplit()
     {
         //figure out screen ratios
         List<int> rows = new List<int>();
@@ -259,7 +226,4 @@ public class PlayerManager : BlockerObject
             }
         }
     }
-
-    //1) if all rows have rows == cols
-        //add new row 
 }

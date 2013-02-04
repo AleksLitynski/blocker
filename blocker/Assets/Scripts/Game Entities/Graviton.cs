@@ -62,8 +62,10 @@ public class Graviton : BlockerObject
 		
 		var direction = (other.transform.position - transform.position).normalized;
 		
-		
-		other.GetComponent<ObjectStats>().grav = -magnitude * direction;
+		if(other.GetComponent<ObjectStats>())
+		{
+			other.GetComponent<ObjectStats>().grav = -magnitude * direction;
+		}
 	}
 	
 	public void surfaceHit(GameObject other, Vector3 surfaceNormal)

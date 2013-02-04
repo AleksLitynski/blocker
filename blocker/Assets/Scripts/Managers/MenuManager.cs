@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class MenuManager : MonoBehaviour 
+public class MenuManager : BlockerObject 
 {
 	// enums
 	public enum GameState {MainMenu, Options, RuleEditor, MapEditor, HostGame, JoinGame, Lobby, Game, PostGame};
@@ -17,8 +17,8 @@ public class MenuManager : MonoBehaviour
 	
 	// accessibility
 	Camera myCamera;
-	PlayerManager playerManager;
-	MapManager mapManager;
+	//PlayerManager playerManager;
+	//MapManager mapManager;
 	
 	// funsies
 	GameObject bgMap;
@@ -28,16 +28,23 @@ public class MenuManager : MonoBehaviour
 	Vector3 lookAtPosition;
 	
 	// Use this for initialization
-	void Start () 
+	public override void Start () 
 	{
+		base.Start();
 		gameState = GameState.MainMenu;
 		
 		myCamera = this.gameObject.GetComponent<Camera>();
-		playerManager = this.gameObject.GetComponent<PlayerManager>();
-		mapManager = this.gameObject.GetComponent<MapManager>();
+		//playerManager = this.gameObject.GetComponent<PlayerManager>();
+		//mapManager = this.gameObject.GetComponent<MapManager>();
 		maps = Resources.LoadAll("Maps",typeof(GameObject));
 		
 		ToggleBGMap(true);
+		
+		
+		
+		
+		
+		
 	}
 	
 	void Update()
@@ -158,12 +165,9 @@ public class MenuManager : MonoBehaviour
 						// actually initialize the game state.
 						if (GUILayout.Button("Start", GUILayout.MaxWidth(200)))
 						{
-							Network.InitializeServer(32, Random.Range(2000,40000), !Network.HavePublicAddress());
-							MasterServer.RegisterHost(gameName, hostedGameName, hostedGameDescription);
-							
 							// buffer an RPC telling everyone the game has started (join in progress)
 							networkView.RPC("ChangeState", RPCMode.AllBuffered, GameCode);
-							mapManager.InitializeMapToUse();
+							networkView.RPC("initializeGame", RPCMode.All);
 						}
 						GUILayout.Label("", GUILayout.MaxWidth(Screen.width*2/3-400));
 						if (GUILayout.Button("Back to Main Menu", GUILayout.MaxWidth(200)))
@@ -174,7 +178,10 @@ public class MenuManager : MonoBehaviour
 						}
 					}
 				GUILayout.EndHorizontal();
+			
+				
 			GUILayout.EndArea();
+				playerAddRemove();
 			break;
 		case GameState.Game:
 			// manage a menu for each local player (placement and settings)
@@ -184,6 +191,45 @@ public class MenuManager : MonoBehaviour
 			
 			break;
 		}
+	}
+	
+	void playerAddRemove()
+	{
+		
+		/* this isthe score thing
+		 * 
+		 * 
+		 * for (int i = 0; i < playerManager.players.Count; i++)
+        {
+			GUILayout.BeginHorizontal();
+            	GUILayout.Label(playerManager.players[i].gameObject.name);
+				GUILayout.Label(""+playerManager.players[i].playerStats.score);
+			GUILayout.EndHorizontal();
+        }*/
+		
+		if (GUILayout.Button("New Player"))
+        {
+            if (Network.peerType == NetworkPeerType.Client) networkView.RPC("AddNewPlayerRequest", RPCMode.Server);
+            if (Network.peerType == NetworkPeerType.Server) playerManager.AddNewPlayerRequest(new NetworkMessageInfo());
+        }
+        for (int i = 0; i < playerManager.localPlayers.Count; i++)
+        {
+			GUILayout.BeginHorizontal();
+	            if (GUILayout.Button("Drop Player " + playerManager.localPlayers[i].localPlayerNumber))
+	            {
+	                networkView.RPC("RemovePlayerRequest", RPCMode.Server, playerManager.localPlayers[i].localPlayerNumber);
+	                if (Network.peerType == NetworkPeerType.Server) playerManager.RemovePlayerRequest(playerManager.localPlayers[i].localPlayerNumber, new NetworkMessageInfo());
+	            }
+				if(GUILayout.Button("KB " + playerManager.localPlayers[i].localPlayerNumber))
+				{
+					foreach(NetPlayer player in playerManager.localPlayers)
+					{
+						player.KeyboardPlayer = false;
+					}
+					playerManager.localPlayers[i].KeyboardPlayer = true;
+				}
+			GUILayout.EndHorizontal();
+        }
 	}
 	
 	void ToggleBGMap(bool tf)

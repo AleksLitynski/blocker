@@ -15,6 +15,7 @@ public class MapManager : BlockerObject
 		
 	}
 	
+	
     void OnPlayerConnected (NetworkPlayer player)
     {
 		//send player characters to load
@@ -24,6 +25,11 @@ public class MapManager : BlockerObject
             int playerNumber = (playerManager.players[i].GetComponent("NetPlayer") as NetPlayer).localPlayerNumber;
             networkView.RPC("AddNewPlayer", player, computer, playerNumber);
         }
+		
+		if(menuManager.gameState == MenuManager.GameState.Game)
+		{
+			networkView.RPC("LoadMap", player, mapToUse.name);	
+		}
     }
 
     void OnDisconnectedFromServer(NetworkDisconnection info)
@@ -58,10 +64,40 @@ public class MapManager : BlockerObject
         }
     }
 	
-	public void InitializeMapToUse()
+	
+	
+	[RPC]
+	void initializeGame()
 	{
-		networkView.RPC("LoadMap", RPCMode.AllBuffered, mapToUse.name);
+		//load map
+		LoadMap(mapToUse.name);
+		//move all players to spawn
+		if(Network.peerType == NetworkPeerType.Server)
+		{
+			foreach(NetPlayer player in playerManager.players)
+			{
+				respawnPlayer(player.name);
+			}
+		}
+		//switch to player camera
+		playerManager.setToLocalCameras();
+		playerManager.UpdateCameraSplit();
+		
+		playerManager.RevealPlayers();
 	}
+	
+	void respawnPlayer(string name) //called on server, sets the players position in random area around spawn
+	{
+		Vector3 newPos = mapToUse.transform.FindChild("Spawn").position;
+		world.transform.FindChild("RootTeam/" + name).transform.position = newPos;
+		networkView.RPC("setPlayerPos", RPCMode.Others, name, newPos);
+	}
+	[RPC]
+	void setPlayerPos(string name, Vector3 pos) //called on clients, copies players location from server
+	{
+		world.transform.FindChild("RootTeam/" + name).transform.position = pos;
+	}
+	
 	
 	[RPC]
 	void LoadMap(string maptoLoad)

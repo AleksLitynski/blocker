@@ -17,6 +17,10 @@ public class BlockerObject : MonoBehaviour {
     public RaceManager raceManager;
 	[HideInInspector]
     public GameObject world;
+	[HideInInspector]
+    public MapManager mapManager;
+	[HideInInspector]
+    public MenuManager menuManager;
 
   	public virtual void Start()
     {
@@ -26,8 +30,20 @@ public class BlockerObject : MonoBehaviour {
         inputDispatcher = GameObject.Find("World").GetComponent("InputDispatcher") as InputDispatcher;
         inputReceiver = GameObject.Find("World").GetComponent("InputReceiver") as InputReceiver;
 		raceManager = GameObject.Find("World").GetComponent<RaceManager>() as RaceManager;
+		mapManager = GameObject.Find("World").GetComponent<MapManager>() as MapManager;
+		menuManager = GameObject.Find("World").GetComponent<MenuManager>() as MenuManager;
 		world = GameObject.Find("World");
 		
     }
+	
+	/*
+	public void PlayerEnter(string he)
+	{
+		
+	}
+	public void PlayerExit(string he)
+	{
+		
+	}*/
 	
 }

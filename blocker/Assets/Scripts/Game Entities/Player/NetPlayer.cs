@@ -97,9 +97,6 @@ public class NetPlayer : NetObject
 			playerArms.Rotate(new Vector3(-col.turnUp,0,0));
 		}
 		
-		
-		
-		
 		Vector3 playerMotion = new Vector3(col.straff, 0, col.forward) * playerStats.speed;//transform.TransformDirection(new Vector3(col.straff, 0, col.forward)) * playerStats.speed;//inial player speed
 		if(col.jump)
 		{

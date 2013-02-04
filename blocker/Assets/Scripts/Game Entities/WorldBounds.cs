@@ -64,17 +64,17 @@ public class WorldBounds : MonoBehaviour
 		case CollisionType.Sphere:
 			collScript = this.gameObject.AddComponent<SphereCollider>();
 			collScript.isTrigger = true;
-			setScale(500);
+			setScale(500, 0, 0);
 			break;
 		case CollisionType.Box:
 			collScript = this.gameObject.AddComponent<BoxCollider>();
 			collScript.isTrigger = true;
-			setScale (1000,1000,1000);
+			setScale (1000,1000, 1000);
 			break;
 		}
 	}
 	
-	void setScale(float value1, float value2 = 0, float value3 = 0)
+	void setScale(float value1, float value2, float value3)
 	{
 		switch(collisionType)
 		{
