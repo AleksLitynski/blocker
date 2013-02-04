@@ -16,6 +16,15 @@ public class InputReceiver : BlockerObject
                 player.move(new InputCollection(player, f, s, tR, tU, j, f1, f2, sp, c));
 				
 				networkView.RPC("setPlayerTransform", RPCMode.Others, player.transform.position, player.transform.rotation.eulerAngles, player.playerArms.rotation, player.name);
+				
+				
+				if(f1)
+				{
+					string name = "rolliepolieolie" + Random.Range(0,1000000);
+					networkView.RPC("spawnObject", RPCMode.All, player.transform.position, player.transform.rotation.eulerAngles, name, "rolliepolieolie", "world/map");
+					networkView.RPC ("setBulletVelocity", RPCMode.All, player.rigidbody.velocity * 1000, "world/map/"+name);
+				}
+				
                 break;
             }
         }
@@ -46,7 +55,7 @@ public class InputReceiver : BlockerObject
         {
             if (obj.name == objName)
             {
-				obj.GetComponent<NetPlayer>().netObject.setTransform(pos, rot);
+				obj.GetComponent<NetObject>().setTransform(pos, rot);
                 break;
             }
         }

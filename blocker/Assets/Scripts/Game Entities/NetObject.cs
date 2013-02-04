@@ -64,7 +64,10 @@ public class NetObject : BlockerObject {
 			}
 			if(Time.time % 1 == 0)
 			{
+<<<<<<< HEAD
 				//Debug.Log("considering a move at: " + Time.time);
+=======
+>>>>>>> Ball spawning and some other junk
 				prevVelo = rigidbody.velocity;	
 			}
 			

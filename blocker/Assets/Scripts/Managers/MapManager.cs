@@ -103,6 +103,10 @@ public class MapManager : BlockerObject
 	void LoadMap(string maptoLoad)
 	{
 		// instantiate the map on the local machine.
+<<<<<<< HEAD
+=======
+	//	Debug.Log(maptoLoad);
+>>>>>>> Ball spawning and some other junk
 		loadedMap = Instantiate(Resources.Load("Maps/" + maptoLoad), Vector3.zero, Quaternion.identity) as GameObject;
 		loadedMap.AddComponent<WorldBounds>();
 	}
