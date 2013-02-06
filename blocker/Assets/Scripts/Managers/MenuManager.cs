@@ -326,10 +326,17 @@ public class MenuManager : BlockerObject
 		Debug.Log("resetting");
 		if (tf)
 		{
+			Screen.lockCursor = false;
 			Destroy(mapManager.loadedMap);
 			playerManager.setToWorldCamera();
 			playerManager.HidePlayers();
 			raceManager.init();
+			var bullets = world.transform.FindChild("Bullets");
+			Destroy(bullets.gameObject);
+			var newBullets = new GameObject();
+			newBullets.transform.parent = world.transform;
+			newBullets.name = "Bullets";
+			
 			bgMap = maps[Random.Range(0, maps.Length)] as GameObject;
 		
 			bgMap = Instantiate(bgMap,new Vector3(),Quaternion.identity) as GameObject;
@@ -358,6 +365,7 @@ public class MenuManager : BlockerObject
 		}
 		else
 		{
+			Screen.lockCursor = true;
 			playerManager.RevealPlayers();
 			playerManager.setToLocalCameras();
 			foreach(NetPlayer player in playerManager.players)

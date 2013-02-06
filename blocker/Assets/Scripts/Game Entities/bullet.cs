@@ -14,4 +14,12 @@ public class bullet : NetObject {
 	{
 		rigidbody.velocity += velocity;
 	}
+	
+	void OnTriggerExit(Collider other)
+	{
+		if(other.GetComponent<WorldBounds>() != null)
+		{
+			Destroy(this.gameObject);
+		}
+	}
 }
