@@ -3,7 +3,7 @@ using System.Collections;
 
 public class bullet : NetObject {
 
-	void Start () 
+	public override void Start () 
 	{
 		base.Start();
 	}

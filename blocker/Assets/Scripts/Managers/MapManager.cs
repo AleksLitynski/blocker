@@ -25,11 +25,20 @@ public class MapManager : BlockerObject
             int playerNumber = (playerManager.players[i].GetComponent("NetPlayer") as NetPlayer).localPlayerNumber;
             networkView.RPC("AddNewPlayer", player, computer, playerNumber);
         }
-		
 		if(menuManager.gameState == MenuManager.GameState.Game)
 		{
 			networkView.RPC("LoadMap", player, mapToUse.name);	
 		}
+		for(var i = 0; i < world.transform.FindChild("Bullets").childCount; i++)
+		{
+			networkView.RPC("spawnObject", player, world.transform.FindChild("Bullets").GetChild(i).position, world.transform.FindChild("Bullets").GetChild(i).rotation.eulerAngles, world.transform.FindChild("Bullets").GetChild(i).name, "testBullet", "World/Bullets");
+			networkView.RPC ("setBulletVelocity", player, world.transform.FindChild("Bullets").GetChild(i).rigidbody.velocity, "World/Bullets/"+world.transform.FindChild("Bullets").GetChild(i).name);
+			networkView.RPC ("setObjectGravity", player, world.transform.FindChild("Bullets").GetChild(i).GetComponent<ObjectStats>().grav, "World/Bullets/"+world.transform.FindChild("Bullets").GetChild(i).name);		
+		}
+		
+		
+		
+		
     }
 
     void OnDisconnectedFromServer(NetworkDisconnection info)
@@ -106,6 +115,7 @@ public class MapManager : BlockerObject
 		//Ball spawning and some other junk
 		loadedMap = Instantiate(Resources.Load("Maps/" + maptoLoad), Vector3.zero, Quaternion.identity) as GameObject;
 		loadedMap.AddComponent<WorldBounds>();
+		raceManager.init();
 	}
 	
 	// making this an rpc seemed very reasonable to me

@@ -24,6 +24,12 @@ public class ObjectManager : BlockerObject
 		GameObject.Find(path).GetComponent<bullet>().velocity = velo;
 	}
 	
+	[RPC]
+	void setObjectGravity(Vector3 velo, string path)
+	{
+		GameObject.Find(path).GetComponent<ObjectStats>().grav = velo;
+	}
+	
 	//http://answers.unity3d.com/questions/8500/how-can-i-get-the-full-path-to-a-gameobject.html
 	public static string GetGameObjectPath(GameObject obj)
 	{

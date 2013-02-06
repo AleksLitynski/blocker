@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class RaceManager: BlockerObject 
 {
@@ -26,7 +27,7 @@ public class RaceManager: BlockerObject
 	public NextNodeRule nextNodeRule = NextNodeRule.OrderedNodes;
 	
 	// game variables
-	public GameObject[] checkpoints;
+	public List<GameObject> checkpoints;
 	public int index;
 	public int maxIndex;
 	public int scoreToWin;
@@ -40,8 +41,8 @@ public class RaceManager: BlockerObject
 	// Use this for initialization
 	public override void Start () 
 	{
-		init();
 		base.Start();
+		init();
 	}
 	
 	// Update is called once per frame
@@ -52,7 +53,7 @@ public class RaceManager: BlockerObject
 		if (Network.peerType == NetworkPeerType.Server)
 		{
 			// handle a player colliding with a checkpoint
-			for (int i = 0; i < checkpoints.Length; i++)
+			for (int i = 0; i < checkpoints.Count; i++)
 			{
 				RaceCheckpoint raceCheckpoint = checkpoints[i].GetComponent<RaceCheckpoint>();
 				
@@ -101,12 +102,20 @@ public class RaceManager: BlockerObject
 		}
 	}
 	
-	void init()
+	public void init()
 	{
 		// create a temp array to hold all the checkpoint objects
-		checkpoints = GameObject.FindGameObjectsWithTag("RaceCheckpoint");
+		checkpoints.Clear();
+		foreach(GameObject obj in GameObject.FindGameObjectsWithTag("RaceCheckpoint"))
+		{
+			if(obj.transform.parent == mapManager.mapToUse.transform)
+			{
+				checkpoints.Add(obj);
+			}
+		}
 		
-		RaceCheckpoint[] temp = new RaceCheckpoint[checkpoints.Length];
+		
+		RaceCheckpoint[] temp = new RaceCheckpoint[checkpoints.Count];
 		
 		foreach(GameObject point in checkpoints)
 		{
@@ -155,13 +164,13 @@ public class RaceManager: BlockerObject
 		
 		matchOver = false;
 		
-		unpack = true;	
+		unpack = true;
 	}
 	
 	void advanceIndex()
 	{
 		networkView.RPC ("changeHalo",RPCMode.All,index, false);
-		RaceCheckpoint[] temp = new RaceCheckpoint[checkpoints.Length];
+		RaceCheckpoint[] temp = new RaceCheckpoint[checkpoints.Count];
 		
 		// loop through checkpoints and grab their scripts
 		for(int i = 0; i < temp.Length; i++)
@@ -253,6 +262,9 @@ public class RaceManager: BlockerObject
 	[RPC]
 	void changeHalo(int i, bool tf)
 	{
-		(checkpoints[i].GetComponent("Halo") as Behaviour).enabled = tf;
+		if(checkpoints.Count < i)
+		{
+			(checkpoints[i].GetComponent("Halo") as Behaviour).enabled = tf;	
+		}
 	}
 }
