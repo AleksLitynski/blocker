@@ -186,6 +186,19 @@ public class MenuManager : BlockerObject
 		case GameState.Game:
 			// manage a menu for each local player (placement and settings)
 			// local players FUUUUUUUUUUUCKKKKKKKKK (fuck local players)
+			foreach(NetPlayer player in playerManager.localPlayers)
+			{
+				var cameraZone = player.playerArms.FindChild("Camera").camera.rect;
+				cameraZone.x = Screen.width * cameraZone.x;
+				cameraZone.y = Screen.height * cameraZone.y;
+				cameraZone.width = Screen.width * cameraZone.width;
+				cameraZone.height = Screen.height * cameraZone.height;
+				
+				GUILayout.BeginArea(cameraZone);
+					GUILayout.TextArea("score: " + player.playerStats.score);
+				GUILayout.EndArea();
+			}
+			
 			break;
 		case GameState.PostGame:
 			
