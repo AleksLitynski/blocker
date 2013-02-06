@@ -27,7 +27,8 @@ public class MapManager : BlockerObject
         }
 		if(menuManager.gameState == MenuManager.GameState.Game)
 		{
-			networkView.RPC("LoadMap", player, mapToUse.name);	
+			networkView.RPC("LoadMap", player, mapToUse.name);
+			networkView.RPC("initializeGame", player);	
 		}
 		for(var i = 0; i < world.transform.FindChild("Bullets").childCount; i++)
 		{
@@ -35,7 +36,6 @@ public class MapManager : BlockerObject
 			networkView.RPC ("setBulletVelocity", player, world.transform.FindChild("Bullets").GetChild(i).rigidbody.velocity, "World/Bullets/"+world.transform.FindChild("Bullets").GetChild(i).name);
 			networkView.RPC ("setObjectGravity", player, world.transform.FindChild("Bullets").GetChild(i).GetComponent<ObjectStats>().grav, "World/Bullets/"+world.transform.FindChild("Bullets").GetChild(i).name);		
 		}
-		
 		
 		
 		
@@ -89,9 +89,11 @@ public class MapManager : BlockerObject
 			}
 		}
 		//switch to player camera
-		playerManager.setToLocalCameras();
-		playerManager.UpdateCameraSplit();
-		
+		if(playerManager.localPlayers.Count > 0)
+		{
+			playerManager.setToLocalCameras();
+			playerManager.UpdateCameraSplit();	
+		}
 		playerManager.RevealPlayers();
 	}
 	

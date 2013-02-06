@@ -21,7 +21,7 @@ public class ObjectManager : BlockerObject
 	[RPC]
 	void setBulletVelocity(Vector3 velo, string path)
 	{
-		GameObject.Find(path).GetComponent<bullet>().velocity = velo;
+		GameObject.Find(path).rigidbody.AddForce(velo, ForceMode.Force);
 	}
 	
 	[RPC]

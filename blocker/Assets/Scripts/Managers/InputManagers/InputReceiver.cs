@@ -22,7 +22,7 @@ public class InputReceiver : BlockerObject
 				{
 					string name = "testBullet" + Random.Range(0,1000000);
 					networkView.RPC("spawnObject", RPCMode.All, player.transform.position + player.transform.Find("Arms").transform.forward * 5, player.transform.rotation.eulerAngles, name, "testBullet", "World/Bullets");
-					networkView.RPC ("setBulletVelocity", RPCMode.All, player.transform.Find("Arms").transform.forward * 30, "World/Bullets/"+name);
+					networkView.RPC ("setBulletVelocity", RPCMode.All, player.transform.Find("Arms").transform.forward * 10000, "World/Bullets/"+name);
 					networkView.RPC ("setObjectGravity", RPCMode.All, player.objectStats.grav, "World/Bullets/"+name);
 					player.GetComponent<PlayerStats>().FiredSinceMouseDown = true;
 				}
