@@ -14,6 +14,7 @@ public class MenuManager : BlockerObject
 	string hostedGameDescription = "Default Description";
 	const int GameCode = 1;
 	const int JoinGameCode = 2;
+	public const int LobbyCode = 3;
 	
 	// accessibility
 	Camera myCamera;
@@ -322,8 +323,13 @@ public class MenuManager : BlockerObject
 	
 	void ToggleBGMap(bool tf)
 	{
+		Debug.Log("resetting");
 		if (tf)
 		{
+			Destroy(mapManager.loadedMap);
+			playerManager.setToWorldCamera();
+			playerManager.HidePlayers();
+			raceManager.init();
 			bgMap = maps[Random.Range(0, maps.Length)] as GameObject;
 		
 			bgMap = Instantiate(bgMap,new Vector3(),Quaternion.identity) as GameObject;
@@ -352,6 +358,12 @@ public class MenuManager : BlockerObject
 		}
 		else
 		{
+			playerManager.RevealPlayers();
+			playerManager.setToLocalCameras();
+			foreach(NetPlayer player in playerManager.players)
+			{
+				player.playerStats.score = 0;	
+			}
 			Destroy(bgMap);
 		}
 		bgtoggle = tf;
@@ -370,6 +382,9 @@ public class MenuManager : BlockerObject
 			break;
 		case 2:
 			gs = GameState.JoinGame;
+			break;
+		case 3:
+			gs = GameState.Lobby;
 			break;
 		}
 		ChangeState (gs);

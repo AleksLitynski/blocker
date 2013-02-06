@@ -91,6 +91,14 @@ public class RaceManager: BlockerObject
 					}
 				}
 			}
+			
+			foreach(NetPlayer player in playerManager.players)
+			{
+				if (player.playerStats.score >= scoreToWin)
+				{
+					networkView.RPC ("ChangeState", RPCMode.All, MenuManager.LobbyCode);	
+				}
+			}
 		}
 	}
 	
@@ -108,11 +116,12 @@ public class RaceManager: BlockerObject
 		checkpoints.Clear();
 		foreach(GameObject obj in GameObject.FindGameObjectsWithTag("RaceCheckpoint"))
 		{
-			if(obj.transform.parent == mapManager.mapToUse.transform)
+			if(obj.transform.parent == mapManager.loadedMap.transform)
 			{
 				checkpoints.Add(obj);
 			}
 		}
+		
 		
 		
 		RaceCheckpoint[] temp = new RaceCheckpoint[checkpoints.Count];
@@ -165,6 +174,8 @@ public class RaceManager: BlockerObject
 		matchOver = false;
 		
 		unpack = true;
+		
+		changeHalo(index, true);
 	}
 	
 	void advanceIndex()

@@ -13,7 +13,7 @@ public class RaceCheckpoint : MonoBehaviour
 	public string hitby;
 	
 	// physics variables
-	public CollisionType collisionType = CollisionType.Box;
+	public CollisionType collisionType = CollisionType.Sphere;
 	public Vector3 scale = new Vector3(1,1,1);
 	public Collider myCollider;
 	
@@ -38,12 +38,17 @@ public class RaceCheckpoint : MonoBehaviour
 			if (scale != (myCollider as BoxCollider).size) (myCollider as BoxCollider).size = scale;
 			break;
 		}
+		transform.FindChild("Sphere").localScale = scale;
+		(myCollider as SphereCollider).center = Vector3.zero;
+		(myCollider as SphereCollider).radius = scale.x/2;
+		
 	}
 	
 	// relying on Start() is weird sometimes, so i safeguard it with a method that might
 	// get run on the first update.
 	void init()
 	{
+		scale = transform.FindChild("Sphere").localScale;
 		// add a collision component based on the CollisionType enum. you can change the
 		// CollisionType in the editor.
 		switch(collisionType)

@@ -8,7 +8,7 @@ using System.Collections.Generic;
 public class MapManager : BlockerObject
 {
 	public GameObject mapToUse;
-	GameObject loadedMap;
+	public GameObject loadedMap;
 	
 	void OnServerInitialized()
 	{

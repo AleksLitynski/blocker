@@ -45,7 +45,7 @@ public class NetPlayer : NetObject
 				{
 					playerCamera.gameObject.camera.cullingMask = playerCamera.gameObject.camera.cullingMask | (1 << (20 + player.localPlayerNumber));
 				}
-			}Debug.Log(raceManager.checkpoints.Count);
+			}
 			if(raceManager.index < raceManager.checkpoints.Count)
 			{
 				playerArrow.LookAt(raceManager.checkpoints[raceManager.index].transform.position);
