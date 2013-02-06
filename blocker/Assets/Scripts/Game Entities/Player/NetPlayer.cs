@@ -12,6 +12,10 @@ public class NetPlayer : NetObject
 	public PlayerStats playerStats;
 	[HideInInspector]
 	public Transform playerArms;
+	[HideInInspector]
+	public Transform playerArrow;
+	[HideInInspector]
+	public Transform playerCamera;
 
     bool _keyboardPlayer = false;
     bool _mobilePlayer = false;
@@ -20,7 +24,37 @@ public class NetPlayer : NetObject
 	void Awake()
 	{
 		playerArms = transform.FindChild("Arms");
+		playerArrow = transform.FindChild("arrow");
+		playerCamera = transform.FindChild("Arms/Camera");
+		playerArrow.gameObject.layer = 20 + localPlayerNumber; //set layer for arrow so I can hide it from the camera
+		for(int i = 0; i < playerArrow.GetChildCount(); i++)
+		{
+			playerArrow.GetChild(i).gameObject.layer = 20 + localPlayerNumber;
+		}
 		playerStats = gameObject.GetComponent<PlayerStats>();
+	}
+	
+	void Update()
+	{
+		if(networkPlayer.ToString() == Network.player.ToString())
+		{
+			playerArrow.gameObject.SetActiveRecursively(true);
+			foreach(NetPlayer player in playerManager.localPlayers)//I'm trying to hide the arrow from all local players. Its not working so far.
+			{	
+				if(player != this)
+				{
+					playerCamera.gameObject.camera.cullingMask = playerCamera.gameObject.camera.cullingMask | (1 << (20 + player.localPlayerNumber));
+				}
+			}Debug.Log(raceManager.checkpoints.Count);
+			if(raceManager.index < raceManager.checkpoints.Count)
+			{
+				playerArrow.LookAt(raceManager.checkpoints[raceManager.index].transform.position);
+			}
+		}
+		else
+		{
+			playerArrow.gameObject.SetActiveRecursively(false);
+		}
 	}
 
     public bool KeyboardPlayer
