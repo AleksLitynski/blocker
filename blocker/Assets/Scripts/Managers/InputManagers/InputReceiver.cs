@@ -18,7 +18,7 @@ public class InputReceiver : BlockerObject
 				networkView.RPC("setPlayerTransform", RPCMode.Others, player.transform.position, player.transform.rotation.eulerAngles, player.playerArms.rotation, player.name);
 				
 				
-				if(f1 && !player.GetComponent<PlayerStats>().FiredSinceMouseDown && menuManager.gameState == MenuManager.GameState.Game) //&& Mathf.Round(Time.time % 1) == 0
+				if(f1 && !player.GetComponent<PlayerStats>().FiredSinceMouseDown && menuManager.gameState == MenuManager.GameState.Game) //ummmm? Maybe this does something??????
 				{
 					Screen.lockCursor = true;
 					string name = "testBullet" + Random.Range(0,1000000);

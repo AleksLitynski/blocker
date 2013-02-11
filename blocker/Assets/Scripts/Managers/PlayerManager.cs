@@ -37,10 +37,14 @@ public class PlayerManager : BlockerObject
             i++;
             
         }
-		networkView.RPC("AddNewPlayer", RPCMode.Others, info.sender, lowestAvailableValue);
-        if (Network.peerType == NetworkPeerType.Server) this.AddNewPlayer(info.sender, lowestAvailableValue);
+		if(lowestAvailableValue < 5)//this is the max local players on the map
+		{
+			networkView.RPC("AddNewPlayer", RPCMode.Others, info.sender, lowestAvailableValue);
+        	if (Network.peerType == NetworkPeerType.Server) this.AddNewPlayer(info.sender, lowestAvailableValue);	
+		}
     }
-
+	
+	//called on the client machines to tell them to add a new player to the game
     [RPC]
     void AddNewPlayer(NetworkPlayer computer, int numOnComputer)
     {

@@ -97,16 +97,38 @@ public class MapManager : BlockerObject
 		playerManager.RevealPlayers();
 	}
 	
-	void respawnPlayer(string name) //called on server, sets the players position in random area around spawn
+	public void respawnPlayer(string name) //called on server, sets the players position in random area around spawn
 	{
-		Vector3 newPos = mapToUse.transform.FindChild("Spawn").position;
-		world.transform.FindChild("RootTeam/" + name).transform.position = newPos;
-		networkView.RPC("setPlayerPos", RPCMode.Others, name, newPos);
+		Transform spawnArea = mapToUse.transform.FindChild("Spawn").transform;
+		GameObject player = world.transform.FindChild("RootTeam/" + name).gameObject;
+		Vector3 spawnLocation = spawnArea.transform.position;
+		Quaternion spawnRotation = spawnArea.transform.rotation;
+		
+		int attempts = 0;
+		while(attempts < 50)
+		{
+			//get random point in spawn area.
+			spawnLocation = new Vector3(Random.Range(spawnArea.position.x - spawnArea.localScale.x/2 ,spawnArea.position.x + spawnArea.localScale.x/2), 
+									Random.Range(spawnArea.position.y - spawnArea.localScale.y/2 ,spawnArea.position.y + spawnArea.localScale.y/2),  
+									Random.Range(spawnArea.position.z - spawnArea.localScale.z/2 ,spawnArea.position.z + spawnArea.localScale.z/2));
+			//check if putting the player there causes a collision
+			if(Physics.OverlapSphere(spawnLocation, player.collider.bounds.max.y).Length <= 1)
+			{
+				break;
+			}
+			player.transform.rotation = spawnArea.transform.rotation;
+			attempts++;
+			
+		}
+		player.rigidbody.velocity = new Vector3();
+		networkView.RPC("setPlayerPos", RPCMode.All, name, spawnLocation, spawnRotation);
+		 
 	}
 	[RPC]
-	void setPlayerPos(string name, Vector3 pos) //called on clients, copies players location from server
+	void setPlayerPos(string name, Vector3 pos, Quaternion rot) //called on clients, copies players location from server
 	{
 		world.transform.FindChild("RootTeam/" + name).transform.position = pos;
+		world.transform.FindChild("RootTeam/" + name).transform.rotation = rot;
 	}
 	
 	

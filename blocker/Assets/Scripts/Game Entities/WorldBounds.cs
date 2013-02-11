@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class WorldBounds : MonoBehaviour 
+public class WorldBounds : BlockerObject 
 {
 	// enums
 	enum CollisionType {Sphere, Box};
@@ -23,9 +23,9 @@ public class WorldBounds : MonoBehaviour
 	}
 	
 	// Use this for initialization
-	void Start () 
+	public override void Start () 
 	{
-		
+		base.Start();
 	}
 	
 	// Update is called once per frame
@@ -42,11 +42,9 @@ public class WorldBounds : MonoBehaviour
 	void PlayerExit(string playerName)
 	{
 		// respawn the player if they fall out of the world bounds.
-		GameObject player = GameObject.Find(playerName);
-		
-		player.rigidbody.velocity = new Vector3();
-		player.transform.position = GameObject.Find ("Spawn").transform.position;
+		mapManager.respawnPlayer(playerName);
 	}
+	
 	
 	void setCollisionType(CollisionType ct)
 	{

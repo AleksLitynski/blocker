@@ -33,17 +33,6 @@ public class BlockerObject : MonoBehaviour {
 		mapManager = GameObject.Find("World").GetComponent<MapManager>() as MapManager;
 		menuManager = GameObject.Find("World").GetComponent<MenuManager>() as MenuManager;
 		world = GameObject.Find("World");
-		
-    }
-	
-	/*
-	public void PlayerEnter(string he)
-	{
-		
 	}
-	public void PlayerExit(string he)
-	{
-		
-	}*/
 	
 }

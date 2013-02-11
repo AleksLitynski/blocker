@@ -231,13 +231,19 @@ public class MenuManager : BlockerObject
 				GUILayout.BeginArea(new Rect(Screen.width*(1.0f/6), Screen.height*17/20, Screen.width*2/3, Screen.height*2/20));
 					GUILayout.BeginHorizontal();
 						// actually initialize the game state.
-						if (GUILayout.Button("Start", GUILayout.MaxWidth(200)))
+						if (Network.peerType == NetworkPeerType.Server)
 						{
-							if (Network.peerType == NetworkPeerType.Server)
-							{
+							if (GUILayout.Button("Start", GUILayout.MaxWidth(200)))
+							{							
 								// buffer an RPC telling everyone the game has started (join in progress)
 								networkView.RPC("ChangeState", RPCMode.AllBuffered, GameCode);
 								networkView.RPC("initializeGame", RPCMode.All);
+							}
+						}
+						else
+						{
+							if (GUILayout.Button("Vote to Start", GUILayout.MaxWidth(200)))
+							{
 							}
 						}
 						GUILayout.Label("", GUILayout.MaxWidth(Screen.width*2/3-400));
@@ -323,7 +329,6 @@ public class MenuManager : BlockerObject
 	
 	void ToggleBGMap(bool tf)
 	{
-		Debug.Log("resetting");
 		if (tf)
 		{
 			Screen.lockCursor = false;

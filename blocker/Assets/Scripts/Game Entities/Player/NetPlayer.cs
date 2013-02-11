@@ -154,7 +154,7 @@ public class NetPlayer : NetObject
 		if (Network.peerType == NetworkPeerType.Server)
 		{
 			// Tell Dog I just died!
-			c.gameObject.SendMessage("PlayerEnter", this.gameObject.name);
+			c.gameObject.SendMessage("PlayerEnter", this.gameObject.name, SendMessageOptions.DontRequireReceiver);
 		}
 	}
 	
@@ -163,7 +163,7 @@ public class NetPlayer : NetObject
 		if (Network.peerType == NetworkPeerType.Server)
 		{
 			// Tell Dog I just died!
-			c.gameObject.SendMessage("PlayerExit", this.gameObject.name);
+			c.gameObject.SendMessage("PlayerExit", this.gameObject.name, SendMessageOptions.DontRequireReceiver);
 		}
 	}
 }
