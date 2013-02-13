@@ -1,0 +1,152 @@
+[1mdiff --cc blocker/Assets/Scripts/Managers/MenuManager.cs[m
+[1mindex eaf8f99,6b02e12..0000000[m
+[1m--- a/blocker/Assets/Scripts/Managers/MenuManager.cs[m
+[1m+++ b/blocker/Assets/Scripts/Managers/MenuManager.cs[m
+[36m@@@ -113,137 -82,16 +76,97 @@@[m [mpublic class MenuManager : BlockerObjec[m
+  			break;[m
+  		case GameState.JoinGame:[m
+  			// get games from the master server.[m
+[31m- 			MasterServer.RequestHostList(gameName);[m
+[31m- 			[m
+[31m- 			GUILayout.BeginArea(new Rect(100, Screen.height/8, Screen.width -200, Screen.height/2));[m
+[31m- 				GUILayout.BeginVertical();[m
+[31m- 				[m
+[31m- 					// actually get games from the master server.[m
+[31m- 					HostData[] availableHosts = MasterServer.PollHostList();[m
+[31m- 					[m
+[31m- 					// actually list games from the master server.[m
+[31m- 					GUILayout.Box("Available Servers", GUILayout.MinWidth(Screen.width - 200));[m
+[31m- 						foreach (HostData host in availableHosts)[m
+[31m- 						{[m
+[31m- 							GUILayout.BeginHorizontal();[m
+[31m- 								GUILayout.Label(host.gameName + " (" + host.connectedPlayers + " / " + host.playerLimit + ") - " + host.comment);[m
+[31m- 								if (GUILayout.Button("Connect", GUILayout.MaxWidth(Screen.width/10)))[m
+[31m- 								{[m
+[31m- 									Network.Connect(host);[m
+[31m- 									ChangeState(GameState.Lobby);[m
+[31m- 								}	[m
+[31m- 							GUILayout.EndHorizontal();[m
+[31m- 						}[m
+[31m- 				GUILayout.EndVertical();[m
+[31m- 				[m
+[31m- 				// buttons at the bottom (refresh and back)[m
+[31m- 				GUILayout.BeginHorizontal();[m
+[31m- 					if (GUILayout.Button("Refresh List",GUILayout.MaxWidth(200))){MasterServer.RequestHostList(gameName);}[m
+[31m- 					GUILayout.Label("",GUILayout.MaxWidth(Screen.width-600));[m
+[31m- 					if (GUILayout.Button("Back to Main Menu",GUILayout.MaxWidth(200))){ChangeState(GameState.MainMenu);}[m
+[31m- 				GUILayout.EndHorizontal();[m
+[31m- 			GUILayout.EndArea();[m
+[31m- 			[m
+[32m+ 			JoinGameMenu.generateGUI(this);[m
+  			break;[m
+  		case GameState.Lobby:[m
+[32m++<<<<<<< HEAD[m
+[32m +			GUILayout.BeginArea(new Rect(0,0,Screen.width, Screen.height));[m
+[32m +				GUILayout.BeginHorizontal();[m
+[32m +					// provide add/drop ability[m
+[32m +					GUILayout.BeginArea(new Rect(Screen.width*1/20,Screen.height*1/20,Screen.width*2/20, Screen.height*15/20));[m
+[32m +						GUILayout.BeginVertical();[m
+[32m +						if (GUILayout.Button("New Player", GUILayout.MinWidth(Screen.width*2/20)))[m
+[32m +				        {[m
+[32m +				            if (Network.peerType == NetworkPeerType.Client) networkView.RPC("AddNewPlayerRequest", RPCMode.Server);[m
+[32m +				            if (Network.peerType == NetworkPeerType.Server) playerManager.AddNewPlayerRequest(new NetworkMessageInfo());[m
+[32m +				        }[m
+[32m +						foreach(NetPlayer player in playerManager.players)[m
+[32m +						{[m
+[32m +							if(player.networkPlayer.ToString() == Network.player.ToString())[m
+[32m +							{[m
+[32m +								if (GUILayout.Button("Drop", GUILayout.MinWidth(Screen.width*2/20)))[m
+[32m +					            {[m
+[32m +					                networkView.RPC("RemovePlayerRequest", RPCMode.Server, player.localPlayerNumber);[m
+[32m +					                if (Network.peerType == NetworkPeerType.Server) playerManager.RemovePlayerRequest(player.localPlayerNumber, new NetworkMessageInfo());[m
+[32m +					            }[m
+[32m +							}[m
+[32m +							else[m
+[32m +							{[m
+[32m +								GUILayout.Label("");[m
+[32m +							}[m
+[32m +						}[m
+[32m +						GUILayout.EndVertical();[m
+[32m +					GUILayout.EndArea();[m
+[32m +					// list player names[m
+[32m +					GUILayout.BeginArea(new Rect(Screen.width*4/20,Screen.height*1.9f/20,Screen.width*5/20, Screen.height*14/20));[m
+[32m +						foreach(NetPlayer player in playerManager.players)[m
+[32m +						{[m
+[32m +							GUILayout.Label(player.gameObject.name);[m
+[32m +						}[m
+[32m +					GUILayout.EndArea();[m
+[32m +					// list player scores[m
+[32m +					GUILayout.BeginArea(new Rect(Screen.width*10/20,Screen.height*1.9f/20,Screen.width*5/20, Screen.height*14/20));[m
+[32m +						foreach(NetPlayer player in playerManager.players)[m
+[32m +						{[m
+[32m +							GUILayout.Label("" + player.playerStats.score);[m
+[32m +						}[m
+[32m +					GUILayout.EndArea();[m
+[32m +				GUILayout.EndHorizontal();[m
+[32m +				GUILayout.BeginArea(new Rect(Screen.width*(1.0f/6), Screen.height*17/20, Screen.width*2/3, Screen.height*2/20));[m
+[32m +					GUILayout.BeginHorizontal();[m
+[32m +						// actually initialize the game state.[m
+[32m +						if (Network.peerType == NetworkPeerType.Server)[m
+[32m +						{[m
+[32m +							if (GUILayout.Button("Start", GUILayout.MaxWidth(200)))[m
+[32m +							{							[m
+[32m +								// buffer an RPC telling everyone the game has started (join in progress)[m
+[32m +								networkView.RPC("ChangeState", RPCMode.AllBuffered, GameCode);[m
+[32m +								networkView.RPC("initializeGame", RPCMode.All);[m
+[32m +							}[m
+[32m +						}[m
+[32m +						else[m
+[32m +						{[m
+[32m +							if (GUILayout.Button("Vote to Start", GUILayout.MaxWidth(200)))[m
+[32m +							{[m
+[32m +							}[m
+[32m +						}[m
+[32m +						GUILayout.Label("", GUILayout.MaxWidth(Screen.width*2/3-400));[m
+[32m +						if (GUILayout.Button("Back to Main Menu", GUILayout.MaxWidth(200)))[m
+[32m +						{[m
+[32m +							if(Network.peerType == NetworkPeerType.Server)[m
+[32m +							{[m
+[32m +								// return yourself to the main menu and everyone else to the joingame menu.[m
+[32m +								ChangeState (GameState.MainMenu);[m
+[32m +								networkView.RPC("ChangeState", RPCMode.Others, JoinGameCode);[m
+[32m +								MasterServer.UnregisterHost();[m
+[32m +							}[m
+[32m +							else[m
+[32m +							{[m
+[32m +								Network.Disconnect();	[m
+[32m +							}[m
+[32m +						}[m
+[32m +					GUILayout.EndHorizontal();[m
+[32m +				GUILayout.EndArea();[m
+[32m +			GUILayout.EndArea();[m
+[32m++=======[m
+[32m+ 			LobbyMenu.generateGUI(this);[m
+[32m++>>>>>>> Broke menu manager into  a few small classes.[m
+  			break;[m
+  		case GameState.Game:[m
+[31m- 			// manage a menu for each local player (placement and settings)[m
+[31m- 			// local players FUUUUUUUUUUUCKKKKKKKKK (fuck local players)[m
+[31m- 			foreach(NetPlayer player in playerManager.localPlayers)[m
+[31m- 			{[m
+[31m- 				var cameraZone = player.playerArms.FindChild("Camera").camera.rect;[m
+[31m- 				cameraZone.x = Screen.width * cameraZone.x;[m
+[31m- 				cameraZone.y = Screen.height * cameraZone.y;[m
+[31m- 				cameraZone.width = Screen.width * cameraZone.width;[m
+[31m- 				cameraZone.height = Screen.height * cameraZone.height;[m
+[31m- 				[m
+[31m- 				GUILayout.BeginArea(cameraZone);[m
+[31m- 					GUILayout.Label("score: " + player.playerStats.score);[m
+[31m- 				GUILayout.EndArea();[m
+[31m- 			}[m
+[31m- 			[m
+[32m+ 			GameMenu.generateGUI(this);[m
+  			break;[m
+  		case GameState.PostGame:[m
+[31m -			[m
+[32m +			// depreciated[m
+  			break;[m
+  		}[m
+  	}[m
+[1mdiff --git a/blocker/Assets/main.unity b/blocker/Assets/main.unity[m
+[1mindex b2ed883..663ca63 100644[m
+Binary files a/blocker/Assets/main.unity and b/blocker/Assets/main.unity differ

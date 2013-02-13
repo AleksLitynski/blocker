@@ -9,11 +9,11 @@ public class MenuManager : BlockerObject
 	public GameState prevState;
 	
 	// vars
-	string gameName = "Blocker v 0.1";
-	string hostedGameName = "Default Game Name";
-	string hostedGameDescription = "Default Description";
-	const int GameCode = 1;
-	const int JoinGameCode = 2;
+	public string gameName = "Blocker v 0.1";
+	public string hostedGameName = "Default Game Name";
+	public string hostedGameDescription = "Default Description";
+	public int GameCode = 1;
+	public int JoinGameCode = 2;
 	public const int LobbyCode = 3;
 	
 	// accessibility
@@ -59,93 +59,27 @@ public class MenuManager : BlockerObject
 		switch(gameState)
 		{
 		case GameState.MainMenu:
-			// menu header
-			GUI.Label(new Rect (Screen.width/2 - 100,Screen.height/2 - 150,200,300), "Blocker", "box");
-			
-			// main menu options
-			GUILayout.BeginArea(new Rect(Screen.width/2-100, Screen.height*2/5, 200,400));
-			GUILayout.BeginVertical();
-			
-			if (GUILayout.Button ("Join Game", GUILayout.MaxWidth(200))){ChangeState(GameState.JoinGame);}
-			if (GUILayout.Button ("Host Game", GUILayout.MaxWidth(200))){ChangeState(GameState.HostGame);}
-			if (GUILayout.Button ("Rule Editor", GUILayout.MaxWidth(200))){ChangeState(GameState.RuleEditor);}
-			if (GUILayout.Button ("Map Editor", GUILayout.MaxWidth(200))){ChangeState(GameState.MapEditor);}
-			if (GUILayout.Button ("Options", GUILayout.MaxWidth(200))){ChangeState(GameState.Options);}
-			
-			GUILayout.EndVertical();
-			GUILayout.EndArea();
-			break;
+			MainMenu.generateGUI(this);
+				break;
 		case GameState.Options:
-			
 			// return to main menu button
-			if (GUI.Button (new Rect (Screen.width/2 - 80,Screen.height - 100,160,20), "Back to Main Menu")){ChangeState(GameState.MainMenu);}
+			OptionsMenu.generateGUI(this);
 			break;
 		case GameState.RuleEditor:
-			if (GUI.Button (new Rect (Screen.width/2 - 80,Screen.height - 100,160,20), "Back to Main Menu")){ChangeState(GameState.MainMenu);}
+			RuleEditorMenu.generateGUI(this);
 			break;
 		case GameState.MapEditor:
-			if (GUI.Button (new Rect (Screen.width/2 - 80,Screen.height - 100,160,20), "Back to Main Menu")){ChangeState(GameState.MainMenu);}
+			MapEditorMenu.generateGUI(this);
 			break;
 		case GameState.HostGame:
-			GUILayout.BeginArea(new Rect(Screen.width/2-100, Screen.height/2, 200,400));
-			GUILayout.BeginVertical();
-			
-			// get name and description from text fields.
-			hostedGameName = GUILayout.TextField(hostedGameName, GUILayout.MaxWidth (200));
-			hostedGameDescription = GUILayout.TextField(hostedGameDescription, GUILayout.MaxWidth(200));
-			
-			// initialize the server and register it with unity's master server.
-			if(GUILayout.Button ("Host", GUILayout.MinWidth(50)))
-			{
-				Network.InitializeServer(32, Random.Range(2000,40000), !Network.HavePublicAddress());
-				MasterServer.RegisterHost(gameName, hostedGameName, hostedGameDescription);
-				
-				ChangeState(GameState.Lobby);
-			}
-			
-			if (GUILayout.Button("Back to Main Menu", GUILayout.MinWidth(50)))
-			{
-				ChangeState(GameState.MainMenu);
-			}
-			
-			GUILayout.EndVertical();
-			GUILayout.EndArea();
+			HostGameMenu.generateGUI(this);
 			break;
 		case GameState.JoinGame:
 			// get games from the master server.
-			MasterServer.RequestHostList(gameName);
-			
-			GUILayout.BeginArea(new Rect(100, Screen.height/8, Screen.width -200, Screen.height/2));
-				GUILayout.BeginVertical();
-				
-					// actually get games from the master server.
-					HostData[] availableHosts = MasterServer.PollHostList();
-					
-					// actually list games from the master server.
-					GUILayout.Box("Available Servers", GUILayout.MinWidth(Screen.width - 200));
-						foreach (HostData host in availableHosts)
-						{
-							GUILayout.BeginHorizontal();
-								GUILayout.Label(host.gameName + " (" + host.connectedPlayers + " / " + host.playerLimit + ") - " + host.comment);
-								if (GUILayout.Button("Connect", GUILayout.MaxWidth(Screen.width/10)))
-								{
-									Network.Connect(host);
-									ChangeState(GameState.Lobby);
-								}	
-							GUILayout.EndHorizontal();
-						}
-				GUILayout.EndVertical();
-				
-				// buttons at the bottom (refresh and back)
-				GUILayout.BeginHorizontal();
-					if (GUILayout.Button("Refresh List",GUILayout.MaxWidth(200))){MasterServer.RequestHostList(gameName);}
-					GUILayout.Label("",GUILayout.MaxWidth(Screen.width-600));
-					if (GUILayout.Button("Back to Main Menu",GUILayout.MaxWidth(200))){ChangeState(GameState.MainMenu);}
-				GUILayout.EndHorizontal();
-			GUILayout.EndArea();
-			
+			JoinGameMenu.generateGUI(this);
 			break;
 		case GameState.Lobby:
+<<<<<<< HEAD
 			GUILayout.BeginArea(new Rect(0,0,Screen.width, Screen.height));
 				GUILayout.BeginHorizontal();
 					// provide add/drop ability
@@ -224,23 +158,12 @@ public class MenuManager : BlockerObject
 					GUILayout.EndHorizontal();
 				GUILayout.EndArea();
 			GUILayout.EndArea();
+=======
+			LobbyMenu.generateGUI(this);
+>>>>>>> Broke menu manager into  a few small classes.
 			break;
 		case GameState.Game:
-			// manage a menu for each local player (placement and settings)
-			// local players FUUUUUUUUUUUCKKKKKKKKK (fuck local players)
-			foreach(NetPlayer player in playerManager.localPlayers)
-			{
-				var cameraZone = player.playerArms.FindChild("Camera").camera.rect;
-				cameraZone.x = Screen.width * cameraZone.x;
-				cameraZone.y = Screen.height * cameraZone.y;
-				cameraZone.width = Screen.width * cameraZone.width;
-				cameraZone.height = Screen.height * cameraZone.height;
-				
-				GUILayout.BeginArea(cameraZone);
-					GUILayout.Label("score: " + player.playerStats.score);
-				GUILayout.EndArea();
-			}
-			
+			GameMenu.generateGUI(this);
 			break;
 		case GameState.PostGame:
 			// depreciated
@@ -331,7 +254,7 @@ public class MenuManager : BlockerObject
 	}
 	
 	[RPC]
-	void ChangeState(int stateCode)
+	public void ChangeState(int stateCode)
 	{
 		GameState gs = new GameState();
 		
@@ -354,7 +277,7 @@ public class MenuManager : BlockerObject
 	// ALWAYS USE THIS TO MAKE CHANGES TO GAMESTATE.
 	// if you dont use this, you may get the background map in your actual map (AHHH)
 	[RPC]
-	void ChangeState(GameState gs)
+	public void ChangeState(GameState gs)
 	{
 		prevState = gameState;
 		gameState = gs;
