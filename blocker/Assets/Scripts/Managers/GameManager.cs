@@ -79,7 +79,7 @@ public class GameManager: BlockerObject
 						{
 							raceCheckpoint.currentPoints++;
 							// find the player, get their netplayer component, and give em some points
-							Debug.Log (raceCheckpoint.hitby == "");
+							Debug.Log (raceCheckpoint.hitby+ " " + i);
 							world.networkView.RPC ("givePoints", RPCMode.All, i, raceCheckpoint.hitby);
 							//GameObject.Find(raceCheckpoint.hitby).GetComponent<NetPlayer>().playerStats.score += raceCheckpoint.scoreReward;
 						}
@@ -105,7 +105,6 @@ public class GameManager: BlockerObject
 					}
 				}
 			}
-			
 			// this is the winning. you win here.
 			switch(winRule)
 			{
@@ -337,6 +336,7 @@ public class GameManager: BlockerObject
 		{
 			(checkpoints[i].GetComponent("Halo") as Behaviour).enabled = tf;	
 		}*/
+		Debug.Log(i);
 		(checkpoints[i].GetComponent("Halo") as Behaviour).enabled = tf;
 		checkpoints[i].active = tf;
 	}
