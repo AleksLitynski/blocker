@@ -6,40 +6,6 @@ public class LobbyMenu
 
 	public static void generateGUI(MenuManager menuManager)
 	{
-		/*GUILayout.BeginArea(new Rect(Screen.width*1/6, Screen.height*1/6, Screen.width*2/3, Screen.height*2/3));
-				GUILayout.BeginVertical();	
-					// list all players in the lobby.
-					foreach(NetPlayer player in playerManager.players)
-					{
-						if(player.networkPlayer.ToString() == Network.player.ToString())
-						{
-							
-						}
-						GUILayout.Label(player.gameObject.name);
-					}
-				GUILayout.EndVertical();
-				GUILayout.BeginHorizontal();
-					if (Network.peerType == NetworkPeerType.Server)
-					{
-						// actually initialize the game state.
-						if (GUILayout.Button("Start", GUILayout.MaxWidth(200)))
-						{
-							// buffer an RPC telling everyone the game has started (join in progress)
-							networkView.RPC("ChangeState", RPCMode.AllBuffered, GameCode);
-							networkView.RPC("initializeGame", RPCMode.All);
-						}
-						GUILayout.Label("", GUILayout.MaxWidth(Screen.width*2/3-400));
-						if (GUILayout.Button("Back to Main Menu", GUILayout.MaxWidth(200)))
-						{
-							// return yourself to the main menu and everyone else to the joingame menu.
-							ChangeState (GameState.MainMenu);
-							networkView.RPC("ChangeState", RPCMode.Others, JoinGameCode);
-						}
-					}
-				GUILayout.EndHorizontal();
-			GUILayout.EndArea();
-			playerAddRemove();*/
-			
 			GUILayout.BeginArea(new Rect(0,0,Screen.width, Screen.height));
 				GUILayout.BeginHorizontal();
 					// provide add/drop ability
@@ -95,10 +61,10 @@ public class LobbyMenu
 							}
 						}
 						else
-						{/*
+						{
 							if (GUILayout.Button("Vote to Start", GUILayout.MaxWidth(200)))
 							{
-							}*/
+							}
 						}
 						GUILayout.Label("", GUILayout.MaxWidth(Screen.width*2/3-400));
 						if (GUILayout.Button("Back to Main Menu", GUILayout.MaxWidth(200)))
