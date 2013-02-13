@@ -13,8 +13,8 @@ public class BlockerObject : MonoBehaviour {
     public InputDispatcher inputDispatcher;
 	[HideInInspector]
     public InputReceiver inputReceiver;
-	[HideInInspector]
-    public RaceManager raceManager;
+	//[HideInInspector]
+    //public GameManager gameManager;
 	[HideInInspector]
     public GameObject world;
 	[HideInInspector]
@@ -29,7 +29,7 @@ public class BlockerObject : MonoBehaviour {
         netPlayer = GameObject.Find("World").GetComponent("NetPlayer") as NetPlayer;
         inputDispatcher = GameObject.Find("World").GetComponent("InputDispatcher") as InputDispatcher;
         inputReceiver = GameObject.Find("World").GetComponent("InputReceiver") as InputReceiver;
-		raceManager = GameObject.Find("World").GetComponent<RaceManager>() as RaceManager;
+		//gameManager = GameObject.Find("World").GetComponent<GameManager>() as GameManager;
 		mapManager = GameObject.Find("World").GetComponent<MapManager>() as MapManager;
 		menuManager = GameObject.Find("World").GetComponent<MenuManager>() as MenuManager;
 		world = GameObject.Find("World");

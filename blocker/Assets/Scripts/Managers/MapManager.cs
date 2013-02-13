@@ -139,7 +139,7 @@ public class MapManager : BlockerObject
 		//Ball spawning and some other junk
 		loadedMap = Instantiate(Resources.Load("Maps/" + maptoLoad), Vector3.zero, Quaternion.identity) as GameObject;
 		loadedMap.AddComponent<WorldBounds>();
-		raceManager.init();
+		//gameManager.init();
 	}
 	
 	// making this an rpc seemed very reasonable to me

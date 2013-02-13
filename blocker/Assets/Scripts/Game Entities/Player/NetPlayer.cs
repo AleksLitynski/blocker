@@ -21,6 +21,8 @@ public class NetPlayer : NetObject
     bool _mobilePlayer = false;
     int _controllerNumber = -1;
 	
+	GameManager gameManager;
+	
 	void Awake()
 	{
 		playerArms = transform.FindChild("Arms");
@@ -32,6 +34,8 @@ public class NetPlayer : NetObject
 			playerArrow.GetChild(i).gameObject.layer = 20 + localPlayerNumber;
 		}
 		playerStats = gameObject.GetComponent<PlayerStats>();
+		
+		gameManager = mapManager.loadedMap.GetComponent<GameManager>();
 	}
 	
 	void Update()
@@ -46,9 +50,9 @@ public class NetPlayer : NetObject
 					playerCamera.gameObject.camera.cullingMask = playerCamera.gameObject.camera.cullingMask | (1 << (20 + player.localPlayerNumber));
 				}
 			}
-			if(raceManager.index < raceManager.checkpoints.Count)
+			if(gameManager.index < gameManager.checkpoints.Count)
 			{
-				playerArrow.LookAt(raceManager.checkpoints[raceManager.index].transform.position);
+				playerArrow.LookAt(gameManager.checkpoints[gameManager.index].transform.position);
 			}
 		}
 		else
