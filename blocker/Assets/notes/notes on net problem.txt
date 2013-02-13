@@ -1,7 +1,0 @@
-client and server connect
-server adds a player. All is fine.
-Client adds a player. 
--Server is fine. 
--Client Sees a camera focused on a player at the origin. That player can be pushed around, but responds to no input.
--Client input moves the clients view of the server player, who is teleported to the origin when client player spawns
--Client's view of the server player will occasionally flicker to the correct location of the server player.
