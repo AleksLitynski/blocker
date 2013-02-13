@@ -7,12 +7,12 @@ using System.Collections.Generic;
 //also, unloads players and map on disconnect
 public class MapManager : BlockerObject
 {
-	public GameObject mapToUse;
-	public GameObject loadedMap;
+	//public GameObject mapToUse;
+	//public GameObject loadedMap;
 	
 	void OnServerInitialized()
 	{
-		
+		menuManager.bgMap.AddComponent<WorldBounds>();
 	}
 	
 	
@@ -27,7 +27,7 @@ public class MapManager : BlockerObject
         }
 		if(menuManager.gameState == MenuManager.GameState.Game)
 		{
-			networkView.RPC("LoadMap", player, mapToUse.name);
+			networkView.RPC("LoadMap", player, menuManager.bgMap.name);
 			networkView.RPC("initializeGame", player);	
 		}
 		for(var i = 0; i < world.transform.FindChild("Bullets").childCount; i++)
@@ -79,7 +79,7 @@ public class MapManager : BlockerObject
 	void initializeGame()
 	{
 		//load map
-		LoadMap(mapToUse.name);
+		LoadMap(menuManager.bgMap.name);
 		//move all players to spawn
 		if(Network.peerType == NetworkPeerType.Server)
 		{
@@ -99,7 +99,7 @@ public class MapManager : BlockerObject
 	
 	public void respawnPlayer(string name) //called on server, sets the players position in random area around spawn
 	{
-		Transform spawnArea = mapToUse.transform.FindChild("Spawn").transform;
+		Transform spawnArea = menuManager.bgMap.transform.FindChild("Spawn").transform;
 		GameObject player = world.transform.FindChild("RootTeam/" + name).gameObject;
 		Vector3 spawnLocation = spawnArea.transform.position;
 		Quaternion spawnRotation = spawnArea.transform.rotation;
@@ -137,15 +137,22 @@ public class MapManager : BlockerObject
 	{
 		// instantiate the map on the local machine.
 		//Ball spawning and some other junk
-		loadedMap = Instantiate(Resources.Load("Maps/" + maptoLoad), Vector3.zero, Quaternion.identity) as GameObject;
-		loadedMap.AddComponent<WorldBounds>();
-		//gameManager.init();
+		maptoLoad = maptoLoad.Remove(maptoLoad.Length-7);
+		Destroy (menuManager.bgMap);
+		GameObject newMap = Instantiate(Resources.Load("Maps/" + maptoLoad), Vector3.zero, Quaternion.identity) as GameObject;
+		newMap.AddComponent<WorldBounds>();
+		menuManager.bgMap = newMap;
+		menuManager.bgMap.GetComponent<GameManager>().ToggleAllCheckpoints(true);
+		
+		newMap.AddComponent<NetworkView>();
+		newMap.GetComponent<GameManager>().init();
+		newMap.networkView.RPC ("setCheckpoint", RPCMode.All, newMap.GetComponent<GameManager>().index);
 	}
 	
 	// making this an rpc seemed very reasonable to me
 	[RPC]
 	void RemoveMap()
 	{
-		Destroy (loadedMap);
+		Destroy (menuManager.bgMap);
 	}
 }

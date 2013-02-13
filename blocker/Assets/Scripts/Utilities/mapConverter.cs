@@ -14,7 +14,7 @@ public class mapConverter
 		doc.AppendChild(declaration);
 		XmlElement root = doc.CreateElement("Map");
 		root.SetAttribute("name", map.name);
-		root.SetAttribute("description", map.GetComponent<MapMetadata>().description);
+		root.SetAttribute("description", map.GetComponent<GameManager>().gameDescription);
 		doc.AppendChild(root);
 		
 		

@@ -22,7 +22,7 @@ public class MenuManager : BlockerObject
 	//MapManager mapManager;
 	
 	// funsies
-	GameObject bgMap;
+	public GameObject bgMap;
 	Object[] maps;
 	bool bgtoggle;
 	Vector3 cameraPosition;
@@ -122,7 +122,7 @@ public class MenuManager : BlockerObject
 		if (tf)
 		{
 			Screen.lockCursor = false;
-			Destroy(mapManager.loadedMap);
+			//Destroy(bgMap);
 			playerManager.setToWorldCamera();
 			playerManager.HidePlayers();
 			//raceManager.init();
@@ -157,6 +157,8 @@ public class MenuManager : BlockerObject
 			
 			cameraPosition = new Vector3(1.5f*(maxx-minx), (maxy-miny), maxz-minz);
 			lookAtPosition = new Vector3(0,.5f*(maxy-miny),0);
+			
+			bgMap.GetComponent<GameManager>().ToggleAllCheckpoints(false);
 		}
 		else
 		{
@@ -167,7 +169,8 @@ public class MenuManager : BlockerObject
 			{
 				player.playerStats.score = 0;	
 			}
-			Destroy(bgMap);
+			
+			bgMap.GetComponent<GameManager>().ToggleAllCheckpoints(true);
 		}
 		bgtoggle = tf;
 	}

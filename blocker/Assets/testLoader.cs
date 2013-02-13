@@ -10,9 +10,9 @@ public class testLoader : BlockerObject {
 	mapConverter mapC = new mapConverter();
 	// Update is called once per frame
 	void Update () {
-		if(mapManager.loadedMap != null && !hasLoaded)
+		if(menuManager.bgMap != null && !hasLoaded)
 		{
-			string outa = 	mapC.createMapXML(mapManager.loadedMap);
+			string outa = 	mapC.createMapXML(menuManager.bgMap);
 			Debug.Log(mapC.readXmlMap(outa));
 				hasLoaded = true;
 		}

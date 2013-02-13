@@ -35,11 +35,16 @@ public class NetPlayer : NetObject
 		}
 		playerStats = gameObject.GetComponent<PlayerStats>();
 		
-		gameManager = mapManager.loadedMap.GetComponent<GameManager>();
+		//gameManager = menuManager.bgMap.GetComponent<GameManager>();
 	}
 	
 	void Update()
 	{
+		if (menuManager.bgMap != null)
+		{
+			gameManager = menuManager.bgMap.GetComponent<GameManager>();
+		}
+		
 		if(networkPlayer.ToString() == Network.player.ToString())
 		{
 			playerArrow.gameObject.SetActiveRecursively(true);
@@ -50,10 +55,11 @@ public class NetPlayer : NetObject
 					playerCamera.gameObject.camera.cullingMask = playerCamera.gameObject.camera.cullingMask | (1 << (20 + player.localPlayerNumber));
 				}
 			}
-			if(gameManager.index < gameManager.checkpoints.Count)
+			/*if(gameManager.index < gameManager.checkpoints.Count)
 			{
 				playerArrow.LookAt(gameManager.checkpoints[gameManager.index].transform.position);
-			}
+			}*/
+			playerArrow.LookAt(gameManager.checkpoints[gameManager.index].transform.position);
 		}
 		else
 		{

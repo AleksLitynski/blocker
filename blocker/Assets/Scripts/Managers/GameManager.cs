@@ -16,8 +16,8 @@ public class GameManager: BlockerObject
 	// most points by the end of a time limit, the most points by the
 	// time someone finishes the race, or being the first to finish the
 	// race.
-	public enum WinRule {MostPointsOverTime, MostPointsByFinish, FirstToFinish};
-	public WinRule winRule = WinRule.MostPointsByFinish;
+	public enum WinRule {MostPointsOverTime, MostPointsByFinish, FirstToFinish, FirstToLimit};
+	public WinRule winRule = WinRule.FirstToLimit;
 	
 	// this rule determines how the manager determines which node is 
 	// next when a node is "completed" (its maxpoints have been
@@ -31,13 +31,16 @@ public class GameManager: BlockerObject
 	public int index;
 	public int maxIndex;
 	public int scoreToWin;
-	public int numWinners;				// make an overarching manager for this
+	public int numWinners;				
 	public int currWinners;
 	public bool matchOver;
+	public float elapsedTime;
+	public float maxTime;
 	
 	// utility variables
 	bool unpack = false;
 	public bool initState = false;				// if false, uninitialize. otherwise, initialize.
+	public string gameDescription;
 	
 	// Use this for initialization
 	public override void Start () 
@@ -51,6 +54,12 @@ public class GameManager: BlockerObject
 	{
 		if (!unpack) init();
 		
+		// only elapse time if the Game state is active.
+		if (GameObject.Find ("World").GetComponent<MenuManager>().gameState == MenuManager.GameState.Game)
+		{
+			elapsedTime += Time.deltaTime;
+		}
+		
 		if (Network.peerType == NetworkPeerType.Server)
 		{
 			// handle a player colliding with a checkpoint
@@ -59,7 +68,7 @@ public class GameManager: BlockerObject
 				RaceCheckpoint raceCheckpoint = checkpoints[i].GetComponent<RaceCheckpoint>();
 				
 				
-				if (raceCheckpoint.hitby != null)
+				if (raceCheckpoint.hitby != null && raceCheckpoint.hitby != "")
 				{
 					// check if this is the next checkpoint. if so, advance the checkpoint
 					// toward its maxPoints (default starting at 0 going to 1), give player points,
@@ -70,7 +79,8 @@ public class GameManager: BlockerObject
 						{
 							raceCheckpoint.currentPoints++;
 							// find the player, get their netplayer component, and give em some points
-							networkView.RPC ("givePoints", RPCMode.All, i, raceCheckpoint.hitby);
+							Debug.Log (raceCheckpoint.hitby == "");
+							world.networkView.RPC ("givePoints", RPCMode.All, i, raceCheckpoint.hitby);
 							//GameObject.Find(raceCheckpoint.hitby).GetComponent<NetPlayer>().playerStats.score += raceCheckpoint.scoreReward;
 						}
 						else //if (raceCheckpoint.currentPoints == raceCheckpoint.maxPoints)
@@ -80,7 +90,7 @@ public class GameManager: BlockerObject
 							advanceIndex();
 							
 							// tell everyone about the new checkpoint.
-							networkView.RPC ("setCheckpoint", RPCMode.Others, index);
+							networkView.RPC ("setCheckpoint", RPCMode.All, index);
 							
 							// reset the hit detection
 							raceCheckpoint.hitby = null;
@@ -88,26 +98,44 @@ public class GameManager: BlockerObject
 					}
 					else
 					{
+						// if you are not the index,
+						// fuck you,
+						// goodbye,
 						raceCheckpoint.hitby = null;
 					}
 				}
 			}
 			
-			foreach(NetPlayer player in playerManager.players)
+			// this is the winning. you win here.
+			switch(winRule)
 			{
-				if (player.playerStats.score >= scoreToWin)
+			// the player with the most points when the final checkpoint is reached.
+			case WinRule.MostPointsByFinish:
+				Debug.Log ("Warning: This WinRule is unimplemented.");
+				break;
+			// the player with the most points after a time interval.
+			case WinRule.MostPointsOverTime:
+				if (elapsedTime >= maxTime)
 				{
-					networkView.RPC ("ChangeState", RPCMode.All, MenuManager.LobbyCode);	
+					world.networkView.RPC ("ChangeState", RPCMode.All, MenuManager.LobbyCode);
 				}
+				break;
+			// the first player to reach the last checkpoint in the race.
+			case WinRule.FirstToFinish:
+				Debug.Log ("Warning: This WinRule is unimplemented.");
+				break;
+			// the first player to reach a certain score.
+			case WinRule.FirstToLimit:
+				foreach(NetPlayer player in playerManager.players)
+				{
+					if (player.playerStats.score >= scoreToWin)
+					{
+						world.networkView.RPC ("ChangeState", RPCMode.All, MenuManager.LobbyCode);	
+					}
+				}
+				break;
 			}
-		}
-	}
-	
-	void OnGUI()
-	{
-		if (currWinners >= numWinners)
-		{
-			//GUI.
+			
 		}
 	}
 	
@@ -117,7 +145,11 @@ public class GameManager: BlockerObject
 		checkpoints.Clear();
 		foreach(GameObject obj in GameObject.FindGameObjectsWithTag("RaceCheckpoint"))
 		{
-			if(obj.transform.parent == mapManager.loadedMap.transform)
+			/*if(obj.transform.parent == GameObject.Find ("World").GetComponent<MapManager>().loadedMap.transform)
+			{
+				checkpoints.Add(obj);
+			}*/
+			if (obj.transform.parent == this.gameObject.transform)
 			{
 				checkpoints.Add(obj);
 			}
@@ -161,6 +193,8 @@ public class GameManager: BlockerObject
 			break;
 		}
 		
+		gameObject.AddComponent<NetworkView>();
+		
 		// initialize indices
 		index = 0;
 		maxIndex = 0;
@@ -177,6 +211,9 @@ public class GameManager: BlockerObject
 		unpack = true;
 		
 		changeHalo(index, true);
+		
+		elapsedTime = 0;
+		maxTime = 60;
 	}
 	
 	void advanceIndex()
@@ -189,34 +226,43 @@ public class GameManager: BlockerObject
 		{
 			temp[i] = checkpoints[i].GetComponent<RaceCheckpoint>();
 		}
-		// easy case
-		if (index == maxIndex)
+		switch(nextNodeRule)
 		{
-			// find  the least index among checkpoints.
-			for (int i = 0; i < temp.Length; i++)
+		case NextNodeRule.OrderedNodes:
+			// easy case
+			if (index == maxIndex)
 			{
-				if (temp[i].orderInRace < index) index = temp[i].orderInRace;
+				// find  the least index among checkpoints.
+				for (int i = 0; i < temp.Length; i++)
+				{
+					if (temp[i].orderInRace < index) index = temp[i].orderInRace;
+				}
+				networkView.RPC ("changeHalo", RPCMode.All, index, true);
+				return;
 			}
-			networkView.RPC ("changeHalo", RPCMode.All, index, true);
-			return;
-		}
-		
-		// ugh
-		bool whilebreak = false;
-		
-		// increase index
-		while (true)
-		{
-			// increment that shit til its something
-			index++;
 			
-			for (int i = 0; i < temp.Length; i++)
+			// ugh
+			bool whilebreak = false;
+			
+			// increase index
+			while (true)
 			{
-				// no lazy. gotta make a damn variable to break from the while loop #wtf
-				//if (temp[i].orderInRace == index) break;
-				if (temp[i].orderInRace == index) whilebreak = true;
+				// increment that shit til its something
+				index++;
+				
+				for (int i = 0; i < temp.Length; i++)
+				{
+					// no lazy. gotta make a damn variable to break from the while loop #wtf
+					//if (temp[i].orderInRace == index) break;
+					if (temp[i].orderInRace == index) whilebreak = true;
+				}
+				if (whilebreak) break;
 			}
-			if (whilebreak) break;
+			break;
+		case NextNodeRule.RandomNode:
+			// get the index from a random checkpoint in the map.
+			index = temp[Random.Range (0,temp.Length)].orderInRace;
+			break;
 		}
 		networkView.RPC ("changeHalo", RPCMode.All, index, true);
 	}
@@ -232,12 +278,25 @@ public class GameManager: BlockerObject
 		}
 	}
 	
-	
+	public void ToggleAllCheckpoints(bool tf)
+	{
+		foreach(GameObject rc in checkpoints)
+		{
+			rc.GetComponent<RaceCheckpoint>().AlterLifeState(tf);
+		}
+	}
 	
 	[RPC]
 	void setCheckpoint(int newIndex)
 	{
 		index = newIndex;
+		foreach(GameObject rc in checkpoints)
+		{
+			rc.GetComponent<RaceCheckpoint>().awake = false;
+		}
+		Debug.Log(checkpoints[index].GetComponent<RaceCheckpoint>().awake);
+		checkpoints[index].GetComponent<RaceCheckpoint>().awake = true;
+		Debug.Log(checkpoints[index].GetComponent<RaceCheckpoint>().awake);
 	}
 	
 	[RPC]
@@ -274,9 +333,11 @@ public class GameManager: BlockerObject
 	[RPC]
 	void changeHalo(int i, bool tf)
 	{
-		if(checkpoints.Count < i)
+		/*if(checkpoints.Count < i)
 		{
 			(checkpoints[i].GetComponent("Halo") as Behaviour).enabled = tf;	
-		}
+		}*/
+		(checkpoints[i].GetComponent("Halo") as Behaviour).enabled = tf;
+		checkpoints[i].active = tf;
 	}
 }
