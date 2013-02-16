@@ -337,7 +337,7 @@ public class GameManager: BlockerObject
 		{
 			(checkpoints[i].GetComponent("Halo") as Behaviour).enabled = tf;	
 		}*/
-		Debug.Log(checkpoints.Count + "in");
+		//Debug.Log(checkpoints.Count + "in");
 		(checkpoints[i].GetComponent("Halo") as Behaviour).enabled = tf;
 		checkpoints[i].active = tf;
 	}

@@ -16,18 +16,26 @@ public class NetPlayer : NetObject
 	public Transform playerArrow;
 	[HideInInspector]
 	public Transform playerCamera;
+	[HideInInspector]
+	public Transform player;
 
     bool _keyboardPlayer = false;
     bool _mobilePlayer = false;
     int _controllerNumber = -1;
+	public float lookPitch = 0;
 	
 	GameManager gameManager;
 	
-	void Awake()
+	public override void Start()
 	{
-		playerArms = transform.FindChild("Arms");
-		playerArrow = transform.FindChild("arrow");
-		playerCamera = transform.FindChild("Arms/Camera");
+		base.Start();
+	}
+	public void Awake()
+	{
+		player = transform.parent;
+		playerArms = transform.FindChild("Model/Arms");
+		playerArrow = player.FindChild("Compass/arrow");
+		playerCamera = player.FindChild("Camera");
 		playerArrow.gameObject.layer = 20 + localPlayerNumber; //set layer for arrow so I can hide it from the camera
 		for(int i = 0; i < playerArrow.GetChildCount(); i++)
 		{
@@ -154,11 +162,6 @@ public class NetPlayer : NetObject
 		move(playerMotion, Quaternion.Euler(0,col.turnRight,0));
 	}
 	
-	public override void Start()
-	{
-		base.Start ();
-	}	
-	
 	void OnTriggerEnter(Collider c)
 	{
 		if (Network.peerType == NetworkPeerType.Server)
@@ -173,7 +176,7 @@ public class NetPlayer : NetObject
 		if (Network.peerType == NetworkPeerType.Server)
 		{
 			// Tell Dog I just died!
-			c.gameObject.SendMessage("PlayerExit", this.gameObject.name, SendMessageOptions.DontRequireReceiver);
+			c.gameObject.SendMessage("PlayerExit", player.name, SendMessageOptions.DontRequireReceiver);
 		}
 	}
 }

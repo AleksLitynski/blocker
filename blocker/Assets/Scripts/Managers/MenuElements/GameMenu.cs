@@ -10,7 +10,7 @@ public class GameMenu
 			// local players FUUUUUUUUUUUCKKKKKKKKK (fuck local players)
 			foreach(NetPlayer player in menuManager.playerManager.localPlayers)
 			{
-				var cameraZone = player.playerArms.FindChild("Camera").camera.rect;
+				var cameraZone = player.playerCamera.camera.rect;
 				cameraZone.x = Screen.width * cameraZone.x;
 				cameraZone.y = Screen.height * cameraZone.y;
 				cameraZone.width = Screen.width * cameraZone.width;

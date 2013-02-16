@@ -37,7 +37,7 @@ public class LobbyMenu
 					GUILayout.BeginArea(new Rect(Screen.width*4/20,Screen.height*1.9f/20,Screen.width*5/20, Screen.height*14/20));
 						foreach(NetPlayer player in menuManager.playerManager.players)
 						{
-							GUILayout.Label(player.gameObject.name);
+							GUILayout.Label(player.player.name);
 						}
 					GUILayout.EndArea();
 					// list player scores

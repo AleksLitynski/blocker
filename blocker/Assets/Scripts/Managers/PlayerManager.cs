@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Linq;
 using System.Collections.Generic;
 
 //asks server to add new player
@@ -50,8 +51,8 @@ public class PlayerManager : BlockerObject
     {
         GameObject newPlayer = Instantiate(playerModel, Vector3.zero, Quaternion.identity) as GameObject;
         newPlayer.name = "player " + computer.ToString() + "-" + numOnComputer;
-        (newPlayer.GetComponent("NetPlayer") as NetPlayer).networkPlayer = computer;
-        (newPlayer.GetComponent("NetPlayer") as NetPlayer).localPlayerNumber = numOnComputer;
+        newPlayer.transform.Find("Doll").GetComponent<NetPlayer>().networkPlayer = computer;
+        newPlayer.transform.Find("Doll").GetComponent<NetPlayer>().localPlayerNumber = numOnComputer;
         newPlayer.transform.parent = GameObject.Find("/World/RootTeam").transform;
 		
 		newPlayer.transform.position = GameObject.Find("Spawn").transform.position;
@@ -59,20 +60,20 @@ public class PlayerManager : BlockerObject
 
         if (numOnComputer == 0)
         {
-            (newPlayer.GetComponent("NetPlayer") as NetPlayer).KeyboardPlayer = true;
+            newPlayer.transform.Find("Doll").GetComponent<NetPlayer>().KeyboardPlayer = true;
         }
         else
         {
-            (newPlayer.GetComponent("NetPlayer") as NetPlayer).ControllerNumber = numOnComputer-1;
+            newPlayer.transform.Find("Doll").GetComponent<NetPlayer>().ControllerNumber = numOnComputer-1;
         }
 
-        players.Add((newPlayer.GetComponent("NetPlayer") as NetPlayer));
+        players.Add(newPlayer.transform.Find("Doll").GetComponent<NetPlayer>());
         if (computer == Network.player)
         {
-            localPlayers.Add((newPlayer.GetComponent("NetPlayer") as NetPlayer));
+            localPlayers.Add(newPlayer.transform.Find("Doll").GetComponent<NetPlayer>());
             UpdateCameraSplit();
         }
-        GameObject.Find(newPlayer.name + "/Arms/Camera").camera.enabled = false;
+        newPlayer.transform.Find("Camera").camera.enabled = false;
         
 		HidePlayers();
     }
@@ -115,7 +116,7 @@ public class PlayerManager : BlockerObject
 	{
 		foreach (NetPlayer player in players)
 		{
-			player.GetComponent<MeshRenderer>().enabled = true;
+			player.transform.Find ("Model").gameObject.active = true;
 			player.GetComponent<Rigidbody>().isKinematic = false;
 		}
 	}
@@ -123,7 +124,7 @@ public class PlayerManager : BlockerObject
 	{
 		foreach (NetPlayer player in players)
 		{
-			player.GetComponent<MeshRenderer>().enabled = false;
+			player.transform.Find ("Model").gameObject.active = false;
 			player.GetComponent<Rigidbody>().isKinematic = true;
 		}
 	}
@@ -132,7 +133,7 @@ public class PlayerManager : BlockerObject
 	{
 		foreach(NetPlayer player in localPlayers)
 		{
-			player.transform.FindChild("Arms/Camera").camera.enabled = false;
+			player.playerCamera.camera.enabled = false;
 		}
 		world.camera.enabled = true;
 	}
@@ -140,7 +141,7 @@ public class PlayerManager : BlockerObject
 	{
 		foreach(NetPlayer player in localPlayers)
 		{
-			player.transform.FindChild("Arms/Camera").camera.enabled = true;
+			player.playerCamera.camera.enabled = true;
 		}
 		world.camera.enabled = false;
 	}
@@ -220,11 +221,11 @@ public class PlayerManager : BlockerObject
 
                 if (favorHorizontal)
                 {
-                    (GameObject.Find(localPlayers[pos].name + "Arms/Camera").camera as Camera).rect = new Rect(j * width, i * height, width, height);
+                    localPlayers[pos].GetComponent<NetPlayer>().playerCamera.camera.rect = new Rect(j * width, i * height, width, height);
                 }
                 else
                 {
-                    (GameObject.Find(localPlayers[pos].name + "Arms/Camera").camera as Camera).rect = new Rect(i * height, j * width, height, width);
+                    localPlayers[pos].GetComponent<NetPlayer>().playerCamera.camera.rect = new Rect(i * height, j * width, height, width);
                 }
                 pos++;
             }

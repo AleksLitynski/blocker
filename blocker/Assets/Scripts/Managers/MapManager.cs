@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Linq;
 using System.Collections.Generic;
 
 //this will be responsable for downloading the map and players when the game starts
@@ -21,8 +22,8 @@ public class MapManager : BlockerObject
 		//send player characters to load
         for (var i = 0; i < playerManager.players.Count; i++)
         {
-            NetworkPlayer computer = (playerManager.players[i].GetComponent("NetPlayer") as NetPlayer).networkPlayer;
-            int playerNumber = (playerManager.players[i].GetComponent("NetPlayer") as NetPlayer).localPlayerNumber;
+            NetworkPlayer computer = playerManager.players[i].GetComponent<NetPlayer>().networkPlayer;
+            int playerNumber = playerManager.players[i].GetComponent<NetPlayer>().localPlayerNumber;
             networkView.RPC("AddNewPlayer", player, computer, playerNumber);
         }
 		if(menuManager.gameState == MenuManager.GameState.Game)
@@ -85,7 +86,7 @@ public class MapManager : BlockerObject
 		{
 			foreach(NetPlayer player in playerManager.players)
 			{
-				respawnPlayer(player.name);
+				respawnPlayer(player.player.name);
 			}
 		}
 		//switch to player camera
@@ -100,7 +101,7 @@ public class MapManager : BlockerObject
 	public void respawnPlayer(string name) //called on server, sets the players position in random area around spawn
 	{
 		Transform spawnArea = menuManager.bgMap.transform.FindChild("Spawn").transform;
-		GameObject player = world.transform.FindChild("RootTeam/" + name).gameObject;
+		GameObject player = findNetPlayerNamed(name);
 		Vector3 spawnLocation = spawnArea.transform.position;
 		Quaternion spawnRotation = spawnArea.transform.rotation;
 		
@@ -112,23 +113,24 @@ public class MapManager : BlockerObject
 									Random.Range(spawnArea.position.y - spawnArea.localScale.y/2 ,spawnArea.position.y + spawnArea.localScale.y/2),  
 									Random.Range(spawnArea.position.z - spawnArea.localScale.z/2 ,spawnArea.position.z + spawnArea.localScale.z/2));
 			//check if putting the player there causes a collision
-			if(Physics.OverlapSphere(spawnLocation, player.collider.bounds.max.y).Length <= 1)
+			if(Physics.OverlapSphere(spawnLocation, player.transform.Find ("Doll").collider.bounds.max.y).Length <= 1)
 			{
 				break;
 			}
-			player.transform.rotation = spawnArea.transform.rotation;
+			player.transform.Find("Doll").rotation = spawnArea.transform.rotation;
 			attempts++;
 			
 		}
-		player.rigidbody.velocity = new Vector3();
+		player.transform.Find ("Doll").rigidbody.velocity = new Vector3();
 		networkView.RPC("setPlayerPos", RPCMode.All, name, spawnLocation, spawnRotation);
 		 
 	}
 	[RPC]
 	void setPlayerPos(string name, Vector3 pos, Quaternion rot) //called on clients, copies players location from server
 	{
-		world.transform.FindChild("RootTeam/" + name).transform.position = pos;
-		world.transform.FindChild("RootTeam/" + name).transform.rotation = rot;
+		GameObject player = findNetPlayerNamed(name);
+		player.transform.Find("Doll").transform.position = pos;
+		player.transform.Find("Doll").transform.rotation = rot;
 	}
 	
 	
@@ -154,5 +156,17 @@ public class MapManager : BlockerObject
 	void RemoveMap()
 	{
 		Destroy (menuManager.bgMap);
+	}
+	
+	GameObject findNetPlayerNamed(string name)
+	{
+		foreach(NetPlayer player in playerManager.players)
+		{
+			if(player.player.name == name )
+			{
+				return player.player.gameObject;	
+			}
+		}
+		throw new System.Exception("couldn't find player");
 	}
 }

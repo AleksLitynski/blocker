@@ -85,8 +85,6 @@ public class NetObject : BlockerObject {
 		
 	    rigidbody.AddRelativeForce(disp * Time.deltaTime);
 		
-		Debug.DrawRay(transform.position, transform.forward, Color.red, 10);
-		Debug.DrawLine(transform.position, transform.position + rigidbody.velocity);
 		
 	}
 	
