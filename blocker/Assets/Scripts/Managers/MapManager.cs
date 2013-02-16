@@ -112,16 +112,25 @@ public class MapManager : BlockerObject
 			spawnLocation = new Vector3(Random.Range(spawnArea.position.x - spawnArea.localScale.x/2 ,spawnArea.position.x + spawnArea.localScale.x/2), 
 									Random.Range(spawnArea.position.y - spawnArea.localScale.y/2 ,spawnArea.position.y + spawnArea.localScale.y/2),  
 									Random.Range(spawnArea.position.z - spawnArea.localScale.z/2 ,spawnArea.position.z + spawnArea.localScale.z/2));
+			
 			//check if putting the player there causes a collision
 			if(Physics.OverlapSphere(spawnLocation, player.transform.Find ("Doll").collider.bounds.max.y).Length <= 1)
 			{
 				break;
 			}
+<<<<<<< HEAD
 			player.transform.Find("Doll").rotation = spawnArea.transform.rotation;
 			attempts++;
 			
 		}
 		player.transform.Find ("Doll").rigidbody.velocity = new Vector3();
+=======
+			attempts++;
+			
+		}
+		player.rigidbody.velocity = new Vector3();
+		player.transform.rotation = spawnArea.transform.rotation;
+>>>>>>> Checkpoints actually work
 		networkView.RPC("setPlayerPos", RPCMode.All, name, spawnLocation, spawnRotation);
 		 
 	}
@@ -140,11 +149,10 @@ public class MapManager : BlockerObject
 		// instantiate the map on the local machine.
 		//Ball spawning and some other junk
 		maptoLoad = maptoLoad.Remove(maptoLoad.Length-7);
-		Destroy (menuManager.bgMap);
+		DestroyImmediate (menuManager.bgMap);
 		GameObject newMap = Instantiate(Resources.Load("Maps/" + maptoLoad), Vector3.zero, Quaternion.identity) as GameObject;
 		newMap.AddComponent<WorldBounds>();
 		menuManager.bgMap = newMap;
-		menuManager.bgMap.GetComponent<GameManager>().ToggleAllCheckpoints(true);
 		
 		newMap.AddComponent<NetworkView>();
 		newMap.GetComponent<GameManager>().init();

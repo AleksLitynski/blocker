@@ -93,7 +93,7 @@ public class mapConverter
 	private XmlElement createCheckpointNode(GameObject checkpoint, XmlDocument doc)
 	{
 		XmlElement toReturn = doc.CreateElement("Checkpoint");
-		RaceCheckpoint comp = checkpoint.GetComponent<RaceCheckpoint>();
+		Zone comp = checkpoint.GetComponent<Zone>();
 		int order = -1;
 		float maxPoints = -1;
 		float scoreReward = -1;

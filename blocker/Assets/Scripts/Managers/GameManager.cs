@@ -23,17 +23,18 @@ public class GameManager: BlockerObject
 	// next when a node is "completed" (its maxpoints have been
 	// reached): choosing a random node, or choosing a node next by the
 	// order.
-	public enum NextNodeRule {RandomNode, OrderedNodes};
-	public NextNodeRule nextNodeRule = NextNodeRule.OrderedNodes;
+	public enum NextNodeRule {RandomNode, Ascending, Descending};
+	public NextNodeRule nextNodeRule = NextNodeRule.Ascending;
+	
+	public enum GameType {Race, KingOfTheHill};
+	public GameType gameType;
 	
 	// game variables
-	public List<GameObject> checkpoints;
 	public int index;
 	public int maxIndex;
 	public int scoreToWin;
 	public int numWinners;				
 	public int currWinners;
-	public bool matchOver;
 	public float elapsedTime;
 	public float maxTime;
 	
@@ -63,38 +64,35 @@ public class GameManager: BlockerObject
 		if (Network.peerType == NetworkPeerType.Server)
 		{
 			// handle a player colliding with a checkpoint
-			for (int i = 0; i < checkpoints.Count; i++)
+			foreach (GameObject zone in GameObject.FindGameObjectsWithTag("Checkpoint"))
 			{
-				RaceCheckpoint raceCheckpoint = checkpoints[i].GetComponent<RaceCheckpoint>();
+				Zone zoneVals = zone.GetComponent<Zone>();
 				
-				
-				if (raceCheckpoint.hitby != null && raceCheckpoint.hitby != "")
+				if (zoneVals.hitby != null && zoneVals.hitby != "")
 				{
 					// check if this is the next checkpoint. if so, advance the checkpoint
 					// toward its maxPoints (default starting at 0 going to 1), give player points,
 					// and advance the index to the next checkpoint.
-					if (raceCheckpoint.orderInRace == index)
+					if (zoneVals.orderInRace == index)
 					{
-						if (raceCheckpoint.currentPoints < raceCheckpoint.maxPoints)
+						if (zoneVals.currentPoints < zoneVals.maxPoints)
 						{
-							raceCheckpoint.currentPoints++;
+							zoneVals.currentPoints++;
 							// find the player, get their netplayer component, and give em some points
-							Debug.Log (raceCheckpoint.hitby+ " " + i);
-							Debug.Log(checkpoints.Count);
-							world.networkView.RPC ("givePoints", RPCMode.All, i, raceCheckpoint.hitby);
+							networkView.RPC ("givePoints", RPCMode.All, zone.name, zoneVals.hitby);
 							//GameObject.Find(raceCheckpoint.hitby).GetComponent<NetPlayer>().playerStats.score += raceCheckpoint.scoreReward;
 						}
 						else //if (raceCheckpoint.currentPoints == raceCheckpoint.maxPoints)
 						{
 							// reset currentPoints and advance the index
-							raceCheckpoint.currentPoints = 0;
+							zoneVals.currentPoints = 0;
 							advanceIndex();
 							
 							// tell everyone about the new checkpoint.
 							networkView.RPC ("setCheckpoint", RPCMode.All, index);
 							
 							// reset the hit detection
-							raceCheckpoint.hitby = null;
+							zoneVals.hitby = null;
 						}
 					}
 					else
@@ -102,7 +100,7 @@ public class GameManager: BlockerObject
 						// if you are not the index,
 						// fuck you,
 						// goodbye,
-						raceCheckpoint.hitby = null;
+						zoneVals.hitby = null;
 					}
 				}
 			}
@@ -141,33 +139,24 @@ public class GameManager: BlockerObject
 	
 	public void init()
 	{
+		// initialize indices
+		index = 0;
+		maxIndex = 0;
+		elapsedTime = 0;
+		maxTime = 60;
+		int nameint = 0;
 		// create a temp array to hold all the checkpoint objects
-		checkpoints.Clear();
-		foreach(GameObject obj in GameObject.FindGameObjectsWithTag("RaceCheckpoint"))
+		foreach(GameObject zone in GameObject.FindGameObjectsWithTag("Checkpoint"))
 		{
-			/*if(obj.transform.parent == GameObject.Find ("World").GetComponent<MapManager>().loadedMap.transform)
-			{
-				checkpoints.Add(obj);
-			}*/
-			if (obj.transform.parent == this.gameObject.transform)
-			{
-				checkpoints.Add(obj);
-			}
-		}
-		
-		
-		
-		RaceCheckpoint[] temp = new RaceCheckpoint[checkpoints.Count];
-		
-		foreach(GameObject point in checkpoints)
-		{
-			(point.GetComponent("Halo") as Behaviour).enabled = false;
-		}
-		
-		// loop through checkpoints and grab their scripts
-		for(int i = 0; i < temp.Length; i++)
-		{
-			temp[i] = (RaceCheckpoint)checkpoints[i].GetComponent("RaceCheckpoint");
+			(zone.GetComponent("Halo") as Behaviour).enabled = false;
+			zone.transform.FindChild("Sphere").GetComponent<MeshRenderer>().enabled = false;
+			
+			if (zone.GetComponent<Zone>().orderInRace > maxIndex) 
+				maxIndex = zone.GetComponent<Zone>().orderInRace;
+			if (zone.GetComponent<Zone>().orderInRace < index) 
+				index = zone.GetComponent<Zone>().orderInRace;
+			zone.name = zone.name + nameint;
+			nameint++;
 		}
 		
 		switch(sameOrderRule)
@@ -177,16 +166,16 @@ public class GameManager: BlockerObject
 			break;
 		case SameOrderRule.UseUniqueValue:
 			// loop through scripts to find same order values
-			for (int i = 0; i < temp.Length - 1; i++)
+			foreach (GameObject zone1 in GameObject.FindGameObjectsWithTag("Checkpoint"))
 			{
-				for (int j = i + 1; j < temp.Length; j++)
+				foreach (GameObject zone2 in GameObject.FindGameObjectsWithTag("Checkpoint"))
 				{
 					// if a matching value is found, change a value and 
 					// reset the search
-					if (temp[i].orderInRace == temp[j].orderInRace)
+					if (zone1.GetComponent<Zone>().orderInRace == zone2.GetComponent<Zone>().orderInRace)
 					{
-						temp[j].orderInRace++;
-						i = 0;
+						maxIndex++;
+						zone2.GetComponent<Zone>().orderInRace = maxIndex;
 					}
 				}
 			}
@@ -195,47 +184,26 @@ public class GameManager: BlockerObject
 		
 		gameObject.AddComponent<NetworkView>();
 		
-		// initialize indices
-		index = 0;
-		maxIndex = 0;
-		
-		for (int i = 0; i < temp.Length; i++)
-		{
-			// find the greatest order in race.
-			if (temp[i].orderInRace > maxIndex) maxIndex = temp[i].orderInRace;
-			if (temp[i].orderInRace < index) index = temp[i].orderInRace;
-		}
-		
-		matchOver = false;
+		index = maxIndex;
+		advanceIndex();
 		
 		unpack = true;
-		
-		changeHalo(index, true);
-		
-		elapsedTime = 0;
-		maxTime = 60;
 	}
 	
 	void advanceIndex()
 	{
 		networkView.RPC ("changeHalo",RPCMode.All,index, false);
-		RaceCheckpoint[] temp = new RaceCheckpoint[checkpoints.Count];
 		
-		// loop through checkpoints and grab their scripts
-		for(int i = 0; i < temp.Length; i++)
-		{
-			temp[i] = checkpoints[i].GetComponent<RaceCheckpoint>();
-		}
 		switch(nextNodeRule)
 		{
-		case NextNodeRule.OrderedNodes:
+		case NextNodeRule.Ascending:
 			// easy case
 			if (index == maxIndex)
 			{
 				// find  the least index among checkpoints.
-				for (int i = 0; i < temp.Length; i++)
+				foreach (GameObject zone in GameObject.FindGameObjectsWithTag("Checkpoint"))
 				{
-					if (temp[i].orderInRace < index) index = temp[i].orderInRace;
+					if (zone.GetComponent<Zone>().orderInRace <= index) index = zone.GetComponent<Zone>().orderInRace;
 				}
 				networkView.RPC ("changeHalo", RPCMode.All, index, true);
 				return;
@@ -250,18 +218,19 @@ public class GameManager: BlockerObject
 				// increment that shit til its something
 				index++;
 				
-				for (int i = 0; i < temp.Length; i++)
+				foreach (GameObject zone in GameObject.FindGameObjectsWithTag("Checkpoint"))
 				{
 					// no lazy. gotta make a damn variable to break from the while loop #wtf
 					//if (temp[i].orderInRace == index) break;
-					if (temp[i].orderInRace == index) whilebreak = true;
+					if (zone.GetComponent<Zone>().orderInRace == index) whilebreak = true;
 				}
+				
 				if (whilebreak) break;
 			}
 			break;
 		case NextNodeRule.RandomNode:
 			// get the index from a random checkpoint in the map.
-			index = temp[Random.Range (0,temp.Length)].orderInRace;
+			index = GameObject.FindGameObjectsWithTag("Checkpoint")[Random.Range (0,GameObject.FindGameObjectsWithTag("Checkpoint").Length)].GetComponent<Zone>().orderInRace;
 			break;
 		}
 		networkView.RPC ("changeHalo", RPCMode.All, index, true);
@@ -278,27 +247,13 @@ public class GameManager: BlockerObject
 		}
 	}
 	
-	public void ToggleAllCheckpoints(bool tf)
-	{
-		foreach(GameObject rc in checkpoints)
-		{
-			rc.GetComponent<RaceCheckpoint>().AlterLifeState(tf);
-		}
-	}
-	
 	[RPC]
 	void setCheckpoint(int newIndex)
 	{
 		index = newIndex;
-		foreach(GameObject rc in checkpoints)
-		{
-			rc.GetComponent<RaceCheckpoint>().awake = false;
-		}
-		Debug.Log(checkpoints[index].GetComponent<RaceCheckpoint>().awake);
-		checkpoints[index].GetComponent<RaceCheckpoint>().awake = true;
-		Debug.Log(checkpoints[index].GetComponent<RaceCheckpoint>().awake);
 	}
 	
+	// made for late join 
 	[RPC]
 	void setScore(int score, string playerName)
 	{
@@ -312,17 +267,14 @@ public class GameManager: BlockerObject
 	
 	// this function uses the index of the loop to give points to the hitby of checkpoints[i]
 	[RPC]
-	void givePoints(int i, string hitby)
+	void givePoints(string zoneName, string hitby)
 	{
-		// get the component script
-		RaceCheckpoint rc = checkpoints[i].GetComponent<RaceCheckpoint>();
-		
 		// find the mofo that hit this dude and give that sucka some dough
 		GameObject playerToFind = GameObject.Find(hitby);
 		
 		if(playerToFind != null)
 		{
-			playerToFind.GetComponent<PlayerStats>().score += rc.scoreReward;
+			playerToFind.GetComponent<PlayerStats>().score += GameObject.Find(zoneName).GetComponent<Zone>().scoreReward;
 			
 			// add this guy to the hall of fame.
 			if (playerToFind.GetComponent<PlayerStats>().score > scoreToWin) currWinners++;
@@ -331,14 +283,23 @@ public class GameManager: BlockerObject
 	
 	// i is the index of the checkpoint to light
 	[RPC]
-	void changeHalo(int i, bool tf)
+	void changeHalo(int ind, bool tf)
 	{
-		/*if(checkpoints.Count < i)
+		foreach(GameObject zone in GameObject.FindGameObjectsWithTag("Checkpoint"))
 		{
+<<<<<<< HEAD
 			(checkpoints[i].GetComponent("Halo") as Behaviour).enabled = tf;	
 		}*/
 		//Debug.Log(checkpoints.Count + "in");
 		(checkpoints[i].GetComponent("Halo") as Behaviour).enabled = tf;
 		checkpoints[i].active = tf;
+=======
+			if(zone.GetComponent<Zone>().orderInRace == ind)
+			{
+				zone.GetComponent<Zone>().toggleHalo(tf);
+				zone.transform.FindChild("Sphere").GetComponent<MeshRenderer>().enabled = tf;
+			}
+		}
+>>>>>>> Checkpoints actually work
 	}
 }

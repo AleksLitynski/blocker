@@ -121,11 +121,11 @@ public class MenuManager : BlockerObject
 	{
 		if (tf)
 		{
+			// initialize the state for non gameplay-stuff.
 			Screen.lockCursor = false;
-			//Destroy(bgMap);
+			Destroy(bgMap);
 			playerManager.setToWorldCamera();
 			playerManager.HidePlayers();
-			//raceManager.init();
 			var bullets = world.transform.FindChild("Bullets");
 			Destroy(bullets.gameObject);
 			var newBullets = new GameObject();
@@ -156,12 +156,11 @@ public class MenuManager : BlockerObject
 			}
 			
 			cameraPosition = new Vector3(1.5f*(maxx-minx), (maxy-miny), maxz-minz);
-			lookAtPosition = new Vector3(0,.5f*(maxy-miny),0);
-			
-			bgMap.GetComponent<GameManager>().ToggleAllCheckpoints(false);
+			lookAtPosition = bgMap.transform.position;
 		}
 		else
 		{
+			// initialize the state for gameplay.
 			Screen.lockCursor = true;
 			playerManager.RevealPlayers();
 			playerManager.setToLocalCameras();
@@ -169,8 +168,6 @@ public class MenuManager : BlockerObject
 			{
 				player.playerStats.score = 0;	
 			}
-			
-			bgMap.GetComponent<GameManager>().ToggleAllCheckpoints(true);
 		}
 		bgtoggle = tf;
 	}

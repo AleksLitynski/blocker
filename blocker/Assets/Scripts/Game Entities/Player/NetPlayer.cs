@@ -67,7 +67,7 @@ public class NetPlayer : NetObject
 			{
 				playerArrow.LookAt(gameManager.checkpoints[gameManager.index].transform.position);
 			}*/
-			playerArrow.LookAt(gameManager.checkpoints[gameManager.index].transform.position);
+			//playerArrow.LookAt(gameManager.checkpoints[gameManager.index].transform.position);
 		}
 		else
 		{
