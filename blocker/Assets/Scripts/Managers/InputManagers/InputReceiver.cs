@@ -37,6 +37,7 @@ public class InputReceiver : BlockerObject
 					{
 						player.playerCamera.GetComponent<FollowCamera>().lockedCamera = true;	
 					}
+					player.laserOn = true;
 				}
 				else
 				{
@@ -44,6 +45,7 @@ public class InputReceiver : BlockerObject
 					{
 						player.playerCamera.GetComponent<FollowCamera>().lockedCamera = false;	
 					}
+					player.laserOn = false;
 				}
 				
                 break;

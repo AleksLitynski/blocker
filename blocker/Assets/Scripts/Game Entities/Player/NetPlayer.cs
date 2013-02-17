@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 [RequireComponent(typeof(PlayerStats))]
 public class NetPlayer : NetObject 
@@ -18,11 +19,15 @@ public class NetPlayer : NetObject
 	public Transform playerCamera;
 	[HideInInspector]
 	public Transform player;
+	[HideInInspector]
+	public Transform playerCompass;
+	
 
     bool _keyboardPlayer = false;
     bool _mobilePlayer = false;
     int _controllerNumber = -1;
 	public float lookPitch = 0;
+	public bool laserOn = false;
 	
 	GameManager gameManager;
 	
@@ -34,16 +39,39 @@ public class NetPlayer : NetObject
 	{
 		player = transform.parent;
 		playerArms = transform.FindChild("Model/Arms");
-		playerArrow = player.FindChild("Compass/arrow");
 		playerCamera = player.FindChild("Camera");
-		playerArrow.gameObject.layer = 20 + localPlayerNumber; //set layer for arrow so I can hide it from the camera
-		for(int i = 0; i < playerArrow.GetChildCount(); i++)
-		{
-			playerArrow.GetChild(i).gameObject.layer = 20 + localPlayerNumber;
-		}
+		playerArrow = playerCamera.FindChild("Compass/arrow");
+		playerCompass = playerCamera.FindChild("Compass");
 		playerStats = gameObject.GetComponent<PlayerStats>();
 		
-		//gameManager = menuManager.bgMap.GetComponent<GameManager>();
+		int newLayer = 21 + localPlayerNumber;
+		//set the compass to the local player's level
+		if(Network.player == networkPlayer)
+		{
+			playerCompass.gameObject.layer = newLayer;
+			for(int i = 0; i < playerCompass.GetChildCount(); i++)
+			{
+				playerCompass.GetChild(i).gameObject.layer = newLayer;
+			}
+			for(int i = 0; i < playerArrow.GetChildCount(); i++)
+			{
+				playerArrow.GetChild(i).gameObject.layer = newLayer;
+			}
+		}
+		else
+		{
+			playerCompass.gameObject.layer = 20;
+			for(int i = 0; i < playerCompass.GetChildCount(); i++)
+			{
+				playerCompass.GetChild(i).gameObject.layer = 20;
+			}
+			for(int i = 0; i < playerArrow.GetChildCount(); i++)
+			{
+				playerArrow.GetChild(i).gameObject.layer = 20;
+			}
+		}
+		
+		
 	}
 	
 	void Update()
@@ -53,26 +81,36 @@ public class NetPlayer : NetObject
 			gameManager = menuManager.bgMap.GetComponent<GameManager>();
 		}
 		
-		if(networkPlayer.ToString() == Network.player.ToString())
+		
+		GameObject[] checkpoints = GameObject.FindGameObjectsWithTag("Checkpoint");
+		Vector3 target = transform.position;
+		foreach(GameObject checkpoint in checkpoints)
 		{
-			playerArrow.gameObject.SetActiveRecursively(true);
-			foreach(NetPlayer player in playerManager.localPlayers)//I'm trying to hide the arrow from all local players. Its not working so far.
-			{	
-				if(player != this)
+			if(checkpoint.GetComponent<Zone>().orderInRace == gameManager.index)
+			{
+				if(Vector3.SqrMagnitude(transform.position - checkpoint.transform.position) < Vector3.SqrMagnitude(transform.position - target))
 				{
-					playerCamera.gameObject.camera.cullingMask = playerCamera.gameObject.camera.cullingMask | (1 << (20 + player.localPlayerNumber));
+					target = new Vector3(checkpoint.transform.position.x, checkpoint.transform.position.y, checkpoint.transform.position.z);
 				}
 			}
-			/*if(gameManager.index < gameManager.checkpoints.Count)
-			{
-				playerArrow.LookAt(gameManager.checkpoints[gameManager.index].transform.position);
-			}*/
-			//playerArrow.LookAt(gameManager.checkpoints[gameManager.index].transform.position);
 		}
-		else
+		playerArrow.LookAt(target);
+		
+		string toLog = "20, ";
+		List<int> toIgnore = new List<int>();
+		toIgnore.Add(20);
+		foreach(NetPlayer player in playerManager.localPlayers)
 		{
-			playerArrow.gameObject.SetActiveRecursively(false);
+			if(player.localPlayerNumber != localPlayerNumber)
+			{
+				toIgnore.Add(21 + player.localPlayerNumber);	
+				toLog += "" + (21 + player.localPlayerNumber) + ", ";	
+			}
 		}
+		Debug.Log((21+localPlayerNumber) + ": " + toLog);
+		playerCamera.camera.cullingMask = LayerMaskHelper.EverythingBut(toIgnore.ToArray()); 
+		
+		drawLaserPointer(laserOn);
 	}
 
     public bool KeyboardPlayer
@@ -177,6 +215,35 @@ public class NetPlayer : NetObject
 		{
 			// Tell Dog I just died!
 			c.gameObject.SendMessage("PlayerExit", player.name, SendMessageOptions.DontRequireReceiver);
+		}
+	}
+	
+	void drawLaserPointer(bool active)
+	{
+		
+		LineRenderer lineRenderer  = GetComponent<LineRenderer>();
+		
+		if(active)
+		{
+			Transform hand = playerArms.Find("Hand");
+			lineRenderer.useWorldSpace = true;
+		    lineRenderer.SetVertexCount(2);
+			lineRenderer.SetPosition(0,hand.position);
+		    RaycastHit hit;
+		    Physics.Raycast(hand.position, hand.forward, out hit);
+		    if(hit.collider)
+			{
+		    	lineRenderer.SetPosition(1, hand.position + hand.forward * hit.distance);
+		    }
+		    else
+			{
+		        lineRenderer.SetPosition(1, hand.position + hand.forward * 500);
+		    }
+		}
+		else
+		{
+			lineRenderer.SetPosition(0,new Vector3(0,0,0));
+			lineRenderer.SetPosition(1,new Vector3(0,0,0));
 		}
 	}
 }

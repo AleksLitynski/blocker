@@ -192,7 +192,10 @@ public class GameManager: BlockerObject
 	
 	void advanceIndex()
 	{
-		networkView.RPC ("changeHalo",RPCMode.All,index, false);
+		if(Network.peerType != NetworkPeerType.Disconnected)
+		{
+			networkView.RPC ("changeHalo",RPCMode.All,index, false);
+		}
 		
 		switch(nextNodeRule)
 		{
@@ -205,7 +208,10 @@ public class GameManager: BlockerObject
 				{
 					if (zone.GetComponent<Zone>().orderInRace <= index) index = zone.GetComponent<Zone>().orderInRace;
 				}
-				networkView.RPC ("changeHalo", RPCMode.All, index, true);
+				if(Network.peerType != NetworkPeerType.Disconnected)
+				{
+					networkView.RPC ("changeHalo", RPCMode.All, index, true);
+				}
 				return;
 			}
 			
