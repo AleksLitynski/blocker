@@ -31,6 +31,20 @@ public class InputReceiver : BlockerObject
 				{
 					player.GetComponent<PlayerStats>().FiredSinceMouseDown = false;
 				}
+				if(f2)
+				{
+					if(playerManager.localPlayers.IndexOf(player) != -1)
+					{
+						player.playerCamera.GetComponent<FollowCamera>().lockedCamera = true;	
+					}
+				}
+				else
+				{
+					if(playerManager.localPlayers.IndexOf(player) != -1)
+					{
+						player.playerCamera.GetComponent<FollowCamera>().lockedCamera = false;	
+					}
+				}
 				
                 break;
             }

@@ -3,27 +3,26 @@ using System.Collections;
 
 public class FollowCamera : BlockerObject 
 {
-	
+	public bool lockedCamera = false;
 	public Transform targetLocation;
-	public Vector3 lookAtTarget;
-//	public Vec cameraLookTowards;
-	public float speed;
-	public float forwardDistance = 100;
+	private Vector3 oldLocation;
+	public float speed = 0.03f;
 	
-	public Vector3 offset;
+	public Vector3 offset = new Vector3(0, 5, -10);
+	public Vector3 lockedOffset = new Vector3(0, 1f, -2);
 	
-	public Vector3 targetPosition;
-	public Quaternion targetRotation;
+	private Vector3 targetPosition;
+	private Quaternion targetRotation;
+	
+	bool isLocked = false;
+	float timeSinceLockRequested = 0f;
 	
 	public override void Start () 
 	{
 		base.Start();
-		targetLocation = transform.parent.Find("Doll");
-
-		offset = new Vector3(0, 5, -10);
-		speed = 0.03f;
-		
-		calculateTarget();
+		targetLocation = transform.parent.Find("Doll/Model/Arms");
+		updateOldLocation();
+		calculateTarget(offset);
 		
 		transform.position = targetPosition;
 		transform.rotation = targetRotation;
@@ -31,43 +30,65 @@ public class FollowCamera : BlockerObject
 	
 	void LateUpdate ()
 	{
-		float compSpeed = speed;
-		if(Input.GetKey(KeyCode.Q))
+		
+		if(lockedCamera)
 		{
-			offset = new Vector3(-3f, 1f, -2f);
-			speed = 0.06f;
+			calculateTarget(lockedOffset);
+			if(timeSinceLockRequested == 0)//Makes the camera not jump when the target location changes abruptly
+			{
+				updateOldLocation();
+			}
+			timeSinceLockRequested += Time.deltaTime;
+			if(Vector3.Distance(targetPosition, transform.position) > 0.5f && !isLocked)
+			{
+				float compSpeed = speed * Mathf.Pow(timeSinceLockRequested * 10, 2);
+				
+				transform.position = Vector3.Lerp(transform.position - (targetPosition - oldLocation), targetPosition, compSpeed) ;//+ (targetPosition - oldLocation);
+				transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, compSpeed * 2);
+				
+			}
+			else
+			{				
+				transform.position = targetPosition;
+				transform.rotation = targetRotation;
+				isLocked = true;
+			}
+			
 		}
 		else
 		{
-			offset = new Vector3(0, 5, -10);
-			speed = 0.03f;	
-			compSpeed *= (Vector3.Distance(targetPosition, transform.position)/5);
+			calculateTarget(offset);
+			float compSpeed = speed * (Vector3.Distance(targetPosition, transform.position)/5);
+			
+			transform.position = Vector3.Lerp(transform.position, targetPosition, compSpeed);
+			transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, compSpeed ); //*2
+			isLocked = false;
+			timeSinceLockRequested = 0f;
 		}
 		
-		calculateTarget();
 		
-		
-		transform.position = Vector3.Lerp(transform.position, targetPosition, compSpeed);
-		transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, compSpeed * 2);
-		
-		
-		Debug.DrawLine(targetPosition, lookAtTarget, Color.blue);
-		
+		updateOldLocation();
+				
 	}
 	
-	
-	void calculateTarget()
+	void calculateTarget(Vector3 inputOffset)
 	{
 		targetPosition = targetLocation.position;
-		targetPosition += targetLocation.forward * offset.z;
-		targetPosition += targetLocation.right * offset.x;
-		targetPosition += targetLocation.up * offset.y;
-		
-		Transform targetLookAt = targetLocation.Find("Model/Arms");
-		lookAtTarget = targetLookAt.position + targetLookAt.forward * forwardDistance;
+		targetPosition += targetLocation.forward * inputOffset.z;
+		targetPosition += targetLocation.right * inputOffset.x;
+		targetPosition += targetLocation.up * inputOffset.y;
 		
 		targetRotation = Quaternion.identity;
-		targetRotation.SetLookRotation( lookAtTarget - targetPosition, targetLocation.up);//targetLocation.position
+		if((targetLocation.position - targetPosition) != Vector3.zero)
+		{
+			targetRotation.SetLookRotation( targetLocation.position - targetPosition, targetLocation.up);
+		}
 	}
+	
+	void updateOldLocation()
+	{
+		oldLocation = new Vector3(targetPosition.x, targetPosition.y, targetPosition.z);
+	}
+	
 	
 }
