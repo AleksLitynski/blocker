@@ -287,19 +287,11 @@ public class GameManager: BlockerObject
 	{
 		foreach(GameObject zone in GameObject.FindGameObjectsWithTag("Checkpoint"))
 		{
-<<<<<<< HEAD
-			(checkpoints[i].GetComponent("Halo") as Behaviour).enabled = tf;	
-		}*/
-		//Debug.Log(checkpoints.Count + "in");
-		(checkpoints[i].GetComponent("Halo") as Behaviour).enabled = tf;
-		checkpoints[i].active = tf;
-=======
 			if(zone.GetComponent<Zone>().orderInRace == ind)
 			{
 				zone.GetComponent<Zone>().toggleHalo(tf);
 				zone.transform.FindChild("Sphere").GetComponent<MeshRenderer>().enabled = tf;
 			}
 		}
->>>>>>> Checkpoints actually work
 	}
 }

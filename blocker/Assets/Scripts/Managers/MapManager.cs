@@ -118,19 +118,11 @@ public class MapManager : BlockerObject
 			{
 				break;
 			}
-<<<<<<< HEAD
 			player.transform.Find("Doll").rotation = spawnArea.transform.rotation;
 			attempts++;
 			
 		}
 		player.transform.Find ("Doll").rigidbody.velocity = new Vector3();
-=======
-			attempts++;
-			
-		}
-		player.rigidbody.velocity = new Vector3();
-		player.transform.rotation = spawnArea.transform.rotation;
->>>>>>> Checkpoints actually work
 		networkView.RPC("setPlayerPos", RPCMode.All, name, spawnLocation, spawnRotation);
 		 
 	}
