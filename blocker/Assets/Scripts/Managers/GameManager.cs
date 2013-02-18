@@ -75,7 +75,7 @@ public class GameManager: BlockerObject
 					// and advance the index to the next checkpoint.
 					if (zoneVals.orderInRace == index)
 					{
-						if (zoneVals.currentPoints < zoneVals.maxPoints)
+						if (zoneVals.currentPoints < zoneVals.maxPoints && menuManager.gameState == MenuManager.GameState.Game)
 						{
 							zoneVals.currentPoints++;
 							// find the player, get their netplayer component, and give em some points
@@ -126,7 +126,7 @@ public class GameManager: BlockerObject
 			case WinRule.FirstToLimit:
 				foreach(NetPlayer player in playerManager.players)
 				{
-					if (player.playerStats.score >= scoreToWin)
+					if (player.playerStats.score >= scoreToWin && menuManager.gameState == MenuManager.GameState.Game)
 					{
 						world.networkView.RPC ("ChangeState", RPCMode.All, MenuManager.LobbyCode);	
 					}
@@ -182,10 +182,18 @@ public class GameManager: BlockerObject
 			break;
 		}
 		
-		gameObject.AddComponent<NetworkView>();
-		
 		index = maxIndex;
 		advanceIndex();
+		
+		if(!gameObject.GetComponent<NetworkView>())
+		{
+			gameObject.AddComponent<NetworkView>();
+			gameObject.GetComponent<NetworkView>().stateSynchronization = NetworkStateSynchronization.Off;
+		}
+		if(Network.peerType != NetworkPeerType.Disconnected)
+		{
+			networkView.RPC ("setCheckpoint", RPCMode.All, index);
+		}
 		
 		unpack = true;
 	}
@@ -241,7 +249,6 @@ public class GameManager: BlockerObject
 		}
 		networkView.RPC ("changeHalo", RPCMode.All, index, true);
 	}
-	
 	
 	void OnPlayerConnected(NetworkPlayer player)
 	{

@@ -4,6 +4,8 @@ using System.Collections;
 public class InputReceiver : BlockerObject 
 {
 	
+	int maxBullets = 10;
+	
 	[RPC]
     public void AddInput(float f, float s, float tR, float tU, bool j, bool f1, bool f2, bool sp, bool c, int localNumber, NetworkMessageInfo info)
     {
@@ -15,7 +17,8 @@ public class InputReceiver : BlockerObject
             {
                 player.move(new InputCollection(player, f, s, tR, tU, j, f1, f2, sp, c));
 				
-				networkView.RPC("setPlayerTransform", RPCMode.Others, player.transform.position, player.transform.rotation.eulerAngles, player.playerArms.rotation, player.name);
+				Debug.Log("got an input from: " + player.player.name);
+				networkView.RPC("setPlayerTransform", RPCMode.Others, player.transform.position, player.transform.rotation.eulerAngles, player.playerArms.rotation, player.player.name);
 				
 				// fire bullets
 				if(f1 && !player.GetComponent<PlayerStats>().FiredSinceMouseDown && menuManager.gameState == MenuManager.GameState.Game) //ummmm? Maybe this does something??????
@@ -23,9 +26,25 @@ public class InputReceiver : BlockerObject
 					Screen.lockCursor = true;
 					string name = "testBullet" + Random.Range(0,1000000);
 					networkView.RPC("spawnObject", RPCMode.All, player.transform.position + player.playerArms.forward * 1.5f , player.transform.rotation.eulerAngles, name, "testBullet", "World/Bullets");
-					networkView.RPC ("setBulletVelocity", RPCMode.All, player.playerArms.forward * 250, "World/Bullets/"+name);
+					networkView.RPC ("setBulletVelocity", RPCMode.All, player.playerArms.forward * 250000, "World/Bullets/"+name);
 					networkView.RPC ("setObjectGravity", RPCMode.All, player.objectStats.grav, "World/Bullets/"+name);
 					player.GetComponent<PlayerStats>().FiredSinceMouseDown = true;
+					
+					Transform bullets = world.transform.Find("Bullets");
+					if(bullets.childCount > maxBullets)
+					{
+						bullet oldestBullet = bullets.GetChild(0).gameObject.GetComponent<bullet>();
+						for(int i = 0; i < bullets.childCount; i++)
+						{
+							bullet current = bullets.GetChild(i).GetComponent<bullet>();
+							if(current.creationTime < oldestBullet.creationTime)
+							{
+								oldestBullet = current;	
+							}
+						}
+						networkView.RPC("removeObject", RPCMode.All, "World/Bullets/" + oldestBullet.name);
+					}
+					
 				}
 				if(!f1)
 				{
@@ -33,25 +52,34 @@ public class InputReceiver : BlockerObject
 				}
 				if(f2)
 				{
-					if(playerManager.localPlayers.IndexOf(player) != -1)
-					{
-						player.playerCamera.GetComponent<FollowCamera>().lockedCamera = true;	
-					}
-					player.laserOn = true;
+					networkView.RPC ("setScopedIn", RPCMode.All, true, player.player.name);
 				}
 				else
 				{
-					if(playerManager.localPlayers.IndexOf(player) != -1)
-					{
-						player.playerCamera.GetComponent<FollowCamera>().lockedCamera = false;	
-					}
-					player.laserOn = false;
+					networkView.RPC ("setScopedIn", RPCMode.All, false, player.player.name);
 				}
 				
                 break;
             }
         }
     }
+	
+	[RPC]
+	public void setScopedIn(bool scopedIn, string name)
+	{
+		foreach(NetPlayer player in playerManager.players)
+		{
+			if(player.player.name == name)
+			{
+				if(playerManager.localPlayers.IndexOf(player) != -1)
+				{
+					player.playerCamera.GetComponent<FollowCamera>().lockedCamera = scopedIn;	
+				}
+				player.laserOn = scopedIn;
+				break;
+			}
+		}
+	}
 	
 	public void AddInput(float f, float s, float tR, float tU, bool j, bool f1, bool f2, bool sp, bool c, int localNumber)
     {
@@ -63,7 +91,7 @@ public class InputReceiver : BlockerObject
 	{
 		foreach (NetPlayer player in playerManager.players)
         {
-            if (player.name == playerName)
+            if (player.player.name == playerName)
             {
 				player.setTransform(pos, rot);
 				player.playerArms.rotation = armRot;

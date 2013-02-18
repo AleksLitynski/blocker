@@ -16,7 +16,6 @@ public class MapManager : BlockerObject
 		menuManager.bgMap.AddComponent<WorldBounds>();
 	}
 	
-	
     void OnPlayerConnected (NetworkPlayer player)
     {
 		//send player characters to load
@@ -29,7 +28,11 @@ public class MapManager : BlockerObject
 		if(menuManager.gameState == MenuManager.GameState.Game)
 		{
 			networkView.RPC("LoadMap", player, menuManager.bgMap.name);
-			networkView.RPC("initializeGame", player);	
+			networkView.RPC("initializeGame", player, menuManager.bgMap.name);	
+		}
+		if(menuManager.gameState == MenuManager.GameState.Lobby)
+		{
+			networkView.RPC("LoadMap", player, menuManager.bgMap.name);
 		}
 		for(var i = 0; i < world.transform.FindChild("Bullets").childCount; i++)
 		{
@@ -74,13 +77,12 @@ public class MapManager : BlockerObject
         }
     }
 	
-	
-	
 	[RPC]
-	void initializeGame()
+	void initializeGame(string mapName)
 	{
 		//load map
-		LoadMap(menuManager.bgMap.name);
+		Debug.Log("Initilizing Game");
+		LoadMap(mapName);
 		//move all players to spawn
 		if(Network.peerType == NetworkPeerType.Server)
 		{
@@ -129,6 +131,7 @@ public class MapManager : BlockerObject
 		networkView.RPC("setPlayerPos", RPCMode.All, name, spawnLocation, spawnRotation);
 		 
 	}
+	
 	[RPC]
 	void setPlayerPos(string name, Vector3 pos, Quaternion rot) //called on clients, copies players location from server
 	{
@@ -136,7 +139,6 @@ public class MapManager : BlockerObject
 		player.transform.Find("Doll").transform.position = pos;
 		player.transform.Find("Doll").transform.rotation = rot;
 	}
-	
 	
 	[RPC]
 	void LoadMap(string maptoLoad)
@@ -147,11 +149,13 @@ public class MapManager : BlockerObject
 		DestroyImmediate (menuManager.bgMap);
 		GameObject newMap = Instantiate(Resources.Load("Maps/" + maptoLoad), Vector3.zero, Quaternion.identity) as GameObject;
 		newMap.AddComponent<WorldBounds>();
+		if(!newMap.GetComponent<NetworkView>())
+		{
+			newMap.AddComponent<NetworkView>();
+			newMap.GetComponent<NetworkView>().stateSynchronization = NetworkStateSynchronization.Off;
+		}
 		menuManager.bgMap = newMap;
 		
-		newMap.AddComponent<NetworkView>();
-		newMap.GetComponent<GameManager>().init();
-		newMap.networkView.RPC ("setCheckpoint", RPCMode.All, newMap.GetComponent<GameManager>().index);
 	}
 	
 	// making this an rpc seemed very reasonable to me

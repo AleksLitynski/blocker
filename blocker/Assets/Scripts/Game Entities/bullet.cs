@@ -13,6 +13,8 @@ public class bullet : NetObject {
 	void Update () 
 	{
 		rigidbody.velocity += velocity;
+		
+	//	if(Time.time - creationTime 
 	}
 	
 	void OnTriggerExit(Collider other)

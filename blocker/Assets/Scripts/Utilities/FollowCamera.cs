@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class FollowCamera : BlockerObject 
 {
@@ -58,11 +59,12 @@ public class FollowCamera : BlockerObject
 			}
 			else
 			{
-				calculateTarget(offset);
-				float compSpeed = speed * (Vector3.Distance(targetPosition, transform.position)/5);
+				calculateTarget(offset); 
+				var compSpeed = speed * ((Vector3.SqrMagnitude(targetPosition - transform.position)/25));
+			
 				
 				transform.position = Vector3.Lerp(transform.position, targetPosition, compSpeed);
-				transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, compSpeed ); //*2
+				transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, compSpeed); //*2
 				isLocked = false;
 				timeSinceLockRequested = 0f;
 			}
@@ -90,6 +92,30 @@ public class FollowCamera : BlockerObject
 	void updateOldLocation()
 	{
 		oldLocation = new Vector3(targetPosition.x, targetPosition.y, targetPosition.z);
+	}
+	
+	
+	int averageOver = 1000;
+	Queue<float> pastSpeeds = new Queue<float>();
+	
+	float addSpeed(float speed)
+	{
+		pastSpeeds.Enqueue(speed);
+		if(pastSpeeds.Count > averageOver)
+		{
+			pastSpeeds.Dequeue();	
+		}
+		return getAverageSpeed();
+	}
+	
+	float getAverageSpeed()
+	{
+		float sum = 0;
+		foreach(float speed in pastSpeeds)
+		{
+			sum += speed;
+		}
+		return sum / pastSpeeds.Count;
 	}
 	
 	

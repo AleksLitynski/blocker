@@ -11,7 +11,11 @@ public class LobbyMenu : BlockerObject
 					GUILayout.BeginArea(new Rect(Screen.width*1/20,Screen.height*1/20,Screen.width*2/20, Screen.height*15/20));
 						if (GUILayout.Button("New Player", GUILayout.MinWidth(Screen.width*2/20)))
 				        {
-				            if (Network.peerType == NetworkPeerType.Client) menuManager.networkView.RPC("AddNewPlayerRequest", RPCMode.Server);
+				            if (Network.peerType == NetworkPeerType.Client) 
+							{
+								//Debug.Log("you clicked it as a clinet");
+								menuManager.networkView.RPC("AddNewPlayerRequest", RPCMode.Server);
+							}
 				            if (Network.peerType == NetworkPeerType.Server) menuManager.playerManager.AddNewPlayerRequest(new NetworkMessageInfo());
 				        }
 					GUILayout.EndArea();
@@ -64,13 +68,14 @@ public class LobbyMenu : BlockerObject
 							{							
 								// buffer an RPC telling everyone the game has started (join in progress)
 								menuManager.networkView.RPC("ChangeState", RPCMode.AllBuffered, menuManager.GameCode);
-								menuManager.networkView.RPC("initializeGame", RPCMode.All);
+								menuManager.networkView.RPC("initializeGame", RPCMode.All, menuManager.bgMap.name);
 							}
 						}
 						else
 						{
 							if (GUILayout.Button("Vote to Start", GUILayout.MaxWidth(200)))
 							{
+								//LOL JOKES ON YOU PLAYER!
 							}
 						}
 						GUILayout.Label("", GUILayout.MaxWidth(Screen.width*2/3-400));
@@ -85,7 +90,8 @@ public class LobbyMenu : BlockerObject
 							}
 							else
 							{
-								Network.Disconnect();	
+								Network.Disconnect();
+								menuManager.ChangeState (MenuManager.GameState.MainMenu);
 							}
 						}
 					GUILayout.EndHorizontal();

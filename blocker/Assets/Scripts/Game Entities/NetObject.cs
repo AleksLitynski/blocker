@@ -14,7 +14,7 @@ public class NetObject : BlockerObject {
 	
 	private Vector3 prevVelo = Vector3.zero;
 	private float maxDiff = 0.1f;
-	
+	public float creationTime = 0;
 	
 	public override void Start ()
     {

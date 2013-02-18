@@ -10,6 +10,10 @@ public class ObjectManager : BlockerObject
 		GameObject newObj = Instantiate(Resources.Load(assetName), pos, Quaternion.Euler(rot)) as GameObject;
 		newObj.name = name;
 		newObj.transform.parent = GameObject.Find(parentPath).transform;
+		if(newObj.GetComponent<bullet>())
+		{
+			newObj.GetComponent<bullet>().creationTime = Time.time;	
+		}
 	}
 	
 	[RPC]

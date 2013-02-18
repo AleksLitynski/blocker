@@ -47,7 +47,9 @@ public class GameMenu
 			}
 			//	GUI.Box(displayWindow, player.player.name);
 			//	Debug.Log(player.player.name + ": " + cameraZone.y);
+			
 			cameraZone = new Rect(cameraZone.x * Screen.width, cameraZone.y * Screen.height, cameraZone.width * Screen.width, cameraZone.height * Screen.height);
+			
 			GUILayout.BeginArea(cameraZone);
 						layoutPlayer(player.player.name, player.playerStats.score);
 			GUILayout.EndArea();
@@ -57,7 +59,7 @@ public class GameMenu
 	
 	public static void layoutPlayer(string name, int score)//, int place1, string name1, int score1, int place2, string name2, int score2)
 	{
-		GUILayout.Space(Screen.height - 25);
+	//	GUILayout.Space(Screen.height - 25);
 		GUILayout.Box(name + ": " + score, GUILayout.ExpandWidth(false), GUILayout.MinWidth(Screen.width/4));
 	}
 }

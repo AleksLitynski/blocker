@@ -26,31 +26,35 @@ public class MenuManager : BlockerObject
 	// funsies
 	public GameObject bgMap;
 	Object[] maps;
-	bool bgtoggle;
+	bool shouldRotateMap;
 	Vector3 cameraPosition;
 	Vector3 lookAtPosition;
+	Quaternion mapRotation = Quaternion.identity; //the rotation of the map. Used to sync when maps are swapped so it looks less awkward.
 	
 	// Use this for initialization
 	public override void Start () 
 	{
 		base.Start();
 		gameState = GameState.MainMenu;
-		
 		myCamera = this.gameObject.GetComponent<Camera>();
-		//playerManager = this.gameObject.GetComponent<PlayerManager>();
-		//mapManager = this.gameObject.GetComponent<MapManager>();
 		maps = Resources.LoadAll("Maps",typeof(GameObject));
 		
-		ToggleBGMap(true);
+		LoadRandomMap();
+		clearBullets();
+		toggleVision(false);
 	}
 	
 	void Update()
 	{
-		if (bgtoggle)
+		if (shouldRotateMap)
 		{
 			myCamera.transform.position = cameraPosition;
 			myCamera.transform.LookAt(lookAtPosition);
-			bgMap.transform.Rotate(new Vector3(0, 0.05f, 0));
+			if(bgMap)
+			{
+				mapRotation = Quaternion.Euler(mapRotation.eulerAngles.x, mapRotation.eulerAngles.y + 0.05f, mapRotation.eulerAngles.z);
+				bgMap.transform.rotation = mapRotation;
+			}
 		}
 	}
 	
@@ -93,75 +97,47 @@ public class MenuManager : BlockerObject
 		}
 	}
 	
-	void playerAddRemove()
+	void LoadRandomMap()
 	{
-		if (GUILayout.Button("New Player"))
-        {
-            if (Network.peerType == NetworkPeerType.Client) networkView.RPC("AddNewPlayerRequest", RPCMode.Server);
-            if (Network.peerType == NetworkPeerType.Server) playerManager.AddNewPlayerRequest(new NetworkMessageInfo());
-        }
-        for (int i = 0; i < playerManager.localPlayers.Count; i++)
-        {
-			GUILayout.BeginHorizontal();
-	            if (GUILayout.Button("Drop Player " + playerManager.localPlayers[i].localPlayerNumber))
-	            {
-	                networkView.RPC("RemovePlayerRequest", RPCMode.Server, playerManager.localPlayers[i].localPlayerNumber);
-	                if (Network.peerType == NetworkPeerType.Server) playerManager.RemovePlayerRequest(playerManager.localPlayers[i].localPlayerNumber, new NetworkMessageInfo());
-	            }
-				if(GUILayout.Button("KB " + playerManager.localPlayers[i].localPlayerNumber))
-				{
-					foreach(NetPlayer player in playerManager.localPlayers)
-					{
-						player.KeyboardPlayer = false;
-					}
-					playerManager.localPlayers[i].KeyboardPlayer = true;
-				}
-			GUILayout.EndHorizontal();
-        }
+		Destroy(bgMap);
+		bgMap = maps[Random.Range(0, maps.Length)] as GameObject;
+		
+		bgMap = Instantiate(bgMap,new Vector3(),Quaternion.identity) as GameObject;
+		
+		float minx = 9999;
+		float maxx = -9999;
+		float miny = 9999;
+		float maxy = -9999;
+		float minz = 9999;
+		float maxz = -9999;
+		foreach(Transform child in bgMap.transform)
+		{
+			if (child.renderer != null)
+			{
+				if (child.renderer.bounds.min.x < minx) {minx = child.renderer.bounds.min.x;}
+				if (child.renderer.bounds.max.x > maxx) {maxx = child.renderer.bounds.max.x;}
+				if (child.renderer.bounds.min.y < miny) {miny = child.renderer.bounds.min.y;}
+				if (child.renderer.bounds.max.y > maxy) {maxy = child.renderer.bounds.max.y;}
+				if (child.renderer.bounds.min.z < minz) {minz = child.renderer.bounds.min.z;}
+				if (child.renderer.bounds.max.z > maxz) {maxz = child.renderer.bounds.max.z;}
+			}
+		}
+		cameraPosition = new Vector3(1.5f*(maxx-minx), (maxy-miny), maxz-minz);
+		lookAtPosition = bgMap.transform.position;
 	}
 	
-	void ToggleBGMap(bool tf)
+	void clearBullets()
 	{
-		if (tf)
-		{
-			// initialize the state for non gameplay-stuff.
-			Screen.lockCursor = false;
-			Destroy(bgMap);
-			playerManager.setToWorldCamera();
-			playerManager.HidePlayers();
-			var bullets = world.transform.FindChild("Bullets");
-			Destroy(bullets.gameObject);
-			var newBullets = new GameObject();
-			newBullets.transform.parent = world.transform;
-			newBullets.name = "Bullets";
-			
-			bgMap = maps[Random.Range(0, maps.Length)] as GameObject;
-		
-			bgMap = Instantiate(bgMap,new Vector3(),Quaternion.identity) as GameObject;
-			
-			float minx = 9999;
-			float maxx = -9999;
-			float miny = 9999;
-			float maxy = -9999;
-			float minz = 9999;
-			float maxz = -9999;
-			foreach(Transform child in bgMap.transform)
-			{
-				if (child.renderer != null)
-				{
-					if (child.renderer.bounds.min.x < minx) {minx = child.renderer.bounds.min.x;}
-					if (child.renderer.bounds.max.x > maxx) {maxx = child.renderer.bounds.max.x;}
-					if (child.renderer.bounds.min.y < miny) {miny = child.renderer.bounds.min.y;}
-					if (child.renderer.bounds.max.y > maxy) {maxy = child.renderer.bounds.max.y;}
-					if (child.renderer.bounds.min.z < minz) {minz = child.renderer.bounds.min.z;}
-					if (child.renderer.bounds.max.z > maxz) {maxz = child.renderer.bounds.max.z;}
-				}
-			}
-			
-			cameraPosition = new Vector3(1.5f*(maxx-minx), (maxy-miny), maxz-minz);
-			lookAtPosition = bgMap.transform.position;
-		}
-		else
+		var bullets = world.transform.FindChild("Bullets");
+		Destroy(bullets.gameObject);
+		var newBullets = new GameObject();
+		newBullets.transform.parent = world.transform;
+		newBullets.name = "Bullets";
+	}
+	
+	void toggleVision(bool showPlayers)
+	{
+		if (showPlayers)
 		{
 			// initialize the state for gameplay.
 			Screen.lockCursor = true;
@@ -171,8 +147,19 @@ public class MenuManager : BlockerObject
 			{
 				player.playerStats.score = 0;	
 			}
+			shouldRotateMap = false;
 		}
-		bgtoggle = tf;
+		else
+		{
+			
+			// initialize the state for non gameplay-stuff.
+			Screen.lockCursor = false;
+			playerManager.setToWorldCamera();
+			playerManager.HidePlayers();
+			
+			shouldRotateMap = true;
+		}
+		//bgtoggle = tf;
 	}
 	
 	[RPC]
@@ -201,12 +188,38 @@ public class MenuManager : BlockerObject
 	[RPC]
 	public void ChangeState(GameState gs)
 	{
-		prevState = gameState;
+	//	prevState = gameState;
 		gameState = gs;
+		
+		clearBullets();
+		
+		if(gameState == GameState.Game)
+		{
+			toggleVision(true);
+		}
+		if(gameState == GameState.JoinGame   || 
+			gameState == GameState.HostGame  || 
+			gameState == GameState.MapEditor || 
+			gameState == GameState.Options   || 
+			gameState == GameState.RuleEditor)
+		{
+			toggleVision(false);			
+		}
+		if(gameState == GameState.MainMenu )
+		{
+			LoadRandomMap();
+		}
+		if(gameState == GameState.Lobby)
+		{
+			toggleVision(false);
+			LoadRandomMap(); 
+			
+		}
+		
 		
 		// if you were previously in a state where the bgmap should not appear and are
 		// now in a state that the bgmap should appear, turn it on.
-		if ((prevState == GameState.Game || prevState == GameState.PostGame) 
+		/*if ((prevState == GameState.Game || prevState == GameState.PostGame) 
 			&& (gameState != GameState.Game || gameState != GameState.PostGame))
 		{
 			ToggleBGMap(true);
@@ -217,5 +230,10 @@ public class MenuManager : BlockerObject
 		{
 			ToggleBGMap(false);	
 		}
+		if(gs == GameState.Lobby)
+		{
+			playerManager.setToWorldCamera();
+			playerManager.HidePlayers();
+		}*/
 	}
 }
