@@ -276,7 +276,8 @@ public class GameManager: BlockerObject
 	void givePoints(string zoneName, string hitby)
 	{
 		// find the mofo that hit this dude and give that sucka some dough
-		GameObject playerToFind = GameObject.Find(hitby);
+		
+		GameObject playerToFind = GameObject.Find(hitby + "/Doll");
 		
 		if(playerToFind != null)
 		{

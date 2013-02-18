@@ -16,7 +16,7 @@ public class GameMenu
 												Screen.width * cameraZone.width,
 												Screen.height * cameraZone.height);
 			//GUI.Box(displayWindow, player.player.name);
-			Debug.Log(player.player.name + ": " + displayWindow);
+			//Debug.Log(player.player.name + ": " + displayWindow);
 			
 				GUILayout.BeginArea(displayWindow);
 					GUILayout.Label("score: " + player.playerStats.score);

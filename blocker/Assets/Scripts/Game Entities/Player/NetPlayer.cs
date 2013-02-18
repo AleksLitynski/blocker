@@ -217,7 +217,7 @@ public class NetPlayer : NetObject
 		if (Network.peerType == NetworkPeerType.Server)
 		{
 			// Tell Dog I just died!
-			c.gameObject.SendMessage("PlayerEnter", this.gameObject.name, SendMessageOptions.DontRequireReceiver);
+			c.gameObject.SendMessage("PlayerEnter", player.name, SendMessageOptions.DontRequireReceiver);
 		}
 	}
 	
