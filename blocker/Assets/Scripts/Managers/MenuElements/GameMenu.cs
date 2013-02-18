@@ -10,14 +10,17 @@ public class GameMenu
 			// local players FUUUUUUUUUUUCKKKKKKKKK (fuck local players)
 			foreach(NetPlayer player in menuManager.playerManager.localPlayers)
 			{
-				var cameraZone = player.playerCamera.camera.rect;
-				cameraZone.x = Screen.width * cameraZone.x;
-				cameraZone.y = Screen.height * cameraZone.y;
-				cameraZone.width = Screen.width * cameraZone.width;
-				cameraZone.height = Screen.height * cameraZone.height;
-				
-				GUILayout.BeginArea(cameraZone);
+				Rect cameraZone = player.playerCamera.camera.rect;
+				Rect displayWindow = new Rect(  (Screen.width * cameraZone.x),
+												Screen.height * cameraZone.height - (Screen.height * cameraZone.y),
+												Screen.width * cameraZone.width,
+												Screen.height * cameraZone.height);
+			//GUI.Box(displayWindow, player.player.name);
+			Debug.Log(player.player.name + ": " + displayWindow);
+			
+				GUILayout.BeginArea(displayWindow);
 					GUILayout.Label("score: " + player.playerStats.score);
+					GUILayout.Label("Name: " + player.player.name);
 				GUILayout.EndArea();
 			}
 			

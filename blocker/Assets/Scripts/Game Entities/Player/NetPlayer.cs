@@ -35,6 +35,7 @@ public class NetPlayer : NetObject
 	{
 		base.Start();
 	}
+	
 	public void Awake()
 	{
 		player = transform.parent;
@@ -44,9 +45,15 @@ public class NetPlayer : NetObject
 		playerCompass = playerCamera.FindChild("Compass");
 		playerStats = gameObject.GetComponent<PlayerStats>();
 		
+		
+	}
+	
+	bool compassHasBeenInited = false;
+	public void initCompassLayer()
+	{
 		int newLayer = 21 + localPlayerNumber;
 		//set the compass to the local player's level
-		if(Network.player == networkPlayer)
+		if(Network.player == networkPlayer)//if it's a local player 
 		{
 			playerCompass.gameObject.layer = newLayer;
 			for(int i = 0; i < playerCompass.GetChildCount(); i++)
@@ -70,12 +77,17 @@ public class NetPlayer : NetObject
 				playerArrow.GetChild(i).gameObject.layer = 20;
 			}
 		}
-		
-		
+		compassHasBeenInited = true;
 	}
 	
 	void Update()
 	{
+		if(!compassHasBeenInited)
+		{
+			initCompassLayer();
+		}
+		
+		
 		if (menuManager.bgMap != null)
 		{
 			gameManager = menuManager.bgMap.GetComponent<GameManager>();
@@ -83,7 +95,7 @@ public class NetPlayer : NetObject
 		
 		
 		GameObject[] checkpoints = GameObject.FindGameObjectsWithTag("Checkpoint");
-		Vector3 target = transform.position;
+		Vector3 target = Vector3.one * 1000000;
 		foreach(GameObject checkpoint in checkpoints)
 		{
 			if(checkpoint.GetComponent<Zone>().orderInRace == gameManager.index)
@@ -107,7 +119,7 @@ public class NetPlayer : NetObject
 				toLog += "" + (21 + player.localPlayerNumber) + ", ";	
 			}
 		}
-		Debug.Log((21+localPlayerNumber) + ": " + toLog);
+	//	Debug.Log((21+localPlayerNumber) + ": " + toLog);
 		playerCamera.camera.cullingMask = LayerMaskHelper.EverythingBut(toIgnore.ToArray()); 
 		
 		drawLaserPointer(laserOn);
@@ -231,7 +243,7 @@ public class NetPlayer : NetObject
 			lineRenderer.SetPosition(0,hand.position);
 		    RaycastHit hit;
 		    Physics.Raycast(hand.position, hand.forward, out hit);
-		    if(hit.collider)
+		    if(hit.collider && !hit.collider.isTrigger)
 			{
 		    	lineRenderer.SetPosition(1, hand.position + hand.forward * hit.distance);
 		    }

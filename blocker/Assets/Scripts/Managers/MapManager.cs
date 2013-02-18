@@ -104,7 +104,7 @@ public class MapManager : BlockerObject
 		GameObject player = findNetPlayerNamed(name);
 		Vector3 spawnLocation = spawnArea.transform.position;
 		Quaternion spawnRotation = spawnArea.transform.rotation;
-		
+		Vector3 down = -spawnArea.transform.up;
 		int attempts = 0;
 		while(attempts < 50)
 		{
@@ -123,6 +123,9 @@ public class MapManager : BlockerObject
 			
 		}
 		player.transform.Find ("Doll").rigidbody.velocity = new Vector3();
+		
+		player.transform.Find ("Doll").GetComponent<ObjectStats>().grav = down * 9.81f;
+		
 		networkView.RPC("setPlayerPos", RPCMode.All, name, spawnLocation, spawnRotation);
 		 
 	}
