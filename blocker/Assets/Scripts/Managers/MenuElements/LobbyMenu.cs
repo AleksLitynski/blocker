@@ -1,21 +1,25 @@
 using UnityEngine;
 using System.Collections;
 
-public class LobbyMenu
+public class LobbyMenu : BlockerObject
 {
 
 	public static void generateGUI(MenuManager menuManager)
 	{
 			GUILayout.BeginArea(new Rect(0,0,Screen.width, Screen.height));
 				GUILayout.BeginHorizontal();
-					// provide add/drop ability
 					GUILayout.BeginArea(new Rect(Screen.width*1/20,Screen.height*1/20,Screen.width*2/20, Screen.height*15/20));
-						GUILayout.BeginVertical();
 						if (GUILayout.Button("New Player", GUILayout.MinWidth(Screen.width*2/20)))
 				        {
 				            if (Network.peerType == NetworkPeerType.Client) menuManager.networkView.RPC("AddNewPlayerRequest", RPCMode.Server);
 				            if (Network.peerType == NetworkPeerType.Server) menuManager.playerManager.AddNewPlayerRequest(new NetworkMessageInfo());
 				        }
+					GUILayout.EndArea();
+					
+					// provide add/drop ability
+					GUILayout.BeginArea(new Rect(Screen.width*1/20,Screen.height*2/20,Screen.width*2/20, Screen.height*15/20));
+						GUILayout.BeginVertical();
+						
 						foreach(NetPlayer player in menuManager.playerManager.players)
 						{
 							if(player.networkPlayer.ToString() == Network.player.ToString())
@@ -34,18 +38,21 @@ public class LobbyMenu
 						GUILayout.EndVertical();
 					GUILayout.EndArea();
 					// list player names
-					GUILayout.BeginArea(new Rect(Screen.width*4/20,Screen.height*1.9f/20,Screen.width*5/20, Screen.height*14/20));
+					GUILayout.BeginArea(new Rect(Screen.width*4/20,Screen.height*2/20,Screen.width*5/20, Screen.height*14/20));
 						foreach(NetPlayer player in menuManager.playerManager.players)
 						{
 							GUILayout.Label(player.player.name);
 						}
 					GUILayout.EndArea();
 					// list player scores
-					GUILayout.BeginArea(new Rect(Screen.width*10/20,Screen.height*1.9f/20,Screen.width*5/20, Screen.height*14/20));
+					GUILayout.BeginArea(new Rect(Screen.width*10/20,Screen.height*1.9f/20,Screen.width*3/20, Screen.height*14/20));
 						foreach(NetPlayer player in menuManager.playerManager.players)
 						{
 							GUILayout.Label("" + player.playerStats.score);
 						}
+					GUILayout.EndArea();
+					GUILayout.BeginArea(new Rect(Screen.width*13/20,Screen.height*1.9f/20,Screen.width*6/20, Screen.height*14/20));
+						GUILayout.Label ("Description: " + menuManager.bgMap.GetComponent<GameManager>().gameDescription);
 					GUILayout.EndArea();
 				GUILayout.EndHorizontal();
 				GUILayout.BeginArea(new Rect(Screen.width*(1.0f/6), Screen.height*17/20, Screen.width*2/3, Screen.height*2/20));

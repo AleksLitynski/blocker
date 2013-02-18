@@ -7,7 +7,7 @@ public class MainMenu
 	public static void generateGUI(MenuManager menuManager)
 	{
 		// menu header
-			GUI.Label(new Rect (Screen.width/2 - 100,Screen.height/2 - 150,200,300), "Blocker", "box");
+			GUI.Label(new Rect (Screen.width/2 - 125,Screen.height/2 - 150,250,300), "Blocker", "box");
 			
 			// main menu options
 			GUILayout.BeginArea(new Rect(Screen.width/2-100, Screen.height*2/5, 200,400));
