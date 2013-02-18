@@ -17,7 +17,7 @@ public class InputReceiver : BlockerObject
 				
 				networkView.RPC("setPlayerTransform", RPCMode.Others, player.transform.position, player.transform.rotation.eulerAngles, player.playerArms.rotation, player.name);
 				
-				
+				// fire bullets
 				if(f1 && !player.GetComponent<PlayerStats>().FiredSinceMouseDown && menuManager.gameState == MenuManager.GameState.Game) //ummmm? Maybe this does something??????
 				{
 					Screen.lockCursor = true;

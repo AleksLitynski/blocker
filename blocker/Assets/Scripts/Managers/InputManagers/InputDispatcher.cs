@@ -33,8 +33,8 @@ public class InputDispatcher : BlockerObject
 				int num = curPlayer.ControllerNumber + 1;
                 collection.forward = -Input.GetAxis("L_YAxis_" + num);
                 collection.straff = Input.GetAxis("L_XAxis_" + num);
-                collection.turnRight = Input.GetAxis("R_XAxis_" + num);
-                collection.turnUp = -Input.GetAxis("R_YAxis_" + num);
+                collection.turnRight = 2*Input.GetAxis("R_XAxis_" + num);
+                collection.turnUp = -1.5f*Input.GetAxis("R_YAxis_" + num);
                 collection.jump = Input.GetAxis("A_" + num) != 0;
                 collection.fireOne = Input.GetAxis("TriggersR_" + num) != 0;
                 collection.fireTwo = Input.GetAxis("TriggersL_" + num) != 0;
