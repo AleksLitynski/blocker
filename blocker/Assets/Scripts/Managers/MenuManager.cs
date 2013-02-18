@@ -16,6 +16,8 @@ public class MenuManager : BlockerObject
 	public int JoinGameCode = 2;
 	public const int LobbyCode = 3;
 	
+	public GUISkin guiSkin;
+	
 	// accessibility
 	Camera myCamera;
 	//PlayerManager playerManager;
@@ -55,6 +57,7 @@ public class MenuManager : BlockerObject
 	// Update is called once per frame
 	void OnGUI () 
 	{
+		GUI.skin = guiSkin;
 		// do different updates based on the state of the game.
 		switch(gameState)
 		{

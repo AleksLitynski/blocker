@@ -146,6 +146,48 @@ public class PlayerManager : BlockerObject
 		world.camera.enabled = false;
 	}
 	
+	
+	public void UpdateCameraSplit()
+	{
+		if(localPlayers.Count == 1)
+		{
+			
+	       	localPlayers[0].GetComponent<NetPlayer>().playerCamera.camera.rect = new Rect(0, 0, 1, 1);
+		}
+		else if(localPlayers.Count == 2)
+		{
+			localPlayers[0].GetComponent<NetPlayer>().playerCamera.camera.rect = new Rect(0, 0, 0.5f, 1);
+			localPlayers[1].GetComponent<NetPlayer>().playerCamera.camera.rect = new Rect(0.5f, 0, 0.5f, 1);
+		}
+		else if(localPlayers.Count == 3)
+		{
+			localPlayers[0].GetComponent<NetPlayer>().playerCamera.camera.rect = new Rect(0   , 0.5f   , 0.5f, 0.5f);
+			localPlayers[1].GetComponent<NetPlayer>().playerCamera.camera.rect = new Rect(0.5f, 0.5f   , 0.5f, 0.5f);
+			localPlayers[2].GetComponent<NetPlayer>().playerCamera.camera.rect = new Rect(0   , 0f     , 1   , 0.5f);
+		}
+		else if(localPlayers.Count == 4)
+		{
+			localPlayers[0].GetComponent<NetPlayer>().playerCamera.camera.rect = new Rect(0,    0.5f, 0.5f, 0.5f);
+			localPlayers[1].GetComponent<NetPlayer>().playerCamera.camera.rect = new Rect(0.5f, 0.5f, 0.5f, 0.5f);
+			
+			localPlayers[2].GetComponent<NetPlayer>().playerCamera.camera.rect = new Rect(0,    0f, 0.5f, 0.5f);
+			localPlayers[3].GetComponent<NetPlayer>().playerCamera.camera.rect = new Rect(0.5f, 0f, 0.5f, 0.5f);
+		}
+		else if(localPlayers.Count == 5)
+		{
+			localPlayers[0].GetComponent<NetPlayer>().playerCamera.camera.rect = new Rect(0,    2f/3f, 0.5f, 1f/3f);
+			localPlayers[1].GetComponent<NetPlayer>().playerCamera.camera.rect = new Rect(0.5f, 2f/3f, 0.5f, 1f/3f);
+			
+			localPlayers[2].GetComponent<NetPlayer>().playerCamera.camera.rect = new Rect(0,    1f/3f, 0.5f, 1f/3f);
+			localPlayers[3].GetComponent<NetPlayer>().playerCamera.camera.rect = new Rect(0.5f, 1f/3f, 0.5f, 1f/3f);
+			
+			localPlayers[4].GetComponent<NetPlayer>().playerCamera.camera.rect = new Rect(0,    0, 1, 1f/3f);
+		}
+		
+	}
+	
+	
+	/*
     public void UpdateCameraSplit()
     {
         //figure out screen ratios
@@ -230,5 +272,5 @@ public class PlayerManager : BlockerObject
                 pos++;
             }
         }
-    }
+    }*/
 }

@@ -78,6 +78,12 @@ public class NetPlayer : NetObject
 			}
 		}
 		compassHasBeenInited = true;
+		
+		
+		Ray ray = playerCamera.camera.ScreenPointToRay(new Vector3(Screen.width - 100,50,0));//tweak this to position compass
+		playerCompass.position = ray.GetPoint(15);
+		
+		
 	}
 	
 	void Update()
