@@ -46,15 +46,24 @@ public class NetObject : BlockerObject {
 			{
 				objectStats.unitOppGrav = -1 * objectStats.grav.normalized;
 			}
-			
-			if(!Physics.Raycast(transform.position, -transform.up, ((collider.bounds.size.x + collider.bounds.size.y + collider.bounds.size.z)/3)  * 1.1f)) //if not on the ground
+			RaycastHit hit;
+			bool hitSomething = Physics.Raycast(new Ray(transform.position, -transform.up), out hit, ((collider.bounds.size.x + collider.bounds.size.y + collider.bounds.size.z)/3)  * 1.1f);
+			if(!hitSomething ) //if not on the ground
 			{
 				currentGrav += (objectStats.grav * Time.deltaTime);
 				rigidbody.AddForce(currentGrav, ForceMode.Impulse);//rigidbody.velocity + 
 			}
 			else
 			{
-				currentGrav = Vector3.zero;
+				if(hit.collider.isTrigger != true)
+				{
+					currentGrav = Vector3.zero;
+				}
+				else
+				{
+					currentGrav += (objectStats.grav * Time.deltaTime);
+					rigidbody.AddForce(currentGrav, ForceMode.Impulse);//rigidbody.velocity + 	
+				}
 			}
 			world.networkView.RPC("setTransform", RPCMode.Others, transform.position, transform.rotation.eulerAngles, this.name);
 			

@@ -39,6 +39,10 @@ public class Zone : MonoBehaviour
 			scale = transform.FindChild("Sphere").localScale;
 			(myCollider as SphereCollider).center = Vector3.zero;
 			(myCollider as SphereCollider).radius = scale.x/2;
+			/*var haloComponent = GetComponent("Halo");
+			Debug.Log(haloComponent.GetType().GetProperty("size"));
+			var  haloSizeProperty = System.Reflection.Assembly.GetExecutingAssembly(). GetType("MyType");//.GetType().GetProperty("size");
+			haloSizeProperty.SetValue(haloComponent, 100, null);*/
 			break;
 		case CollisionType.Box:
 			Debug.Log ("Warning: This type of Checkpoint collider does not function properly (See CollisionType.Sphere)");
@@ -46,6 +50,8 @@ public class Zone : MonoBehaviour
 			break;
 		}
 	}
+	
+	
 	
 	// relying on Start() is weird sometimes, so i safeguard it with a method that might
 	// get run on the first update.
