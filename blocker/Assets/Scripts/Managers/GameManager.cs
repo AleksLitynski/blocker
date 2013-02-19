@@ -183,13 +183,13 @@ public class GameManager: BlockerObject
 		}
 		
 		index = maxIndex;
-		advanceIndex();
 		
 		if(!gameObject.GetComponent<NetworkView>())
 		{
 			gameObject.AddComponent<NetworkView>();
 			gameObject.GetComponent<NetworkView>().stateSynchronization = NetworkStateSynchronization.Off;
 		}
+		advanceIndex();
 		if(Network.peerType != NetworkPeerType.Disconnected)
 		{
 			networkView.RPC ("setCheckpoint", RPCMode.All, index);

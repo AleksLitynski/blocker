@@ -8,8 +8,8 @@ public class LobbyMenu : BlockerObject
 	{
 			GUILayout.BeginArea(new Rect(0,0,Screen.width, Screen.height));
 				GUILayout.BeginHorizontal();
-					GUILayout.BeginArea(new Rect(Screen.width*1/20,Screen.height*1/20,Screen.width*2/20, Screen.height*15/20));
-						if (GUILayout.Button("New Player", GUILayout.MinWidth(Screen.width*2/20)))
+					GUILayout.BeginArea(new Rect(Screen.width*1/20,Screen.height*1/20,Screen.width/6, Screen.height*15/20));
+						if (GUILayout.Button("New Player", GUILayout.MinWidth(Screen.width/6)))
 				        {
 				            if (Network.peerType == NetworkPeerType.Client) 
 							{
@@ -56,7 +56,10 @@ public class LobbyMenu : BlockerObject
 						}
 					GUILayout.EndArea();
 					GUILayout.BeginArea(new Rect(Screen.width*13/20,Screen.height*1.9f/20,Screen.width*6/20, Screen.height*14/20));
-						GUILayout.Label ("Description: " + menuManager.bgMap.GetComponent<GameManager>().gameDescription);
+		
+						GUILayout.Label ("Description:");
+						GUILayout.Label (menuManager.bgMap.GetComponent<GameManager>().gameDescription);
+		
 					GUILayout.EndArea();
 				GUILayout.EndHorizontal();
 				GUILayout.BeginArea(new Rect(Screen.width*(1.0f/6), Screen.height*17/20, Screen.width*2/3, Screen.height*2/20));

@@ -22,7 +22,6 @@ public class PlayerManager : BlockerObject
     [RPC]
     public void AddNewPlayerRequest(NetworkMessageInfo info)
     {
-		Debug.Log(info.sender.ipAddress);
         int lowestAvailableValue = 0;   //find the lowest available localPlayerNumber of the players on the machine asking to add a player. 
         int i = 0;
         while(i < players.Count)
@@ -183,6 +182,11 @@ public class PlayerManager : BlockerObject
 			localPlayers[3].GetComponent<NetPlayer>().playerCamera.camera.rect = new Rect(0.5f, 1f/3f, 0.5f, 1f/3f);
 			
 			localPlayers[4].GetComponent<NetPlayer>().playerCamera.camera.rect = new Rect(0,    0, 1, 1f/3f);
+		}
+		
+		foreach(NetPlayer player in localPlayers)
+		{
+			player.initCompassLayer();	
 		}
 		
 	}

@@ -29,48 +29,63 @@ public class FollowCamera : BlockerObject
 		transform.rotation = targetRotation;
 	}
 	
+	float gameStartTime = 0.0f;
+	
 	void LateUpdate ()
 	{
-		if(targetLocation)
+		if(menuManager.gameState == MenuManager.GameState.Lobby)
 		{
-			if(lockedCamera)
+			transform.position = menuManager.cameraPosition;
+			transform.LookAt(menuManager.lookAtPosition);
+			gameStartTime = Time.time;
+		}
+		else
+		{
+			if(targetLocation)
 			{
-				calculateTarget(lockedOffset);
-				if(timeSinceLockRequested == 0)//Makes the camera not jump when the target location changes abruptly
+				if(lockedCamera)
 				{
-					updateOldLocation();
-				}
-				timeSinceLockRequested += Time.deltaTime;
-				if(Vector3.Distance(targetPosition, transform.position) > 0.5f && !isLocked)
-				{
-					float compSpeed = speed * Mathf.Pow(timeSinceLockRequested * 10, 2);
-					
-					transform.position = Vector3.Lerp(transform.position - (targetPosition - oldLocation), targetPosition, compSpeed) ;//+ (targetPosition - oldLocation);
-					transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, compSpeed * 2);
+					calculateTarget(lockedOffset);
+					if(timeSinceLockRequested == 0)//Makes the camera not jump when the target location changes abruptly
+					{
+						updateOldLocation();
+					}
+					timeSinceLockRequested += Time.deltaTime;
+					if(Vector3.Distance(targetPosition, transform.position) > 0.5f && !isLocked)
+					{
+						float compSpeed = speed * Mathf.Pow(timeSinceLockRequested * 10, 2);
+						
+						transform.position = Vector3.Lerp(transform.position - (targetPosition - oldLocation), targetPosition, compSpeed) ;//+ (targetPosition - oldLocation);
+						transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, compSpeed * 2);
+						
+					}
+					else
+					{				
+						transform.position = targetPosition;
+						transform.rotation = targetRotation;
+						isLocked = true;
+					}
 					
 				}
 				else
-				{				
-					transform.position = targetPosition;
-					transform.rotation = targetRotation;
-					isLocked = true;
+				{
+					calculateTarget(offset);
+					var compSpeed = speed;
+					if(gameStartTime + 2 < Time.time)
+					{
+						compSpeed *= (Vector3.SqrMagnitude(targetPosition - transform.position)/25);
+					}
+				
+					
+					transform.position = Vector3.Lerp(transform.position, targetPosition, compSpeed);
+					transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, compSpeed); //*2
+					isLocked = false;
+					timeSinceLockRequested = 0f;
 				}
 				
-			}
-			else
-			{
-				calculateTarget(offset); 
-				var compSpeed = speed * ((Vector3.SqrMagnitude(targetPosition - transform.position)/25));
-			
 				
-				transform.position = Vector3.Lerp(transform.position, targetPosition, compSpeed);
-				transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, compSpeed); //*2
-				isLocked = false;
-				timeSinceLockRequested = 0f;
+				updateOldLocation();
 			}
-			
-			
-			updateOldLocation();
 		}
 				
 	}

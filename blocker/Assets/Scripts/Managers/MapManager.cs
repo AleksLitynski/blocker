@@ -81,7 +81,6 @@ public class MapManager : BlockerObject
 	void initializeGame(string mapName)
 	{
 		//load map
-		Debug.Log("Initilizing Game");
 		LoadMap(mapName);
 		//move all players to spawn
 		if(Network.peerType == NetworkPeerType.Server)

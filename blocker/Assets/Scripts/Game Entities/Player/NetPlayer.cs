@@ -29,6 +29,8 @@ public class NetPlayer : NetObject
 	public float lookPitch = 0;
 	public bool laserOn = false;
 	
+	public bool jumpWasUp = true;
+	
 	GameManager gameManager;
 	
 	public override void Start()
@@ -79,15 +81,21 @@ public class NetPlayer : NetObject
 		}
 		compassHasBeenInited = true;
 		
+		float x = (((Screen.width * playerCamera.camera.rect.width)/1.1f) + (Screen.width * playerCamera.camera.rect.x));
+		float y = (((Screen.height * playerCamera.camera.rect.height)/9) + (Screen.height * playerCamera.camera.rect.y));
 		
-		Ray ray = playerCamera.camera.ScreenPointToRay(new Vector3(Screen.width - 100,50,0));//tweak this to position compass
-		playerCompass.position = ray.GetPoint(15);
+		
+		Ray ray = playerCamera.camera.ScreenPointToRay(new Vector3(x,y,0));//tweak this to position compass
+		playerCompass.position = ray.GetPoint(17);
 		
 		
 	}
 	
 	void Update()
 	{
+		
+		
+		
 		if(!compassHasBeenInited)
 		{
 			initCompassLayer();

@@ -27,8 +27,8 @@ public class MenuManager : BlockerObject
 	public GameObject bgMap;
 	Object[] maps;
 	bool shouldRotateMap;
-	Vector3 cameraPosition;
-	Vector3 lookAtPosition;
+	public Vector3 cameraPosition;
+	public Vector3 lookAtPosition;
 	Quaternion mapRotation = Quaternion.identity; //the rotation of the map. Used to sync when maps are swapped so it looks less awkward.
 	
 	// Use this for initialization

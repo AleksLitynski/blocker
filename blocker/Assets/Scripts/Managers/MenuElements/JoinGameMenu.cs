@@ -20,7 +20,7 @@ public class JoinGameMenu
 						{
 							GUILayout.BeginHorizontal();
 								GUILayout.Label(host.gameName + " (" + host.connectedPlayers + " / " + host.playerLimit + ") - " + host.comment);
-								if (GUILayout.Button("Connect", GUILayout.MaxWidth(Screen.width/10)))
+								if (GUILayout.Button("Connect", GUILayout.MaxWidth(Screen.width/8)))
 								{
 									Network.Connect(host);
 									menuManager.ChangeState(MenuManager.GameState.Lobby);

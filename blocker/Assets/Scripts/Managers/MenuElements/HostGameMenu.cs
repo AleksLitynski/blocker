@@ -6,12 +6,12 @@ public class HostGameMenu
 	public static void generateGUI(MenuManager menuManager)
 	{
 		
-		GUILayout.BeginArea(new Rect(Screen.width/2-100, Screen.height/2, 200,400));
+		GUILayout.BeginArea(new Rect(Screen.width/2-150, Screen.height/2, 300,400));
 				GUILayout.BeginVertical();
 				
 				// get name and description from text fields.
-				menuManager.hostedGameName = GUILayout.TextField(menuManager.hostedGameName, GUILayout.MaxWidth (200));
-				menuManager.hostedGameDescription = GUILayout.TextField(menuManager.hostedGameDescription, GUILayout.MaxWidth(200));
+				menuManager.hostedGameName = GUILayout.TextField(menuManager.hostedGameName, GUILayout.MaxWidth (300));
+				menuManager.hostedGameDescription = GUILayout.TextField(menuManager.hostedGameDescription, GUILayout.MaxWidth(300));
 				
 				// initialize the server and register it with unity's master server.
 				if(GUILayout.Button ("Host", GUILayout.MinWidth(50)))
