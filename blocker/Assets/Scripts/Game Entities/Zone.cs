@@ -92,7 +92,14 @@ public class Zone : MonoBehaviour
 	void PlayerExit(string name)
 	{
 		//hitby = null;
-		hitList.RemoveAt(hitList.IndexOf(name));
+		try
+		{
+			hitList.RemoveAt(hitList.IndexOf(name));
+		}
+		finally
+		{
+			hitList.Remove(name);
+		}
 	}
 	
 	public void toggleHalo(bool tf)

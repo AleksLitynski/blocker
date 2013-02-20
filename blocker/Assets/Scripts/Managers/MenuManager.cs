@@ -46,7 +46,7 @@ public class MenuManager : BlockerObject
 	
 	void Update()
 	{
-		if (shouldRotateMap)
+		if (gameState != GameState.Game)
 		{
 		/*	myCamera.transform.position = cameraPosition;
 			myCamera.transform.LookAt(lookAtPosition);
@@ -55,6 +55,8 @@ public class MenuManager : BlockerObject
 				mapRotation = Quaternion.Euler(mapRotation.eulerAngles.x, mapRotation.eulerAngles.y + 0.05f, mapRotation.eulerAngles.z);
 				bgMap.transform.rotation = mapRotation;
 			}*/
+			
+			bgMap.transform.Rotate (0,.05f,0);
 		}
 	}
 	
@@ -101,7 +103,7 @@ public class MenuManager : BlockerObject
 	{
 		Destroy(bgMap);
 		bgMap = maps[Random.Range(0, maps.Length)] as GameObject;
-		
+		Debug.Log("LOADING ALEKS STUPID");
 		bgMap = Instantiate(bgMap,new Vector3(),Quaternion.identity) as GameObject;
 		
 		float minx = 9999;
@@ -124,6 +126,8 @@ public class MenuManager : BlockerObject
 		}
 		cameraPosition = new Vector3(1.5f*(maxx-minx), (maxy-miny), maxz-minz);
 		lookAtPosition = bgMap.transform.position;
+		
+		Debug.Log(cameraPosition);
 	}
 	
 	void clearBullets()
@@ -157,6 +161,9 @@ public class MenuManager : BlockerObject
 			Screen.lockCursor = false;
 			playerManager.setToWorldCamera();
 			playerManager.HidePlayers();
+			
+			myCamera.transform.position = cameraPosition;
+			myCamera.transform.LookAt(lookAtPosition);
 			
 			shouldRotateMap = true;
 		}
@@ -193,7 +200,7 @@ public class MenuManager : BlockerObject
 		gameState = gs;
 		
 		clearBullets();
-		
+		Debug.Log(gs);
 		if(gameState == GameState.Game)
 		{
 			toggleVision(true);
@@ -213,7 +220,7 @@ public class MenuManager : BlockerObject
 		if(gameState == GameState.Lobby)
 		{
 			toggleVision(false);
-			LoadRandomMap(); 
+			//LoadRandomMap(); 
 			
 		}
 		

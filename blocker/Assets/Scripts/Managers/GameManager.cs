@@ -74,7 +74,7 @@ public class GameManager: BlockerObject
 				// and advance the index to the next checkpoint.
 				if (menuManager.gameState == MenuManager.GameState.Game && zoneVals.orderInRace == index)
 				{
-					if (zoneVals.hitList[0] != null)
+					if (zoneVals.hitList != null)
 					{
 						if (zoneVals.currentPoints < zoneVals.maxPoints)
 						{
@@ -213,7 +213,8 @@ public class GameManager: BlockerObject
 		switch(winRule)
 		{
 		case WinRule.FirstToFinish:
-			if (index == maxIndex)
+		case WinRule.MostPointsByFinish:
+			if (index == maxIndex && unpack == true)
 			{
 				// if the win rule is set to first to finish, the game is over if someone reaches the final
 				// checkpoint
@@ -264,7 +265,10 @@ public class GameManager: BlockerObject
 			index = GameObject.FindGameObjectsWithTag("Checkpoint")[Random.Range (0,GameObject.FindGameObjectsWithTag("Checkpoint").Length)].GetComponent<Zone>().orderInRace;
 			break;
 		}
-		networkView.RPC ("changeHalo", RPCMode.All, index, true);
+		if (Network.peerType != NetworkPeerType.Disconnected)
+		{
+			networkView.RPC ("changeHalo", RPCMode.All, index, true);
+		}
 	}
 	
 	void OnPlayerConnected(NetworkPlayer player)
