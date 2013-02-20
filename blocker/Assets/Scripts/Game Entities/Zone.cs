@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class Zone : MonoBehaviour 
 {
@@ -10,7 +11,8 @@ public class Zone : MonoBehaviour
 	public int currentPoints = 0;
 	public int maxPoints = 1;
 	public int scoreReward = 1;
-	public string hitby;
+	//public string hitby;
+	public List<string> hitList;
 	
 	// physics variables
 	public CollisionType collisionType = CollisionType.Sphere;
@@ -84,11 +86,13 @@ public class Zone : MonoBehaviour
 	// collision handling
 	void PlayerEnter(string name)
 	{
-		hitby = name;
+		//hitby = name;
+		hitList.Add(name);
 	}
 	void PlayerExit(string name)
 	{
-		hitby = null;	
+		//hitby = null;
+		hitList.RemoveAt(hitList.IndexOf(name));
 	}
 	
 	public void toggleHalo(bool tf)

@@ -38,11 +38,10 @@ Category {
             Tags { "LightMode" = "Always" }
             
 CGPROGRAM
-// profiles arbfp1
-// vertex vert
-// fragment frag
-// fragmentoption ARB_precision_hint_fastest 
-// fragmentoption ARB_fog_exp2
+#pragma vertex vert
+#pragma fragment frag
+#pragma fragmentoption ARB_precision_hint_fastest 
+#pragma fragmentoption ARB_fog_exp2
 
 #include "UnityCG.cginc"
 

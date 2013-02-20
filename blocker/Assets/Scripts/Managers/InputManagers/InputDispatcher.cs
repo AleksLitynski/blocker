@@ -51,7 +51,6 @@ public class InputDispatcher : BlockerObject
 				}
 				
             }
-			Debug.Log(collection.netPlayer.player.name + ": " + collection.jump);
             collection.sendToServerVia(networkView, inputReceiver);
 			
 			

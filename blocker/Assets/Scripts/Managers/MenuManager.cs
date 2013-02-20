@@ -135,6 +135,7 @@ public class MenuManager : BlockerObject
 		newBullets.name = "Bullets";
 	}
 	
+	// toggle visibility of players and blah blah blh
 	void toggleVision(bool showPlayers)
 	{
 		if (showPlayers)

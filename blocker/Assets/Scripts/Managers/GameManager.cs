@@ -68,19 +68,25 @@ public class GameManager: BlockerObject
 			{
 				Zone zoneVals = zone.GetComponent<Zone>();
 				
-				if (zoneVals.hitby != null && zoneVals.hitby != "")
+				
+				// check if this is the next checkpoint. if so, advance the checkpoint
+				// toward its maxPoints (default starting at 0 going to 1), give player points,
+				// and advance the index to the next checkpoint.
+				if (menuManager.gameState == MenuManager.GameState.Game && zoneVals.orderInRace == index)
 				{
-					// check if this is the next checkpoint. if so, advance the checkpoint
-					// toward its maxPoints (default starting at 0 going to 1), give player points,
-					// and advance the index to the next checkpoint.
-					if (zoneVals.orderInRace == index)
+					if (zoneVals.hitList[0] != null)
 					{
-						if (zoneVals.currentPoints < zoneVals.maxPoints && menuManager.gameState == MenuManager.GameState.Game)
+						if (zoneVals.currentPoints < zoneVals.maxPoints)
 						{
-							zoneVals.currentPoints++;
-							// find the player, get their netplayer component, and give em some points
-							networkView.RPC ("givePoints", RPCMode.All, zone.name, zoneVals.hitby);
-							//GameObject.Find(raceCheckpoint.hitby).GetComponent<NetPlayer>().playerStats.score += raceCheckpoint.scoreReward;
+							foreach (string playerName in zoneVals.hitList)
+							{
+								if (playerName != "")
+								{
+									zoneVals.currentPoints++;
+									// find the player, get their netplayer component, and give em some points
+									networkView.RPC ("givePoints", RPCMode.All, zone.name, playerName);
+								}
+							}
 						}
 						else //if (raceCheckpoint.currentPoints == raceCheckpoint.maxPoints)
 						{
@@ -92,16 +98,16 @@ public class GameManager: BlockerObject
 							networkView.RPC ("setCheckpoint", RPCMode.All, index);
 							
 							// reset the hit detection
-							zoneVals.hitby = null;
+							zoneVals.hitList = new List<string>();
 						}
 					}
-					else
-					{
-						// if you are not the index,
-						// fuck you,
-						// goodbye,
-						zoneVals.hitby = null;
-					}
+				}
+				else
+				{
+					// if you are not the index,
+					// fuck you,
+					// goodbye,
+					zoneVals.hitList = new List<string>();
 				}
 			}
 			// this is the winning. you win here.
@@ -109,7 +115,6 @@ public class GameManager: BlockerObject
 			{
 			// the player with the most points when the final checkpoint is reached.
 			case WinRule.MostPointsByFinish:
-				Debug.Log ("Warning: This WinRule is unimplemented.");
 				break;
 			// the player with the most points after a time interval.
 			case WinRule.MostPointsOverTime:
@@ -203,6 +208,18 @@ public class GameManager: BlockerObject
 		if(Network.peerType != NetworkPeerType.Disconnected)
 		{
 			networkView.RPC ("changeHalo",RPCMode.All,index, false);
+		}
+		
+		switch(winRule)
+		{
+		case WinRule.FirstToFinish:
+			if (index == maxIndex)
+			{
+				// if the win rule is set to first to finish, the game is over if someone reaches the final
+				// checkpoint
+				world.networkView.RPC ("ChangeState", RPCMode.All, MenuManager.LobbyCode);
+			}
+			break;
 		}
 		
 		switch(nextNodeRule)
