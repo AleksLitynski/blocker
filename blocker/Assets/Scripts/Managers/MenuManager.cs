@@ -57,7 +57,8 @@ public class MenuManager : BlockerObject
 				bgMap.transform.rotation = mapRotation;
 			}*/
 			mapRotation += new Vector3(0,.05f,0);
-			bgMap.transform.rotation = Quaternion.Euler (mapRotation);
+			//bgMap.transform.rotation = Quaternion.Euler (mapRotation);
+			myCamera.transform.RotateAround(bgMap.transform.position, Vector3.up, 5 * Time.deltaTime);
 		}
 	}
 	
@@ -127,6 +128,9 @@ public class MenuManager : BlockerObject
 		}
 		cameraPosition = new Vector3(1.5f*(maxx-minx), (maxy-miny), maxz-minz);
 		lookAtPosition = bgMap.transform.position;
+			
+		myCamera.transform.position = cameraPosition;
+		myCamera.transform.LookAt(lookAtPosition);
 	}
 	
 	void clearBullets()
@@ -164,9 +168,6 @@ public class MenuManager : BlockerObject
 			playerManager.setToWorldCamera();
 			playerManager.HidePlayers();
 			
-			myCamera.transform.position = cameraPosition;
-			myCamera.transform.LookAt(lookAtPosition);
-			
 			//shouldRotateMap = true;
 		}
 		//bgtoggle = tf;
@@ -198,13 +199,24 @@ public class MenuManager : BlockerObject
 	[RPC]
 	public void ChangeState(GameState gs)
 	{
-	//	prevState = gameState;
+		prevState = gameState;
 		gameState = gs;
 		
 		clearBullets();
 		if(gameState == GameState.Game)
 		{
+			Debug.Log("1");
 			toggleVision(true);
+			if (prevState == GameState.Lobby)
+			{
+				Debug.Log("2");
+				if (playerManager.localPlayers.Count == 0)
+				{
+					Debug.Log("3");
+					myCamera.transform.position = cameraPosition;
+					myCamera.transform.LookAt(lookAtPosition);
+				}
+			}
 		}
 		if(gameState == GameState.JoinGame   || 
 			gameState == GameState.HostGame  || 
@@ -222,7 +234,11 @@ public class MenuManager : BlockerObject
 		{
 			toggleVision(false);
 			//LoadRandomMap(); 
-			
+			if (prevState == GameState.Game)
+			{
+				myCamera.transform.position = cameraPosition;
+				myCamera.transform.LookAt(lookAtPosition);
+			}
 		}
 		
 		
