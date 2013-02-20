@@ -94,7 +94,7 @@ public class Zone : MonoBehaviour
 		//hitby = null;
 		try
 		{
-			hitList.RemoveAt(hitList.IndexOf(name));
+			hitList.Remove(name);
 		}
 		finally
 		{

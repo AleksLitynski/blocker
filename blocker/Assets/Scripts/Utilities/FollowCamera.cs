@@ -71,10 +71,10 @@ public class FollowCamera : BlockerObject
 				{
 					calculateTarget(offset);
 					var compSpeed = speed;
-					if(gameStartTime + 2 < Time.time)
-					{
+					//if(gameStartTime + 2 < Time.time)
+					//{
 						compSpeed *= (Vector3.SqrMagnitude(targetPosition - transform.position)/25);
-					}
+					//}
 				
 					
 					transform.position = Vector3.Lerp(transform.position, targetPosition, compSpeed);

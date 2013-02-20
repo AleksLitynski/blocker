@@ -29,7 +29,7 @@ public class MenuManager : BlockerObject
 	bool shouldRotateMap;
 	public Vector3 cameraPosition;
 	public Vector3 lookAtPosition;
-	Quaternion mapRotation = Quaternion.identity; //the rotation of the map. Used to sync when maps are swapped so it looks less awkward.
+	//Quaternion mapRotation = Quaternion.identity; //the rotation of the map. Used to sync when maps are swapped so it looks less awkward.
 	
 	// Use this for initialization
 	public override void Start () 
@@ -42,6 +42,7 @@ public class MenuManager : BlockerObject
 		LoadRandomMap();
 		clearBullets();
 		toggleVision(false);
+		
 	}
 	
 	void Update()
@@ -63,6 +64,7 @@ public class MenuManager : BlockerObject
 	// Update is called once per frame
 	void OnGUI () 
 	{
+		
 		GUI.skin = guiSkin;
 		// do different updates based on the state of the game.
 		switch(gameState)
