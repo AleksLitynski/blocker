@@ -48,13 +48,13 @@ public class MenuManager : BlockerObject
 	{
 		if (shouldRotateMap)
 		{
-			myCamera.transform.position = cameraPosition;
+		/*	myCamera.transform.position = cameraPosition;
 			myCamera.transform.LookAt(lookAtPosition);
 			if(bgMap)
 			{
 				mapRotation = Quaternion.Euler(mapRotation.eulerAngles.x, mapRotation.eulerAngles.y + 0.05f, mapRotation.eulerAngles.z);
 				bgMap.transform.rotation = mapRotation;
-			}
+			}*/
 		}
 	}
 	
