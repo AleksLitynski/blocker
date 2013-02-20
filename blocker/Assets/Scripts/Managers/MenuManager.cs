@@ -29,7 +29,11 @@ public class MenuManager : BlockerObject
 	bool shouldRotateMap;
 	public Vector3 cameraPosition;
 	public Vector3 lookAtPosition;
+<<<<<<< HEAD
 	//Quaternion mapRotation = Quaternion.identity; //the rotation of the map. Used to sync when maps are swapped so it looks less awkward.
+=======
+	Vector3 mapRotation = Vector3.zero; //the rotation of the map. Used to sync when maps are swapped so it looks less awkward.
+>>>>>>> Instructions and Persistent BG Rotation
 	
 	// Use this for initialization
 	public override void Start () 
@@ -56,8 +60,8 @@ public class MenuManager : BlockerObject
 				mapRotation = Quaternion.Euler(mapRotation.eulerAngles.x, mapRotation.eulerAngles.y + 0.05f, mapRotation.eulerAngles.z);
 				bgMap.transform.rotation = mapRotation;
 			}*/
-			
-			bgMap.transform.Rotate (0,.05f,0);
+			mapRotation += new Vector3(0,.05f,0);
+			bgMap.transform.rotation = Quaternion.Euler (mapRotation);
 		}
 	}
 	
@@ -105,7 +109,6 @@ public class MenuManager : BlockerObject
 	{
 		Destroy(bgMap);
 		bgMap = maps[Random.Range(0, maps.Length)] as GameObject;
-		Debug.Log("LOADING ALEKS STUPID");
 		bgMap = Instantiate(bgMap,new Vector3(),Quaternion.identity) as GameObject;
 		
 		float minx = 9999;
@@ -128,8 +131,6 @@ public class MenuManager : BlockerObject
 		}
 		cameraPosition = new Vector3(1.5f*(maxx-minx), (maxy-miny), maxz-minz);
 		lookAtPosition = bgMap.transform.position;
-		
-		Debug.Log(cameraPosition);
 	}
 	
 	void clearBullets()
@@ -202,7 +203,6 @@ public class MenuManager : BlockerObject
 		gameState = gs;
 		
 		clearBullets();
-		Debug.Log(gs);
 		if(gameState == GameState.Game)
 		{
 			toggleVision(true);
