@@ -33,13 +33,13 @@ public class FollowCamera : BlockerObject
 	
 	void LateUpdate ()
 	{
-		if(menuManager.gameState == MenuManager.GameState.Lobby)
+		/*if(menuManager.gameState == MenuManager.GameState.Lobby)
 		{
 			transform.position = menuManager.cameraPosition;
 			transform.LookAt(menuManager.lookAtPosition);
 			//gameStartTime = Time.time;
-		}
-		else
+		}*/
+		//else
 		{
 			if(targetLocation)
 			{

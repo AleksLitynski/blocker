@@ -152,6 +152,7 @@ public class MapManager : BlockerObject
 		{
 			newMap.AddComponent<NetworkView>();
 			newMap.GetComponent<NetworkView>().stateSynchronization = NetworkStateSynchronization.Off;
+			newMap.GetComponent<NetworkView>().observed = null;
 		}
 		menuManager.bgMap = newMap;
 		

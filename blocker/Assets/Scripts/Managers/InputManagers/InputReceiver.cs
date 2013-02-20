@@ -24,7 +24,7 @@ public class InputReceiver : BlockerObject
 					{
 						Screen.lockCursor = true;
 						string name = "testBullet" + Random.Range(0,1000000);
-						networkView.RPC("spawnObject", RPCMode.All, player.transform.position + player.playerArms.forward * 1.5f , player.transform.rotation.eulerAngles, name, "testBullet", "World/Bullets");
+						networkView.RPC("spawnObject", RPCMode.All, player.playerArms.Find("Hand").position + player.playerArms.forward * 1.5f , player.transform.rotation.eulerAngles, name, "testBullet", "World/Bullets");
 						networkView.RPC ("setBulletVelocity", RPCMode.All, player.playerArms.forward * 250000, "World/Bullets/"+name);
 						networkView.RPC ("setObjectGravity", RPCMode.All, player.objectStats.grav, "World/Bullets/"+name);
 						player.GetComponent<PlayerStats>().FiredSinceMouseDown = true;
@@ -89,6 +89,7 @@ public class InputReceiver : BlockerObject
 	[RPC]
 	public void setPlayerTransform(Vector3 pos, Vector3 rot, Quaternion armRot, string playerName)
 	{
+		//Debug.Log(playerName);
 		foreach (NetPlayer player in playerManager.players)
         {
             if (player.player.name == playerName)

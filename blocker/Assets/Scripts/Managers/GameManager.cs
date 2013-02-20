@@ -193,6 +193,7 @@ public class GameManager: BlockerObject
 		{
 			gameObject.AddComponent<NetworkView>();
 			gameObject.GetComponent<NetworkView>().stateSynchronization = NetworkStateSynchronization.Off;
+			gameObject.GetComponent<NetworkView>().observed = null;
 		}
 		advanceIndex();
 		if(Network.peerType != NetworkPeerType.Disconnected)
