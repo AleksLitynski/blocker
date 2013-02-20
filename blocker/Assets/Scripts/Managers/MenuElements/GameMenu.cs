@@ -9,6 +9,23 @@ public class GameMenu
 	public static void generateGUI(MenuManager menuManager)
 	{
 		
+		if(Network.peerType == NetworkPeerType.Server)
+		{
+			if(GUI.Button(new Rect(Screen.width - 100,0, 100, 20),"X All"))
+			{
+				menuManager.ChangeState (MenuManager.LobbyCode);
+				menuManager.networkView.RPC("changeState", RPCMode.Others, MenuManager.LobbyCode);
+			}
+		}
+		else
+		{
+			if(GUI.Button(new Rect(Screen.width - 50,0, 50, 20),"X"))
+			{
+				Network.Disconnect();
+				menuManager.ChangeState (MenuManager.GameState.MainMenu);
+			}			
+		}
+		
 		foreach(NetPlayer player in menuManager.playerManager.localPlayers.OrderByDescending(p => p.playerStats.score))
 		{
 			Rect cameraZone = player.playerCamera.camera.rect;
