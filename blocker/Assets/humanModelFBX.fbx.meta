@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: a478f825fa393ec45ba71238c92eb09f
+guid: 7a0e8aaffb811da4584fb8c669cd63d0
 ModelImporter:
   fileIDToRecycleName:
     4300000: pCube1
@@ -13,9 +13,10 @@ ModelImporter:
     4300016: pCube9
     4300018: pCube10
     4300020: pCube11
-    7400000: Take 001 //// human model second attempt
-    7400002: idle //// human model second attempt
-    7400004: run //// human model second attempt
+    7400000: Take 001 //// humanModelFBX
+    7400002: idle //// humanModelFBX
+    7400004: run //// humanModelFBX
+    7400006: jump //// humanModelFBX
   serializedVersion: 10
   materials:
     importMaterials: 1
@@ -31,15 +32,20 @@ ModelImporter:
     animationScaleError: .5
     animationWrapMode: 0
     clipAnimations:
+    - name: run
+      firstFrame: 1
+      lastFrame: 26
+      wrapMode: 2
+      loop: 1
     - name: idle
       firstFrame: 1
       lastFrame: 2
       wrapMode: 1
       loop: 0
-    - name: run
-      firstFrame: 2
-      lastFrame: 27
-      wrapMode: 0
+    - name: jump
+      firstFrame: 27
+      lastFrame: 43
+      wrapMode: 1
       loop: 0
   meshes:
     lODScreenPercentages: []
@@ -63,182 +69,185 @@ ModelImporter:
     //RootNode:
       data:
         first: 1
-        second: a2860100
+        second: b2860100
       data:
         first: 4
-        second: 821a0600
+        second: 921a0600
       data:
         first: 111
         second: 605fa900
-    group:
-      data:
-        first: 1
-        second: d8860100
-      data:
-        first: 4
-        second: b81a0600
     ikHandle1:
-      data:
-        first: 1
-        second: ce860100
-      data:
-        first: 4
-        second: ae1a0600
-    ikHandle2:
-      data:
-        first: 1
-        second: ae860100
-      data:
-        first: 4
-        second: 8e1a0600
-    ikHandle3:
-      data:
-        first: 1
-        second: d6860100
-      data:
-        first: 4
-        second: b61a0600
-    ikHandle4:
-      data:
-        first: 1
-        second: da860100
-      data:
-        first: 4
-        second: ba1a0600
-    joint1:
-      data:
-        first: 1
-        second: c2860100
-      data:
-        first: 4
-        second: a21a0600
-    joint10:
-      data:
-        first: 1
-        second: ca860100
-      data:
-        first: 4
-        second: aa1a0600
-    joint11:
-      data:
-        first: 1
-        second: d4860100
-      data:
-        first: 4
-        second: b41a0600
-    joint12:
-      data:
-        first: 1
-        second: d2860100
-      data:
-        first: 4
-        second: b21a0600
-    joint13:
-      data:
-        first: 1
-        second: e2860100
-      data:
-        first: 4
-        second: c21a0600
-    joint14:
-      data:
-        first: 1
-        second: e0860100
-      data:
-        first: 4
-        second: c01a0600
-    joint15:
-      data:
-        first: 1
-        second: d0860100
-      data:
-        first: 4
-        second: b01a0600
-    joint2:
-      data:
-        first: 1
-        second: a8860100
-      data:
-        first: 4
-        second: 881a0600
-    joint3:
-      data:
-        first: 1
-        second: a6860100
-      data:
-        first: 4
-        second: 861a0600
-    joint4:
-      data:
-        first: 1
-        second: c8860100
-      data:
-        first: 4
-        second: a81a0600
-    joint5:
-      data:
-        first: 1
-        second: c6860100
-      data:
-        first: 4
-        second: a61a0600
-    joint6:
-      data:
-        first: 1
-        second: e6860100
-      data:
-        first: 4
-        second: c61a0600
-    joint7:
-      data:
-        first: 1
-        second: e4860100
-      data:
-        first: 4
-        second: c41a0600
-    joint8:
-      data:
-        first: 1
-        second: a4860100
-      data:
-        first: 4
-        second: 841a0600
-    joint9:
-      data:
-        first: 1
-        second: cc860100
-      data:
-        first: 4
-        second: ac1a0600
-    locator1:
-      data:
-        first: 1
-        second: b6860100
-      data:
-        first: 4
-        second: 961a0600
-    locator2:
-      data:
-        first: 1
-        second: b4860100
-      data:
-        first: 4
-        second: 941a0600
-    locator3:
       data:
         first: 1
         second: dc860100
       data:
         first: 4
         second: bc1a0600
-    locator4:
+    ikHandle2:
+      data:
+        first: 1
+        second: d4860100
+      data:
+        first: 4
+        second: b41a0600
+    ikHandle3:
       data:
         first: 1
         second: de860100
       data:
         first: 4
         second: be1a0600
+    ikHandle4:
+      data:
+        first: 1
+        second: b8860100
+      data:
+        first: 4
+        second: 981a0600
+    joint1:
+      data:
+        first: 1
+        second: d0860100
+      data:
+        first: 4
+        second: b01a0600
+    joint10:
+      data:
+        first: 1
+        second: a8860100
+      data:
+        first: 4
+        second: 881a0600
+    joint11:
+      data:
+        first: 1
+        second: b6860100
+      data:
+        first: 4
+        second: 961a0600
+    joint12:
+      data:
+        first: 1
+        second: be860100
+      data:
+        first: 4
+        second: 9e1a0600
+    joint13:
+      data:
+        first: 1
+        second: c8860100
+      data:
+        first: 4
+        second: a81a0600
+    joint14:
+      data:
+        first: 1
+        second: e2860100
+      data:
+        first: 4
+        second: c21a0600
+    joint15:
+      data:
+        first: 1
+        second: c6860100
+      data:
+        first: 4
+        second: a61a0600
+    joint2:
+      data:
+        first: 1
+        second: b4860100
+      data:
+        first: 4
+        second: 941a0600
+    joint3:
+      data:
+        first: 1
+        second: ae860100
+      data:
+        first: 4
+        second: 8e1a0600
+    joint4:
+      data:
+        first: 1
+        second: bc860100
+      data:
+        first: 4
+        second: 9c1a0600
+    joint5:
+      data:
+        first: 1
+        second: ba860100
+      data:
+        first: 4
+        second: 9a1a0600
+    joint6:
+      data:
+        first: 1
+        second: d2860100
+      data:
+        first: 4
+        second: b21a0600
+    joint7:
+      data:
+        first: 1
+        second: a6860100
+      data:
+        first: 4
+        second: 861a0600
+    joint8:
+      data:
+        first: 1
+        second: ce860100
+      data:
+        first: 4
+        second: ae1a0600
+    joint9:
+      data:
+        first: 1
+        second: c2860100
+      data:
+        first: 4
+        second: a21a0600
+    locator1:
+      data:
+        first: 1
+        second: cc860100
+      data:
+        first: 4
+        second: ac1a0600
+    locator2:
+      data:
+        first: 1
+        second: e4860100
+      data:
+        first: 4
+        second: c41a0600
+    locator3:
+      data:
+        first: 1
+        second: c4860100
+      data:
+        first: 4
+        second: a41a0600
+    locator4:
+      data:
+        first: 1
+        second: c0860100
+      data:
+        first: 4
+        second: a01a0600
     pCube1:
+      data:
+        first: 1
+        second: a2860100
+      data:
+        first: 4
+        second: 821a0600
+      data:
+        first: 137
+        second: a20bd100
+    pCube10:
       data:
         first: 1
         second: a0860100
@@ -248,97 +257,37 @@ ModelImporter:
       data:
         first: 137
         second: a00bd100
-    pCube10:
-      data:
-        first: 1
-        second: bc860100
-      data:
-        first: 4
-        second: 9c1a0600
-      data:
-        first: 137
-        second: ae0bd100
     pCube11:
       data:
         first: 1
-        second: c4860100
+        second: d8860100
       data:
         first: 4
-        second: a41a0600
-      data:
-        first: 137
-        second: b40bd100
-    pCube2:
-      data:
-        first: 1
-        second: ba860100
-      data:
-        first: 4
-        second: 9a1a0600
-      data:
-        first: 137
-        second: ac0bd100
-    pCube3:
-      data:
-        first: 1
-        second: b8860100
-      data:
-        first: 4
-        second: 981a0600
-      data:
-        first: 137
-        second: aa0bd100
-    pCube4:
-      data:
-        first: 1
-        second: c0860100
-      data:
-        first: 4
-        second: a01a0600
-      data:
-        first: 137
-        second: b20bd100
-    pCube5:
-      data:
-        first: 1
-        second: be860100
-      data:
-        first: 4
-        second: 9e1a0600
+        second: b81a0600
       data:
         first: 137
         second: b00bd100
-    pCube6:
+    pCube2:
       data:
         first: 1
-        second: b2860100
+        second: da860100
       data:
         first: 4
-        second: 921a0600
+        second: ba1a0600
       data:
         first: 137
-        second: a80bd100
-    pCube7:
+        second: b20bd100
+    pCube3:
       data:
         first: 1
-        second: b0860100
+        second: e0860100
       data:
         first: 4
-        second: 901a0600
+        second: c01a0600
       data:
         first: 137
-        second: a60bd100
-    pCube8:
-      data:
-        first: 1
-        second: ac860100
-      data:
-        first: 4
-        second: 8c1a0600
-      data:
-        first: 137
-        second: a40bd100
-    pCube9:
+        second: b40bd100
+    pCube4:
       data:
         first: 1
         second: aa860100
@@ -347,4 +296,54 @@ ModelImporter:
         second: 8a1a0600
       data:
         first: 137
-        second: a20bd100
+        second: a60bd100
+    pCube5:
+      data:
+        first: 1
+        second: b0860100
+      data:
+        first: 4
+        second: 901a0600
+      data:
+        first: 137
+        second: aa0bd100
+    pCube6:
+      data:
+        first: 1
+        second: d6860100
+      data:
+        first: 4
+        second: b61a0600
+      data:
+        first: 137
+        second: ae0bd100
+    pCube7:
+      data:
+        first: 1
+        second: ac860100
+      data:
+        first: 4
+        second: 8c1a0600
+      data:
+        first: 137
+        second: a80bd100
+    pCube8:
+      data:
+        first: 1
+        second: a4860100
+      data:
+        first: 4
+        second: 841a0600
+      data:
+        first: 137
+        second: a40bd100
+    pCube9:
+      data:
+        first: 1
+        second: ca860100
+      data:
+        first: 4
+        second: aa1a0600
+      data:
+        first: 137
+        second: ac0bd100
