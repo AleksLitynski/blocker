@@ -29,7 +29,7 @@ public class FollowCamera : BlockerObject
 		transform.rotation = targetRotation;
 	}
 	
-	float gameStartTime = 0.0f;
+	//float gameStartTime = 0.0f;
 	
 	void LateUpdate ()
 	{
@@ -37,7 +37,7 @@ public class FollowCamera : BlockerObject
 		{
 			transform.position = menuManager.cameraPosition;
 			transform.LookAt(menuManager.lookAtPosition);
-			gameStartTime = Time.time;
+			//gameStartTime = Time.time;
 		}
 		else
 		{

@@ -26,14 +26,10 @@ public class MenuManager : BlockerObject
 	// funsies
 	public GameObject bgMap;
 	Object[] maps;
-	bool shouldRotateMap;
+	//bool shouldRotateMap;
 	public Vector3 cameraPosition;
 	public Vector3 lookAtPosition;
-<<<<<<< HEAD
-	//Quaternion mapRotation = Quaternion.identity; //the rotation of the map. Used to sync when maps are swapped so it looks less awkward.
-=======
 	Vector3 mapRotation = Vector3.zero; //the rotation of the map. Used to sync when maps are swapped so it looks less awkward.
->>>>>>> Instructions and Persistent BG Rotation
 	
 	// Use this for initialization
 	public override void Start () 
@@ -155,7 +151,7 @@ public class MenuManager : BlockerObject
 			{
 				player.playerStats.score = 0;	
 			}
-			shouldRotateMap = false;
+			//shouldRotateMap = false;
 		}
 		else
 		{
@@ -168,7 +164,7 @@ public class MenuManager : BlockerObject
 			myCamera.transform.position = cameraPosition;
 			myCamera.transform.LookAt(lookAtPosition);
 			
-			shouldRotateMap = true;
+			//shouldRotateMap = true;
 		}
 		//bgtoggle = tf;
 	}
