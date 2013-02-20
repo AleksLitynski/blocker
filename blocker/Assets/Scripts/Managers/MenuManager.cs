@@ -144,12 +144,15 @@ public class MenuManager : BlockerObject
 		if (showPlayers)
 		{
 			// initialize the state for gameplay.
-			Screen.lockCursor = true;
 			playerManager.RevealPlayers();
-			playerManager.setToLocalCameras();
-			foreach(NetPlayer player in playerManager.players)
+			if (playerManager.localPlayers.Count != 0)
 			{
-				player.playerStats.score = 0;	
+				Screen.lockCursor = true;
+				playerManager.setToLocalCameras();
+				foreach(NetPlayer player in playerManager.players)
+				{
+					player.playerStats.score = 0;	
+				}
 			}
 			//shouldRotateMap = false;
 		}
