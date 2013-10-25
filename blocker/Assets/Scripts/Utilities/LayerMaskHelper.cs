@@ -1,5 +1,7 @@
-//Professor. I got this code from:
+//This code came from:
 //http://pixelplacement.com/2012/01/31/layermasks-simplified/
+
+//It is meant to make layers (bitwise flags) easier to handle.
 
 using UnityEngine;
 

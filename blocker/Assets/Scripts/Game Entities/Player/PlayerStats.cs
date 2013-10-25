@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
+//This bundles the players stats. Fairly self evident. Note that it is a monobehavior.
 public class PlayerStats : MonoBehaviour
 {
 	public float speed = 500;

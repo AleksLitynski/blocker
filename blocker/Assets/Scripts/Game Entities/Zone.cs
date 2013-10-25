@@ -2,6 +2,10 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
+/*
+ * The Zone is the sphere the player walks into to score points. 
+ * They can score points over time at a certain rate. The points can be shared between players or locked to the first player to enter.
+ */
 public class Zone : MonoBehaviour 
 {
 	public enum CollisionType {Cylinder, Box, Sphere};

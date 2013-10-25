@@ -1,6 +1,15 @@
 using UnityEngine;
 using System.Collections;
 
+/*
+ * This class is misnamed. It should be the CONTROLS MENU
+ * 
+ * Oh well. Sorry for the confusion.
+ * 
+ * Game rule editing is coming later.
+ * 
+ * 
+ */
 public class RuleEditorMenu 
 {
 

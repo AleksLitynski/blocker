@@ -3,6 +3,10 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Collections;
 
+/* This generates the in-game UI. It gets a bit long because the split-screen support is hard coded.
+ * Be carful if you try to make it programatic, the Y axis tends to face different directions depending on its mood.
+ * 
+ */
 public class GameMenu
 {
 
@@ -26,6 +30,7 @@ public class GameMenu
 			}			
 		}
 		
+		//Go through each local player and put their UI over their part of the screen
 		foreach(NetPlayer player in menuManager.playerManager.localPlayers.OrderByDescending(p => p.playerStats.score))
 		{
 			Rect cameraZone = player.playerCamera.camera.rect;
@@ -68,7 +73,7 @@ public class GameMenu
 			cameraZone = new Rect(cameraZone.x * Screen.width, cameraZone.y * Screen.height, cameraZone.width * Screen.width, cameraZone.height * Screen.height);
 			
 			GUILayout.BeginArea(cameraZone);
-						layoutPlayer(player.player.name, player.playerStats.score);
+						layoutPlayer(player.player.name, player.playerStats.score); //Draws the player name and score above each player at the proper loctation.
 			GUILayout.EndArea();
 		}
 			

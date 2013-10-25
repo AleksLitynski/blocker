@@ -2,39 +2,39 @@ using UnityEngine;
 using System.Linq;
 using System.Collections.Generic;
 
-//this will be responsable for downloading the map and players when the game starts
-//currently just downloads players, as that's all there is right now
-
-//also, unloads players and map on disconnect
+/*	
+ * 	This Class is responsible for adding all players to the map.
+ * 	This is all done at the start of the game.
+ * 	It also unloads players/map when a disconnect has occured.
+ */
 public class MapManager : BlockerObject
 {
-	//public GameObject mapToUse;
-	//public GameObject loadedMap;
-	
+	//When the server starts, add a box that prevents player from falling off the world forever.
 	void OnServerInitialized()
 	{
 		menuManager.bgMap.AddComponent<WorldBounds>();
 	}
 	
+	//When a player asks to join the game...
     void OnPlayerConnected (NetworkPlayer player)
     {
-		//send player characters to load
+		//send player characters to load... tell the player they are allowed to join. Give them a player Number.
         for (var i = 0; i < playerManager.players.Count; i++)
         {
             NetworkPlayer computer = playerManager.players[i].GetComponent<NetPlayer>().networkPlayer;
             int playerNumber = playerManager.players[i].GetComponent<NetPlayer>().localPlayerNumber;
             networkView.RPC("AddNewPlayer", player, computer, playerNumber);
         }
-		if(menuManager.gameState == MenuManager.GameState.Game)
+		if(menuManager.gameState == MenuManager.GameState.Game) //If you are in game, tell them to load the current map.
 		{
 			networkView.RPC("LoadMap", player, menuManager.bgMap.name);
 			networkView.RPC("initializeGame", player, menuManager.bgMap.name);	
 		}
-		if(menuManager.gameState == MenuManager.GameState.Lobby)
+		if(menuManager.gameState == MenuManager.GameState.Lobby) //Tell them to just load the map...
 		{
 			networkView.RPC("LoadMap", player, menuManager.bgMap.name);
 		}
-		for(var i = 0; i < world.transform.FindChild("Bullets").childCount; i++)
+		for(var i = 0; i < world.transform.FindChild("Bullets").childCount; i++) //Tell them about all bullets (currently only dynamic content) they must position.
 		{
 			networkView.RPC("spawnObject", player, world.transform.FindChild("Bullets").GetChild(i).position, world.transform.FindChild("Bullets").GetChild(i).rotation.eulerAngles, world.transform.FindChild("Bullets").GetChild(i).name, "testBullet", "World/Bullets");
 			networkView.RPC ("setBulletVelocity", player, world.transform.FindChild("Bullets").GetChild(i).rigidbody.velocity, "World/Bullets/"+world.transform.FindChild("Bullets").GetChild(i).name);
@@ -44,7 +44,8 @@ public class MapManager : BlockerObject
 		
 		
     }
-
+	
+	//When YOU disconnect from the server
     void OnDisconnectedFromServer(NetworkDisconnection info)
     {
         //remove the map
@@ -60,23 +61,25 @@ public class MapManager : BlockerObject
             Destroy(toGo);
         }
     }
-
+	
+	//When SOMEONE ELSE disconnects
     void OnPlayerDisconnected(NetworkPlayer player)
     {
         for (int i = 0; i < playerManager.players.Count; i++)
         {
             if (playerManager.players[i].networkPlayer == player)
             {
-                networkView.RPC("RemovePlayer", RPCMode.Others, player, playerManager.players[i].localPlayerNumber);
+                networkView.RPC("RemovePlayer", RPCMode.Others, player, playerManager.players[i].localPlayerNumber); //Tell everyone to remove them.
                 if (Network.peerType == NetworkPeerType.Server)
                 {
-                    playerManager.RemovePlayer(player, playerManager.players[i].localPlayerNumber);
+                    playerManager.RemovePlayer(player, playerManager.players[i].localPlayerNumber); //Remove them yourself
                     i--;
                 } 
             }
         }
     }
 	
+	//This tells everyone to start the game.
 	[RPC]
 	void initializeGame(string mapName)
 	{
@@ -123,6 +126,7 @@ public class MapManager : BlockerObject
 			attempts++;
 			
 		}
+		//The player is a etheral entity, the "doll" is the body you see in game. It got updated a few times, the logical divide helps.
 		player.transform.Find ("Doll").rigidbody.velocity = new Vector3();
 		
 		player.transform.Find ("Doll").GetComponent<ObjectStats>().grav = down * 9.81f;
@@ -131,6 +135,7 @@ public class MapManager : BlockerObject
 		 
 	}
 	
+	//Tells the client to position the player initally.
 	[RPC]
 	void setPlayerPos(string name, Vector3 pos, Quaternion rot) //called on clients, copies players location from server
 	{
@@ -139,6 +144,7 @@ public class MapManager : BlockerObject
 		player.transform.Find("Doll").transform.rotation = rot;
 	}
 	
+	//Loads a given map. Self documenting name.
 	[RPC]
 	void LoadMap(string maptoLoad)
 	{
@@ -151,7 +157,7 @@ public class MapManager : BlockerObject
 		if(!newMap.GetComponent<NetworkView>())
 		{
 			newMap.AddComponent<NetworkView>();
-			newMap.GetComponent<NetworkView>().stateSynchronization = NetworkStateSynchronization.Off;
+			newMap.GetComponent<NetworkView>().stateSynchronization = NetworkStateSynchronization.Off; //Disable the sync. We only communicate using the world.RPC function.
 			newMap.GetComponent<NetworkView>().observed = null;
 		}
 		menuManager.bgMap = newMap;
@@ -165,6 +171,8 @@ public class MapManager : BlockerObject
 		Destroy (menuManager.bgMap);
 	}
 	
+	//This looks up a player object from their string name. 
+	//I'm sure a Foldl could have sufficed.
 	GameObject findNetPlayerNamed(string name)
 	{
 		foreach(NetPlayer player in playerManager.players)

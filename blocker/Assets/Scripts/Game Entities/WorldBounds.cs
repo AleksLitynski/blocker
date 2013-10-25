@@ -1,6 +1,10 @@
 using UnityEngine;
 using System.Collections;
 
+/*
+ * Players tend to fall off the map.
+ * This is the container that respawns them when they fall too far.
+ */
 public class WorldBounds : BlockerObject 
 {
 	// enums
@@ -10,14 +14,11 @@ public class WorldBounds : BlockerObject
 	// references
 	Collider collScript;
 	
-	// vars
-	//Vector3 scale;
 	
 	void Awake()
 	{
 		// initialization
 		collisionType = CollisionType.Box;
-		//scale = new Vector3();
 		
 		setCollisionType(collisionType);
 	}
@@ -34,10 +35,7 @@ public class WorldBounds : BlockerObject
 	
 	}
 	
-	void PlayerEnter(string playerName)
-	{
-		// uhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh
-	}
+	void PlayerEnter(string playerName){}
 	
 	void PlayerExit(string playerName)
 	{
@@ -45,7 +43,7 @@ public class WorldBounds : BlockerObject
 		mapManager.respawnPlayer(playerName);
 	}
 	
-	
+	//This toggles if the world bounds are a sphere or a rectangle.
 	void setCollisionType(CollisionType ct)
 	{
 		// mutate dat shit
@@ -72,6 +70,7 @@ public class WorldBounds : BlockerObject
 		}
 	}
 	
+	//Changes the side of the collider.
 	void setScale(float value1, float value2, float value3)
 	{
 		switch(collisionType)

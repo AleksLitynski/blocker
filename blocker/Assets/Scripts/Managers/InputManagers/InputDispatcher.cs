@@ -1,14 +1,18 @@
 using UnityEngine;
 using System.Collections;
 
+/* This is called on the machine responsable for collecting input about a given player (there may be multiple players per machine)
+ * 
+ * 
+ */
 public class InputDispatcher : BlockerObject
 {
     void Update()
     {
-        foreach(NetPlayer curPlayer in playerManager.localPlayers)
+        foreach(NetPlayer curPlayer in playerManager.localPlayers) //when players join the game, they are added to "localPlayers", the sum players don't have to be analysed to find local ones!
         {
             InputCollection collection = new InputCollection(curPlayer);
-            if (curPlayer.KeyboardPlayer)
+            if (curPlayer.KeyboardPlayer) //collect input off the keyboard
             {
                 collection.forward = 0;
                 if(Input.GetKey("w")) collection.forward += 1;
@@ -24,11 +28,11 @@ public class InputDispatcher : BlockerObject
                 collection.sprint = Input.GetKeyDown(KeyCode.LeftShift);
                 collection.crouch = Input.GetKeyDown(KeyCode.LeftControl);
             }
-            else if (curPlayer.MobilePlayer)
+            else if (curPlayer.MobilePlayer) //we can't collect input from mobile, we don't support it. Yet. DOCUMENTATION!@!!
             {
                 Debug.Log("We don't support mobile. Yet.");
             }
-            else if (curPlayer.ControllerNumber >= 0 && curPlayer.ControllerNumber <= 3)
+            else if (curPlayer.ControllerNumber >= 0 && curPlayer.ControllerNumber <= 3) //We can only do 4 controllers at once. it sucks. I tried really hard to do more, but microsoft's a stinker.
             {
 				int num = curPlayer.ControllerNumber + 1;
                 collection.forward = -Input.GetAxis("L_YAxis_" + num);
@@ -51,7 +55,7 @@ public class InputDispatcher : BlockerObject
 				}
 				
             }
-            collection.sendToServerVia(networkView, inputReceiver);
+            collection.sendToServerVia(networkView, inputReceiver); //The collection has a simple RPC call in it
 			
 			
         }

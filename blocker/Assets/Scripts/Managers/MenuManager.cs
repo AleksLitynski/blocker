@@ -1,6 +1,12 @@
 using UnityEngine;
 using System.Collections;
 
+/*
+ * This used to be much larger. Now calls out to MenuElements folder items. 
+ * 
+ * A big state machine of all the menus in the game
+ * 
+ */
 public class MenuManager : BlockerObject 
 {
 	// enums
@@ -16,7 +22,7 @@ public class MenuManager : BlockerObject
 	public int JoinGameCode = 2;
 	public const int LobbyCode = 3;
 	
-	public GUISkin guiSkin;
+	public GUISkin guiSkin; //Mostly used to specify the Pixaled Text Texture.
 	
 	// accessibility
 	Camera myCamera;
@@ -102,6 +108,7 @@ public class MenuManager : BlockerObject
 		}
 	}
 	
+	//Loads a random map to be used as a background image.
 	void LoadRandomMap()
 	{
 		Destroy(bgMap);
@@ -133,6 +140,7 @@ public class MenuManager : BlockerObject
 		myCamera.transform.LookAt(lookAtPosition);
 	}
 	
+	//Odd place for it, but it deletes the lingering bullet objects.
 	void clearBullets()
 	{
 		var bullets = world.transform.FindChild("Bullets");
@@ -142,7 +150,7 @@ public class MenuManager : BlockerObject
 		newBullets.name = "Bullets";
 	}
 	
-	// toggle visibility of players and blah blah blh
+	// toggle visibility of players (IE: hide them when we are in the menu)
 	void toggleVision(bool showPlayers)
 	{
 		if (showPlayers)
@@ -155,7 +163,7 @@ public class MenuManager : BlockerObject
 				playerManager.setToLocalCameras();
 				foreach(NetPlayer player in playerManager.players)
 				{
-					player.playerStats.score = 0;	
+					player.playerStats.score = 0;	//reset the score when we hide the players
 				}
 			}
 			//shouldRotateMap = false;
@@ -173,6 +181,7 @@ public class MenuManager : BlockerObject
 		//bgtoggle = tf;
 	}
 	
+	//RPC's to all clients the state of the game
 	[RPC]
 	public void ChangeState(int stateCode)
 	{
@@ -224,7 +233,7 @@ public class MenuManager : BlockerObject
 			gameState == GameState.Options   || 
 			gameState == GameState.RuleEditor)
 		{
-			toggleVision(false);			
+			toggleVision(false);		//Hide the map when in menu	
 		}
 		if(gameState == GameState.MainMenu )
 		{

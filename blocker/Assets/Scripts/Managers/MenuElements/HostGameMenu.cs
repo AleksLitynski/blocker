@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
+//Options to host a game.
 public class HostGameMenu
 {
 	public static void generateGUI(MenuManager menuManager)

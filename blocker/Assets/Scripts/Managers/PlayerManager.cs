@@ -2,6 +2,15 @@ using UnityEngine;
 using System.Linq;
 using System.Collections.Generic;
 
+
+/* 
+ * This deal with individual players joining the game. 
+ * The Server/Client are already connected. Many players may still join the game, because each machine can support up to five (take that, halo!) player split screen.
+ * 
+ * A player is identifed by their computer number and their player number. That is, what machine in the game, and what player on the machine.
+ */
+
+
 //asks server to add new player
 //tells all players to add new player
 //adds new player
@@ -11,14 +20,15 @@ public class PlayerManager : BlockerObject
 
     public GameObject playerModel;
 
-    public List<NetPlayer> players = new List<NetPlayer>();
-    public List<NetPlayer> localPlayers = new List<NetPlayer>();
+    public List<NetPlayer> players = new List<NetPlayer>();			//This is all players in the game.
+    public List<NetPlayer> localPlayers = new List<NetPlayer>();	//These are just the local players.
 	
 	public override void Start()
 	{
-		base.Start();
+		base.Start();	//We need to call BlockerObjects start function to get some references linked up.
 	}
 	
+	//We can only send the server a request. It will allow or deny that more players can join the game.
     [RPC]
     public void AddNewPlayerRequest(NetworkMessageInfo info)
     {
@@ -28,7 +38,7 @@ public class PlayerManager : BlockerObject
         {
             if (players[i].networkPlayer == info.sender)
             {
-                if (players[i].localPlayerNumber == lowestAvailableValue)
+                if (players[i].localPlayerNumber == lowestAvailableValue) //The new player will ask for the lowest number available.
                 {
                     lowestAvailableValue++;
                     i = 0;
@@ -41,11 +51,12 @@ public class PlayerManager : BlockerObject
 		if(lowestAvailableValue < 5)//this is the max local players on the map
 		{
 			networkView.RPC("AddNewPlayer", RPCMode.Others, info.sender, lowestAvailableValue);
-        	if (Network.peerType == NetworkPeerType.Server) this.AddNewPlayer(info.sender, lowestAvailableValue);	
+        	if (Network.peerType == NetworkPeerType.Server) this.AddNewPlayer(info.sender, lowestAvailableValue);	//The server doesn't hear its own RPCs, we have to call the functions locally.
 		}
     }
 	
-	//called on the client machines to tell them to add a new player to the game
+	//called on the client machines to tell them to add a new player to the game.
+	//This is called once the server has approved the connection.
     [RPC]
     void AddNewPlayer(NetworkPlayer computer, int numOnComputer)
     {
@@ -58,7 +69,7 @@ public class PlayerManager : BlockerObject
 		newPlayer.transform.position = GameObject.Find("Spawn").transform.position;
 		
 
-        if (numOnComputer == 0)
+        if (numOnComputer == 0) //Default is: First player is Keyboard player, all other players use a controller.
         {
             newPlayer.transform.Find("Doll").GetComponent<NetPlayer>().KeyboardPlayer = true;
         }
@@ -70,23 +81,27 @@ public class PlayerManager : BlockerObject
         players.Add(newPlayer.transform.Find("Doll").GetComponent<NetPlayer>());
         if (computer == Network.player)
         {
-            localPlayers.Add(newPlayer.transform.Find("Doll").GetComponent<NetPlayer>());
+            localPlayers.Add(newPlayer.transform.Find("Doll").GetComponent<NetPlayer>()); //if It is a local player, add another division to the camera.
             UpdateCameraSplit();
         }
-        newPlayer.transform.Find("Camera").camera.enabled = false;
+        newPlayer.transform.Find("Camera").camera.enabled = false; //Turn off the camera, for now.
         
 		HidePlayers();
     }
 	
 	
-	
+	//Ask to leave the game. Mostly used on misclicks. The server won't wait for this message if a player disconnects
     [RPC]
     public void RemovePlayerRequest(int numOnComputer, NetworkMessageInfo info)
     {
         networkView.RPC("RemovePlayer", RPCMode.Others, info.sender, numOnComputer);
         if (Network.peerType == NetworkPeerType.Server) this.RemovePlayer(info.sender, numOnComputer);
     }
-
+	
+	//Tells all clients to remove a given player.
+	//Players are identifed by two things: 
+	//computer: The machine the player is on
+	//numOnComputer: the player to be removed on the computer.
     [RPC]
     public void RemovePlayer(NetworkPlayer computer, int numOnComputer)
     {
@@ -112,6 +127,7 @@ public class PlayerManager : BlockerObject
 		}
     }
 	
+	//This makes all players visable.
 	public void RevealPlayers()
 	{
 		foreach (NetPlayer player in players)
@@ -120,6 +136,7 @@ public class PlayerManager : BlockerObject
 			player.GetComponent<Rigidbody>().isKinematic = false;
 		}
 	}
+	//Opposite. Hides all players.
 	public void HidePlayers()
 	{
 		foreach (NetPlayer player in players)
@@ -129,6 +146,7 @@ public class PlayerManager : BlockerObject
 		}
 	}
 	
+	//This switches to a single camera that shows the map. This is used in menus.
 	public void setToWorldCamera()
 	{
 		foreach(NetPlayer player in localPlayers)
@@ -137,6 +155,7 @@ public class PlayerManager : BlockerObject
 		}
 		world.camera.enabled = true;
 	}
+	//Durring the game, we use one camera per local player (local, as opposed to on a remote computer)
 	public void setToLocalCameras()
 	{
 		foreach(NetPlayer player in localPlayers)
@@ -146,7 +165,9 @@ public class PlayerManager : BlockerObject
 		world.camera.enabled = false;
 	}
 	
-	
+	//This functioned used to be much more complex.
+	//Now, its just a lookup table. 
+	//If there is 1 player, show X amount of screen. If there are two, show Y amount. Etc
 	public void UpdateCameraSplit()
 	{
 		if(localPlayers.Count == 1)
@@ -184,98 +205,14 @@ public class PlayerManager : BlockerObject
 			localPlayers[4].GetComponent<NetPlayer>().playerCamera.camera.rect = new Rect(0,    0, 1, 1f/3f);
 		}
 		
-		foreach(NetPlayer player in localPlayers)
+		foreach(NetPlayer player in localPlayers) //Once we divide the screen, we need to set up the 3d compass overlays again.
 		{
 			player.initCompassLayer();	
 		}
 		
 	}
 	
-	
-	/*
-    public void UpdateCameraSplit()
-    {
-        //figure out screen ratios
-        List<int> rows = new List<int>();
-        int startingRow = 0;
-        for (int i = 0; i <= localPlayers.Count; i++)
-        {
-            bool addIntoARow = false;
-            for (int k = 0; k < rows.Count; k++)
-            {
-                var currentRow = k + startingRow;
-                if (currentRow >= rows.Count)
-                {
-                    currentRow = 0;
-                }
-                if (rows[currentRow] < rows.Count)
-                {
-                    rows[currentRow]++;
-                    addIntoARow = true;
-                    break;
-                }
-            }
-            if (!addIntoARow)
-            {
-                rows.Add(0);
-                for (int j = 0; j < rows.Count; j++)
-                {
-                    rows[j] = 0;
-                }
-                i = 0;
-                startingRow = rows.Count - 1;
-            }
-            startingRow++;
-            if(startingRow == rows.Count)
-            {
-                startingRow = 0;
-            }
-
-
-        }
-        int v = 0;
-        while (v < rows.Count)
-        {
-            if (rows[v] == 0)
-            {
-                rows.Remove(0);
-            }
-            else
-            {
-                v++;
-            }
-        }
-
-
-        //layout screens based on calculations
-        bool favorHorizontal = false;
-        if (Screen.width > Screen.height)
-        {
-            favorHorizontal = true;
-        }
-        int pos = 0;
-        for (int i = 0; i < rows.Count; i++)
-        {
-            for (int j = 0; j < rows[i]; j++)
-            {
-
-                float width = 1 / (float)rows[i]; 
-                
-                float height = 1 / (float)rows.Count;
-
-
-
-
-                if (favorHorizontal)
-                {
-                    localPlayers[pos].GetComponent<NetPlayer>().playerCamera.camera.rect = new Rect(j * width, i * height, width, height);
-                }
-                else
-                {
-                    localPlayers[pos].GetComponent<NetPlayer>().playerCamera.camera.rect = new Rect(i * height, j * width, height, width);
-                }
-                pos++;
-            }
-        }
-    }*/
+	/* The old camera split code has been deleted. Please review the REPOs history to get it back.
+	 * It was good stuff, but the UI overlay confused matters.
+	 */
 }

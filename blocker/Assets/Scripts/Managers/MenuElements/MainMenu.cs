@@ -1,6 +1,10 @@
 using UnityEngine;
 using System.Collections;
 
+/* Static menu method. There were very ugly when they were in a single class.
+ * 
+ * All called from MenuManager.
+ */
 public class MainMenu
 {
 

@@ -1,11 +1,17 @@
 using UnityEngine;
 using System.Collections;
 
+
+/* This is the lobby before the game. Players add themselves and all split screen players from here.
+ * 
+ * 
+ */
 public class LobbyMenu : BlockerObject
 {
 
 	public static void generateGUI(MenuManager menuManager)
 	{
+			//Unity UI is a bunch of calls, but its nesting has been indented here, hopefully it clarifies.
 			GUILayout.BeginArea(new Rect(0,0,Screen.width, Screen.height));
 				GUILayout.BeginHorizontal();
 					GUILayout.BeginArea(new Rect(Screen.width*1/20,Screen.height*1/20,Screen.width/6, Screen.height*15/20));
@@ -14,7 +20,7 @@ public class LobbyMenu : BlockerObject
 				            if (Network.peerType == NetworkPeerType.Client) 
 							{
 								//Debug.Log("you clicked it as a clinet");
-								menuManager.networkView.RPC("AddNewPlayerRequest", RPCMode.Server);
+								menuManager.networkView.RPC("AddNewPlayerRequest", RPCMode.Server); //Adding new players must be RPC'd
 							}
 				            if (Network.peerType == NetworkPeerType.Server) menuManager.playerManager.AddNewPlayerRequest(new NetworkMessageInfo());
 				        }
@@ -52,13 +58,13 @@ public class LobbyMenu : BlockerObject
 					GUILayout.BeginArea(new Rect(Screen.width*10/20,Screen.height*1.9f/20,Screen.width*3/20, Screen.height*14/20));
 						foreach(NetPlayer player in menuManager.playerManager.players)
 						{
-							GUILayout.Label("" + player.playerStats.score);
+							GUILayout.Label("" + player.playerStats.score); //Score from the previous game
 						}
 					GUILayout.EndArea();
 					GUILayout.BeginArea(new Rect(Screen.width*13/20,Screen.height*1.9f/20,Screen.width*6/20, Screen.height*14/20));
 		
 						GUILayout.Label ("Description:");
-						GUILayout.Label (menuManager.bgMap.GetComponent<GameManager>().gameDescription);
+						GUILayout.Label (menuManager.bgMap.GetComponent<GameManager>().gameDescription); //Game DESC.
 		
 					GUILayout.EndArea();
 				GUILayout.EndHorizontal();

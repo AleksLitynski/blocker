@@ -1,6 +1,12 @@
 using UnityEngine;
 using System.Collections;
 
+
+/*
+ * Loads a map from XML. ----------STILL TESTING. DO NOT REALY ON IT------------
+ * 
+ * 
+ */
 public class testLoader : BlockerObject {
 
 	// Use this for initialization

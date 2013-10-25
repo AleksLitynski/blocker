@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
+//The menu that lists available servers.
 public class JoinGameMenu
 {
 

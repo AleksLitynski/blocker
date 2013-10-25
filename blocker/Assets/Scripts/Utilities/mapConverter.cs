@@ -2,6 +2,11 @@ using UnityEngine;
 using System.Collections;
 using System.Xml;
 
+
+/* This feature is never used.
+ * It is meant to Read/Write a map to an XML file. 
+ * There is planned support for custom maps, and this is part of it.
+ */
 public class mapConverter 
 {
 	

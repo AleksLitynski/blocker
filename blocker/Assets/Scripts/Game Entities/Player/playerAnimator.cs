@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
+//This code plays the animations on the player model. They animate based on the direction the given player is moving.
 public class playerAnimator : BlockerObject
 {
 	GameObject model;

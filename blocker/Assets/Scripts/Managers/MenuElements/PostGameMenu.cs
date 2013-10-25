@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
+//There is no post game menu. Todo...
 public class PostGameMenu
 {
 

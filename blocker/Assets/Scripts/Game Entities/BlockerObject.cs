@@ -1,6 +1,12 @@
 using UnityEngine;
 using System.Collections;
 
+/*This is a filter on the generic MonoBehavior. 
+ * Having it here lets us provide name based access to common objects.
+ * 
+ * Instead of having to use Find/GetComponent to access common objects, everything in our game gets easy access to these buggers:
+ * 
+ */ 
 public class BlockerObject : MonoBehaviour {
 	
 	[HideInInspector]

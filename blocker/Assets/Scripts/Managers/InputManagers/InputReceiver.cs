@@ -1,6 +1,10 @@
 using UnityEngine;
 using System.Collections;
 
+/* This class hears about inputs and applies them to players.
+ * 
+ * 
+ */
 public class InputReceiver : BlockerObject 
 {
 	
@@ -13,7 +17,7 @@ public class InputReceiver : BlockerObject
 		{
 	        foreach (NetPlayer player in playerManager.players)
 	        {
-	            if (player.networkPlayer == info.sender && player.localPlayerNumber == localNumber)
+	            if (player.networkPlayer == info.sender && player.localPlayerNumber == localNumber) //We have to itterate to find the player the message refers to. We could generate a hash based on a passed property, but it hasn't been done.
 	            {
 	                player.move(new InputCollection(player, f, s, tR, tU, j, f1, f2, sp, c));
 					
@@ -29,7 +33,7 @@ public class InputReceiver : BlockerObject
 						networkView.RPC ("setObjectGravity", RPCMode.All, player.objectStats.grav, "World/Bullets/"+name);
 						player.GetComponent<PlayerStats>().FiredSinceMouseDown = true;
 						
-						Transform bullets = world.transform.Find("Bullets");
+						Transform bullets = world.transform.Find("Bullets"); //Destroys old bullets if there are too many!
 						if(bullets.childCount > maxBullets)
 						{
 							bullet oldestBullet = bullets.GetChild(0).gameObject.GetComponent<bullet>();
@@ -41,7 +45,7 @@ public class InputReceiver : BlockerObject
 									oldestBullet = current;	
 								}
 							}
-							networkView.RPC("removeObject", RPCMode.All, "World/Bullets/" + oldestBullet.name);
+							networkView.RPC("removeObject", RPCMode.All, "World/Bullets/" + oldestBullet.name); //Removes the old bullet on all computers
 						}
 						
 					}
@@ -51,7 +55,7 @@ public class InputReceiver : BlockerObject
 					}
 					if(f2)
 					{
-						networkView.RPC ("setScopedIn", RPCMode.All, true, player.player.name);
+						networkView.RPC ("setScopedIn", RPCMode.All, true, player.player.name); //Alters everyone when a player has scoped in. 
 					}
 					else
 					{

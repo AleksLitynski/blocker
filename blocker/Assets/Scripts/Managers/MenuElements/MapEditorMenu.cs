@@ -1,6 +1,11 @@
 using UnityEngine;
 using System.Collections;
 
+/* Menu item. Static function used to draw the map menu.
+ * 
+ * Called from MenuManager.
+ * 
+ */
 public class MapEditorMenu 
 {
 

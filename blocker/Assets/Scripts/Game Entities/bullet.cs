@@ -1,6 +1,8 @@
 using UnityEngine;
 using System.Collections;
 
+//Bullets are farily mundane networked objects, but
+//they move with a predetermied velocity, on top of their motion induced by physics
 public class bullet : NetObject {
 
 	public override void Start () 
@@ -12,11 +14,11 @@ public class bullet : NetObject {
 	
 	void Update () 
 	{
+		//Just keep chugging along
 		rigidbody.velocity += velocity;
-		
-	//	if(Time.time - creationTime 
 	}
 	
+	//When the bullet exits the map, destory the bullet.
 	void OnTriggerExit(Collider other)
 	{
 		if(other.GetComponent<WorldBounds>() != null)

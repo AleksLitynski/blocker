@@ -2,6 +2,10 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
+/* This class determines who won/lost a given game.
+ * Coded by Mike Lyle (mostly)
+ * 
+ */
 public class GameManager: BlockerObject 
 {
 	// enums

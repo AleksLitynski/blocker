@@ -1,6 +1,13 @@
 using UnityEngine;
 using System.Collections.Generic;
 
+/* This controls the games connection to the server.
+ * 
+ * It doesn't worry about how many players are on board, just throwing across the innital connection
+ * 
+ * The connection code is embedded in the GUI code. Not great, but fairly clean.
+ */
+
 public class ConnectionManager : BlockerObject 
 {
 	//public string serverAddress = "bigwhite.student.rit.edu";
@@ -28,13 +35,14 @@ public class ConnectionManager : BlockerObject
 		
 		if(GUI.Button(new Rect(0, 0, 120, 20), "Return to Lobby"))
 		{
-			Network.Disconnect();
-			Application.LoadLevel(Application.loadedLevel);
+			Network.Disconnect(); //Disconnects!!
+			Application.LoadLevel(Application.loadedLevel); //Loads a background map
 		}
 		
 	}
 	
 	
+	//Presents a "HOST SERVER" button. Creates a server on request
 	string hostedGameName = "Default Game Name";
 	string hostedGameDescription = "Default Description";
 	void ServerGUI()
@@ -53,7 +61,9 @@ public class ConnectionManager : BlockerObject
 
  	void createServer(string hostName, string description)
 	{
-		Network.InitializeServer(32, Random.Range(2000,40000), !Network.HavePublicAddress());
+		//Registers the master server. 
+		//Uses a random ID to prevents collision between version while debugging
+		Network.InitializeServer(32, Random.Range(2000,40000), !Network.HavePublicAddress()); 
 		MasterServer.RegisterHost(gameName, hostName, description);
 		
 	}
@@ -64,7 +74,7 @@ public class ConnectionManager : BlockerObject
 		GUILayout.BeginVertical();
 		HostData[] availableHosts = MasterServer.PollHostList();
 			GUILayout.Box("Available Servers", GUILayout.MinWidth(Screen.width - 200));
-			foreach (HostData host in availableHosts)
+			foreach (HostData host in availableHosts) //Itterate all available servers and present them.
 			{
 				connectionRow(host);
 			}
@@ -72,6 +82,7 @@ public class ConnectionManager : BlockerObject
 		
 	}
 	
+	//Shows a single row of valid server.
 	void connectionRow(HostData host)
 	{
 		GUILayout.BeginHorizontal();
@@ -79,7 +90,7 @@ public class ConnectionManager : BlockerObject
 			GUILayout.Label(host.comment);
 			if (GUILayout.Button("Connect", GUILayout.MaxWidth(Screen.width/10)))
 			{
-				Network.Connect(host);			
+				Network.Connect(host);	//Uses unitys server connection protocal		
 			}				
 		GUILayout.EndHorizontal();
 	}
