@@ -57,11 +57,14 @@ public class NetObject : BlockerObject {
 				objectStats.unitOppGrav = -1 * objectStats.grav.normalized;
 			}
 			RaycastHit hit;
-			bool hitSomething = Physics.Raycast(new Ray(transform.position, -transform.up), out hit, ((collider.bounds.size.x + collider.bounds.size.y + collider.bounds.size.z)/3)  * 1.1f);
+
+
+			bool hitSomething = Physics.Raycast(new Ray(transform.position, -transform.up), out hit, 1.0f);
+
 			if(!hitSomething ) //if not on the ground, fall downwards
 			{
 				currentGrav += (objectStats.grav * Time.deltaTime);
-				rigidbody.AddForce(currentGrav, ForceMode.Impulse);//rigidbody.velocity + 
+				GetComponent<Rigidbody>().AddForce(currentGrav, ForceMode.Impulse);//rigidbody.velocity + 
 			}
 			else //Otherwise, apply the normal force. This was a big issue, as downward forces cumulated to quite high numbers, causing collision issues
 			{
@@ -72,20 +75,20 @@ public class NetObject : BlockerObject {
 				else
 				{
 					currentGrav += (objectStats.grav * Time.deltaTime);
-					rigidbody.AddForce(currentGrav, ForceMode.Impulse);//rigidbody.velocity + 	
+					GetComponent<Rigidbody>().AddForce(currentGrav, ForceMode.Impulse);//rigidbody.velocity + 	
 				}
 			}
 			//Move the object for everybody. 
 			//world.networkView is the primary RPC channel used by the game. This helps to consolidate network traffic and keep the code manageable.
-			world.networkView.RPC("setTransform", RPCMode.Others, transform.position, transform.rotation.eulerAngles, this.name);
+			world.GetComponent<NetworkView>().RPC("setTransform", RPCMode.Others, transform.position, transform.rotation.eulerAngles, this.name);
 			
-			if(Mathf.Abs(prevVelo.x - rigidbody.velocity.x) > maxDiff || Mathf.Abs(prevVelo.y - rigidbody.velocity.y) > maxDiff || Mathf.Abs(prevVelo.z - rigidbody.velocity.z) > maxDiff)
+			if(Mathf.Abs(prevVelo.x - GetComponent<Rigidbody>().velocity.x) > maxDiff || Mathf.Abs(prevVelo.y - GetComponent<Rigidbody>().velocity.y) > maxDiff || Mathf.Abs(prevVelo.z - GetComponent<Rigidbody>().velocity.z) > maxDiff)
 			{
-				world.networkView.RPC("setTransform", RPCMode.Others, transform.position, transform.rotation.eulerAngles, name);
+				world.GetComponent<NetworkView>().RPC("setTransform", RPCMode.Others, transform.position, transform.rotation.eulerAngles, name);
 			}
 			if(Time.time % 1 == 0)
 			{
-				prevVelo = rigidbody.velocity;	
+				prevVelo = GetComponent<Rigidbody>().velocity;	
 			}
 			
 		}
@@ -100,12 +103,12 @@ public class NetObject : BlockerObject {
 			Quaternion rotate = Quaternion.LookRotation(Vector3.Cross(transform.right, objectStats.unitOppGrav), objectStats.unitOppGrav);
 			rotate = Quaternion.RotateTowards(transform.rotation, rotate, objectStats.maxGravRoll);
 			rotate = rotate * forcedRotation;
-			rigidbody.rotation = rotate;
+			GetComponent<Rigidbody>().rotation = rotate;
 			
 		}
 		
 		//Applies the force over time.
-	    rigidbody.AddRelativeForce(disp * Time.deltaTime);
+	    GetComponent<Rigidbody>().AddRelativeForce(disp * Time.deltaTime);
 		
 		
 	}

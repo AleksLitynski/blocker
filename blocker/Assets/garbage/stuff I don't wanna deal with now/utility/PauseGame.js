@@ -17,19 +17,28 @@ function Update () {
 	}
 	if(paused)
 	{
-		Screen.lockCursor = false;
+		if(Cursor.lockState != CursorLockMode.None) Cursor.lockState = CursorLockMode.None;
+		if(Cursor.visable   != true)                 Cursor.visible = true;
 	}
 	else
 	{
 		if(gameObject.GetComponent("NetworkSetup").connected)
 		{
-			Screen.lockCursor = gameObject.GetComponent("GameOptions").mouseLock;
+			if(gameObject.GetComponent("GameOptions").mouseLock){
+				if(Cursor.lockState != CursorLockMode.Locked) Cursor.lockState = CursorLockMode.Locked;
+				if(Cursor.visable   != false)                 Cursor.visible = false;
+			} else {
+				if(Cursor.lockState != CursorLockMode.None) Cursor.lockState = CursorLockMode.None;
+				if(Cursor.visable   != true)                 Cursor.visible = true;
+			}
 		}
 	}
 	if(!gameObject.GetComponent("NetworkSetup").connected)
 	{
 		paused = false;
-		Screen.lockCursor = false;
+		
+		if(Cursor.lockState != CursorLockMode.None) Cursor.lockState = CursorLockMode.None;
+		if(Cursor.visable   != true)                 Cursor.visible = true;
 	}
 	
 	prevPauseInput = Input.GetAxis("Pause");

@@ -75,7 +75,7 @@ public class mapConverter
 		toReturn.SetAttribute("scaleX", ""+terrain.transform.position.x);
 		toReturn.SetAttribute("scaleY", ""+terrain.transform.localScale.y);
 		toReturn.SetAttribute("scaleZ", ""+terrain.transform.localScale.z);
-		string type = "sphere"; if(terrain.collider is BoxCollider) type = "cube";
+		string type = "sphere"; if(terrain.GetComponent<Collider>() is BoxCollider) type = "cube";
 		toReturn.SetAttribute("bigG", ""+terrain.GetComponent<Graviton>().bigG);
 		toReturn.SetAttribute("type", type);
 		float x = 0;

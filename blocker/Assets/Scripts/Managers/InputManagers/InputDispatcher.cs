@@ -55,7 +55,7 @@ public class InputDispatcher : BlockerObject
 				}
 				
             }
-            collection.sendToServerVia(networkView, inputReceiver); //The collection has a simple RPC call in it
+            collection.sendToServerVia(GetComponent<NetworkView>(), inputReceiver); //The collection has a simple RPC call in it
 			
 			
         }

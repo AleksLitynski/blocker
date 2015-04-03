@@ -18,7 +18,7 @@ public class GameMenu
 			if(GUI.Button(new Rect(Screen.width - 100,0, 100, 20),"X All"))
 			{
 				menuManager.ChangeState (MenuManager.LobbyCode);
-				menuManager.networkView.RPC("changeState", RPCMode.Others, MenuManager.LobbyCode);
+				menuManager.GetComponent<NetworkView>().RPC("changeState", RPCMode.Others, MenuManager.LobbyCode);
 			}
 		}
 		else
@@ -33,7 +33,7 @@ public class GameMenu
 		//Go through each local player and put their UI over their part of the screen
 		foreach(NetPlayer player in menuManager.playerManager.localPlayers.OrderByDescending(p => p.playerStats.score))
 		{
-			Rect cameraZone = player.playerCamera.camera.rect;
+			Rect cameraZone = player.playerCamera.GetComponent<Camera>().rect;
 			if(menuManager.playerManager.localPlayers.Count == 1)
 			{
 		       	cameraZone = new Rect(0, 0, 1, 1);

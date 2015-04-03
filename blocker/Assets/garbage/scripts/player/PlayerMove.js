@@ -24,7 +24,7 @@ function Update()
 		    }
 		}
 		
-		if(Physics.Raycast(transform.position, -transform.up, collider.bounds.size.y + collider.bounds.size.y/5, LayerMask.NameToLayer("Player")))
+		if(Physics.Raycast(transform.position, -transform.up, GetComponent.<Collider>().bounds.size.y + GetComponent.<Collider>().bounds.size.y/5, LayerMask.NameToLayer("Player")))
 		{
 			playerStats.isGrounded = true;
 		}

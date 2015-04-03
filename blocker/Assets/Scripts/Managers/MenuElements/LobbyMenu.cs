@@ -20,7 +20,7 @@ public class LobbyMenu : BlockerObject
 				            if (Network.peerType == NetworkPeerType.Client) 
 							{
 								//Debug.Log("you clicked it as a clinet");
-								menuManager.networkView.RPC("AddNewPlayerRequest", RPCMode.Server); //Adding new players must be RPC'd
+								menuManager.GetComponent<NetworkView>().RPC("AddNewPlayerRequest", RPCMode.Server); //Adding new players must be RPC'd
 							}
 				            if (Network.peerType == NetworkPeerType.Server) menuManager.playerManager.AddNewPlayerRequest(new NetworkMessageInfo());
 				        }
@@ -36,7 +36,7 @@ public class LobbyMenu : BlockerObject
 							{
 								if (GUILayout.Button("Drop", GUILayout.MinWidth(Screen.width*2/20)))
 					            {
-					                menuManager.networkView.RPC("RemovePlayerRequest", RPCMode.Server, player.localPlayerNumber);
+					                menuManager.GetComponent<NetworkView>().RPC("RemovePlayerRequest", RPCMode.Server, player.localPlayerNumber);
 					                if (Network.peerType == NetworkPeerType.Server) menuManager.playerManager.RemovePlayerRequest(player.localPlayerNumber, new NetworkMessageInfo());
 					            }
 							}
@@ -76,8 +76,8 @@ public class LobbyMenu : BlockerObject
 							if (GUILayout.Button("Start", GUILayout.MaxWidth(200)))
 							{							
 								// buffer an RPC telling everyone the game has started (join in progress)
-								menuManager.networkView.RPC("ChangeState", RPCMode.AllBuffered, menuManager.GameCode);
-								menuManager.networkView.RPC("initializeGame", RPCMode.All, menuManager.bgMap.name);
+								menuManager.GetComponent<NetworkView>().RPC("ChangeState", RPCMode.AllBuffered, menuManager.GameCode);
+								menuManager.GetComponent<NetworkView>().RPC("initializeGame", RPCMode.All, menuManager.bgMap.name);
 							}
 						}
 						else
@@ -94,7 +94,7 @@ public class LobbyMenu : BlockerObject
 							{
 								// return yourself to the main menu and everyone else to the joingame menu.
 								menuManager.ChangeState (MenuManager.GameState.MainMenu);
-								menuManager.networkView.RPC("ChangeState", RPCMode.Others, menuManager.JoinGameCode);
+								menuManager.GetComponent<NetworkView>().RPC("ChangeState", RPCMode.Others, menuManager.JoinGameCode);
 								MasterServer.UnregisterHost();
 							}
 							else

@@ -123,14 +123,14 @@ public class MenuManager : BlockerObject
 		float maxz = -9999;
 		foreach(Transform child in bgMap.transform)
 		{
-			if (child.renderer != null)
+			if (child.GetComponent<Renderer>() != null)
 			{
-				if (child.renderer.bounds.min.x < minx) {minx = child.renderer.bounds.min.x;}
-				if (child.renderer.bounds.max.x > maxx) {maxx = child.renderer.bounds.max.x;}
-				if (child.renderer.bounds.min.y < miny) {miny = child.renderer.bounds.min.y;}
-				if (child.renderer.bounds.max.y > maxy) {maxy = child.renderer.bounds.max.y;}
-				if (child.renderer.bounds.min.z < minz) {minz = child.renderer.bounds.min.z;}
-				if (child.renderer.bounds.max.z > maxz) {maxz = child.renderer.bounds.max.z;}
+				if (child.GetComponent<Renderer>().bounds.min.x < minx) {minx = child.GetComponent<Renderer>().bounds.min.x;}
+				if (child.GetComponent<Renderer>().bounds.max.x > maxx) {maxx = child.GetComponent<Renderer>().bounds.max.x;}
+				if (child.GetComponent<Renderer>().bounds.min.y < miny) {miny = child.GetComponent<Renderer>().bounds.min.y;}
+				if (child.GetComponent<Renderer>().bounds.max.y > maxy) {maxy = child.GetComponent<Renderer>().bounds.max.y;}
+				if (child.GetComponent<Renderer>().bounds.min.z < minz) {minz = child.GetComponent<Renderer>().bounds.min.z;}
+				if (child.GetComponent<Renderer>().bounds.max.z > maxz) {maxz = child.GetComponent<Renderer>().bounds.max.z;}
 			}
 		}
 		cameraPosition = new Vector3(1.5f*(maxx-minx), (maxy-miny), maxz-minz);
@@ -159,7 +159,10 @@ public class MenuManager : BlockerObject
 			playerManager.RevealPlayers();
 			if (playerManager.localPlayers.Count != 0)
 			{
-				Screen.lockCursor = true;
+
+				if(Cursor.lockState != CursorLockMode.Locked) Cursor.lockState = CursorLockMode.Locked;
+				if(Cursor.visible   != false)                 Cursor.visible = false;
+
 				playerManager.setToLocalCameras();
 				foreach(NetPlayer player in playerManager.players)
 				{
@@ -172,7 +175,10 @@ public class MenuManager : BlockerObject
 		{
 			
 			// initialize the state for non gameplay-stuff.
-			Screen.lockCursor = false;
+			if(Cursor.lockState != CursorLockMode.None) Cursor.lockState = CursorLockMode.None;
+			if(Cursor.visible   != true)                 Cursor.visible = true;
+
+
 			playerManager.setToWorldCamera();
 			playerManager.HidePlayers();
 			

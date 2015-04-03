@@ -54,7 +54,7 @@ function Update ()
 			if(j == 10) {j = 0;}
 			if(Input.GetKeyDown(j+""))
 			{
-				networkView.RPC("setGun", RPCMode.AllBuffered, i);
+				GetComponent.<NetworkView>().RPC("setGun", RPCMode.AllBuffered, i);
 			}
 		}
 	

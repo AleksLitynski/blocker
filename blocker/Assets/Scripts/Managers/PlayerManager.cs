@@ -50,7 +50,7 @@ public class PlayerManager : BlockerObject
         }
 		if(lowestAvailableValue < 5)//this is the max local players on the map
 		{
-			networkView.RPC("AddNewPlayer", RPCMode.Others, info.sender, lowestAvailableValue);
+			GetComponent<NetworkView>().RPC("AddNewPlayer", RPCMode.Others, info.sender, lowestAvailableValue);
         	if (Network.peerType == NetworkPeerType.Server) this.AddNewPlayer(info.sender, lowestAvailableValue);	//The server doesn't hear its own RPCs, we have to call the functions locally.
 		}
     }
@@ -84,7 +84,7 @@ public class PlayerManager : BlockerObject
             localPlayers.Add(newPlayer.transform.Find("Doll").GetComponent<NetPlayer>()); //if It is a local player, add another division to the camera.
             UpdateCameraSplit();
         }
-        newPlayer.transform.Find("Camera").camera.enabled = false; //Turn off the camera, for now.
+        newPlayer.transform.Find("Camera").GetComponent<Camera>().enabled = false; //Turn off the camera, for now.
         
 		HidePlayers();
     }
@@ -94,7 +94,7 @@ public class PlayerManager : BlockerObject
     [RPC]
     public void RemovePlayerRequest(int numOnComputer, NetworkMessageInfo info)
     {
-        networkView.RPC("RemovePlayer", RPCMode.Others, info.sender, numOnComputer);
+        GetComponent<NetworkView>().RPC("RemovePlayer", RPCMode.Others, info.sender, numOnComputer);
         if (Network.peerType == NetworkPeerType.Server) this.RemovePlayer(info.sender, numOnComputer);
     }
 	
@@ -132,7 +132,7 @@ public class PlayerManager : BlockerObject
 	{
 		foreach (NetPlayer player in players)
 		{
-			player.transform.Find ("Model").gameObject.active = true;
+			player.transform.Find ("Model").gameObject.SetActive(true);
 			player.GetComponent<Rigidbody>().isKinematic = false;
 		}
 	}
@@ -141,7 +141,7 @@ public class PlayerManager : BlockerObject
 	{
 		foreach (NetPlayer player in players)
 		{
-			player.transform.Find ("Model").gameObject.active = false;
+			player.transform.Find ("Model").gameObject.SetActive(false);
 			player.GetComponent<Rigidbody>().isKinematic = true;
 		}
 	}
@@ -151,18 +151,18 @@ public class PlayerManager : BlockerObject
 	{
 		foreach(NetPlayer player in localPlayers)
 		{
-			player.playerCamera.camera.enabled = false;
+			player.playerCamera.GetComponent<Camera>().enabled = false;
 		}
-		world.camera.enabled = true;
+		world.GetComponent<Camera>().enabled = true;
 	}
 	//Durring the game, we use one camera per local player (local, as opposed to on a remote computer)
 	public void setToLocalCameras()
 	{
 		foreach(NetPlayer player in localPlayers)
 		{
-			player.playerCamera.camera.enabled = true;
+			player.playerCamera.GetComponent<Camera>().enabled = true;
 		}
-		world.camera.enabled = false;
+		world.GetComponent<Camera>().enabled = false;
 	}
 	
 	//This functioned used to be much more complex.
@@ -173,36 +173,36 @@ public class PlayerManager : BlockerObject
 		if(localPlayers.Count == 1)
 		{
 			
-	       	localPlayers[0].GetComponent<NetPlayer>().playerCamera.camera.rect = new Rect(0, 0, 1, 1);
+	       	localPlayers[0].GetComponent<NetPlayer>().playerCamera.GetComponent<Camera>().rect = new Rect(0, 0, 1, 1);
 		}
 		else if(localPlayers.Count == 2)
 		{
-			localPlayers[0].GetComponent<NetPlayer>().playerCamera.camera.rect = new Rect(0, 0, 0.5f, 1);
-			localPlayers[1].GetComponent<NetPlayer>().playerCamera.camera.rect = new Rect(0.5f, 0, 0.5f, 1);
+			localPlayers[0].GetComponent<NetPlayer>().playerCamera.GetComponent<Camera>().rect = new Rect(0, 0, 0.5f, 1);
+			localPlayers[1].GetComponent<NetPlayer>().playerCamera.GetComponent<Camera>().rect = new Rect(0.5f, 0, 0.5f, 1);
 		}
 		else if(localPlayers.Count == 3)
 		{
-			localPlayers[0].GetComponent<NetPlayer>().playerCamera.camera.rect = new Rect(0   , 0.5f   , 0.5f, 0.5f);
-			localPlayers[1].GetComponent<NetPlayer>().playerCamera.camera.rect = new Rect(0.5f, 0.5f   , 0.5f, 0.5f);
-			localPlayers[2].GetComponent<NetPlayer>().playerCamera.camera.rect = new Rect(0   , 0f     , 1   , 0.5f);
+			localPlayers[0].GetComponent<NetPlayer>().playerCamera.GetComponent<Camera>().rect = new Rect(0   , 0.5f   , 0.5f, 0.5f);
+			localPlayers[1].GetComponent<NetPlayer>().playerCamera.GetComponent<Camera>().rect = new Rect(0.5f, 0.5f   , 0.5f, 0.5f);
+			localPlayers[2].GetComponent<NetPlayer>().playerCamera.GetComponent<Camera>().rect = new Rect(0   , 0f     , 1   , 0.5f);
 		}
 		else if(localPlayers.Count == 4)
 		{
-			localPlayers[0].GetComponent<NetPlayer>().playerCamera.camera.rect = new Rect(0,    0.5f, 0.5f, 0.5f);
-			localPlayers[1].GetComponent<NetPlayer>().playerCamera.camera.rect = new Rect(0.5f, 0.5f, 0.5f, 0.5f);
+			localPlayers[0].GetComponent<NetPlayer>().playerCamera.GetComponent<Camera>().rect = new Rect(0,    0.5f, 0.5f, 0.5f);
+			localPlayers[1].GetComponent<NetPlayer>().playerCamera.GetComponent<Camera>().rect = new Rect(0.5f, 0.5f, 0.5f, 0.5f);
 			
-			localPlayers[2].GetComponent<NetPlayer>().playerCamera.camera.rect = new Rect(0,    0f, 0.5f, 0.5f);
-			localPlayers[3].GetComponent<NetPlayer>().playerCamera.camera.rect = new Rect(0.5f, 0f, 0.5f, 0.5f);
+			localPlayers[2].GetComponent<NetPlayer>().playerCamera.GetComponent<Camera>().rect = new Rect(0,    0f, 0.5f, 0.5f);
+			localPlayers[3].GetComponent<NetPlayer>().playerCamera.GetComponent<Camera>().rect = new Rect(0.5f, 0f, 0.5f, 0.5f);
 		}
 		else if(localPlayers.Count == 5)
 		{
-			localPlayers[0].GetComponent<NetPlayer>().playerCamera.camera.rect = new Rect(0,    2f/3f, 0.5f, 1f/3f);
-			localPlayers[1].GetComponent<NetPlayer>().playerCamera.camera.rect = new Rect(0.5f, 2f/3f, 0.5f, 1f/3f);
+			localPlayers[0].GetComponent<NetPlayer>().playerCamera.GetComponent<Camera>().rect = new Rect(0,    2f/3f, 0.5f, 1f/3f);
+			localPlayers[1].GetComponent<NetPlayer>().playerCamera.GetComponent<Camera>().rect = new Rect(0.5f, 2f/3f, 0.5f, 1f/3f);
 			
-			localPlayers[2].GetComponent<NetPlayer>().playerCamera.camera.rect = new Rect(0,    1f/3f, 0.5f, 1f/3f);
-			localPlayers[3].GetComponent<NetPlayer>().playerCamera.camera.rect = new Rect(0.5f, 1f/3f, 0.5f, 1f/3f);
+			localPlayers[2].GetComponent<NetPlayer>().playerCamera.GetComponent<Camera>().rect = new Rect(0,    1f/3f, 0.5f, 1f/3f);
+			localPlayers[3].GetComponent<NetPlayer>().playerCamera.GetComponent<Camera>().rect = new Rect(0.5f, 1f/3f, 0.5f, 1f/3f);
 			
-			localPlayers[4].GetComponent<NetPlayer>().playerCamera.camera.rect = new Rect(0,    0, 1, 1f/3f);
+			localPlayers[4].GetComponent<NetPlayer>().playerCamera.GetComponent<Camera>().rect = new Rect(0,    0, 1, 1f/3f);
 		}
 		
 		foreach(NetPlayer player in localPlayers) //Once we divide the screen, we need to set up the 3d compass overlays again.

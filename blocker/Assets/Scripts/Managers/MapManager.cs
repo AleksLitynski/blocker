@@ -23,22 +23,22 @@ public class MapManager : BlockerObject
         {
             NetworkPlayer computer = playerManager.players[i].GetComponent<NetPlayer>().networkPlayer;
             int playerNumber = playerManager.players[i].GetComponent<NetPlayer>().localPlayerNumber;
-            networkView.RPC("AddNewPlayer", player, computer, playerNumber);
+            GetComponent<NetworkView>().RPC("AddNewPlayer", player, computer, playerNumber);
         }
 		if(menuManager.gameState == MenuManager.GameState.Game) //If you are in game, tell them to load the current map.
 		{
-			networkView.RPC("LoadMap", player, menuManager.bgMap.name);
-			networkView.RPC("initializeGame", player, menuManager.bgMap.name);	
+			GetComponent<NetworkView>().RPC("LoadMap", player, menuManager.bgMap.name);
+			GetComponent<NetworkView>().RPC("initializeGame", player, menuManager.bgMap.name);	
 		}
 		if(menuManager.gameState == MenuManager.GameState.Lobby) //Tell them to just load the map...
 		{
-			networkView.RPC("LoadMap", player, menuManager.bgMap.name);
+			GetComponent<NetworkView>().RPC("LoadMap", player, menuManager.bgMap.name);
 		}
 		for(var i = 0; i < world.transform.FindChild("Bullets").childCount; i++) //Tell them about all bullets (currently only dynamic content) they must position.
 		{
-			networkView.RPC("spawnObject", player, world.transform.FindChild("Bullets").GetChild(i).position, world.transform.FindChild("Bullets").GetChild(i).rotation.eulerAngles, world.transform.FindChild("Bullets").GetChild(i).name, "testBullet", "World/Bullets");
-			networkView.RPC ("setBulletVelocity", player, world.transform.FindChild("Bullets").GetChild(i).rigidbody.velocity, "World/Bullets/"+world.transform.FindChild("Bullets").GetChild(i).name);
-			networkView.RPC ("setObjectGravity", player, world.transform.FindChild("Bullets").GetChild(i).GetComponent<ObjectStats>().grav, "World/Bullets/"+world.transform.FindChild("Bullets").GetChild(i).name);		
+			GetComponent<NetworkView>().RPC("spawnObject", player, world.transform.FindChild("Bullets").GetChild(i).position, world.transform.FindChild("Bullets").GetChild(i).rotation.eulerAngles, world.transform.FindChild("Bullets").GetChild(i).name, "testBullet", "World/Bullets");
+			GetComponent<NetworkView>().RPC ("setBulletVelocity", player, world.transform.FindChild("Bullets").GetChild(i).GetComponent<Rigidbody>().velocity, "World/Bullets/"+world.transform.FindChild("Bullets").GetChild(i).name);
+			GetComponent<NetworkView>().RPC ("setObjectGravity", player, world.transform.FindChild("Bullets").GetChild(i).GetComponent<ObjectStats>().grav, "World/Bullets/"+world.transform.FindChild("Bullets").GetChild(i).name);		
 		}
 		
 		
@@ -55,7 +55,7 @@ public class MapManager : BlockerObject
         playerManager.players = new List<NetPlayer>();
         playerManager.localPlayers = new List<NetPlayer>();
         Transform rootTeam = gameObject.transform.Find("RootTeam");
-        for (int i = 0; i < rootTeam.GetChildCount(); i++)
+        for (int i = 0; i < rootTeam.childCount; i++)
         {
             GameObject toGo = rootTeam.GetChild(i).gameObject;
             Destroy(toGo);
@@ -69,7 +69,7 @@ public class MapManager : BlockerObject
         {
             if (playerManager.players[i].networkPlayer == player)
             {
-                networkView.RPC("RemovePlayer", RPCMode.Others, player, playerManager.players[i].localPlayerNumber); //Tell everyone to remove them.
+                GetComponent<NetworkView>().RPC("RemovePlayer", RPCMode.Others, player, playerManager.players[i].localPlayerNumber); //Tell everyone to remove them.
                 if (Network.peerType == NetworkPeerType.Server)
                 {
                     playerManager.RemovePlayer(player, playerManager.players[i].localPlayerNumber); //Remove them yourself
@@ -118,7 +118,7 @@ public class MapManager : BlockerObject
 									Random.Range(spawnArea.position.z - spawnArea.localScale.z/2 ,spawnArea.position.z + spawnArea.localScale.z/2));
 			
 			//check if putting the player there causes a collision
-			if(Physics.OverlapSphere(spawnLocation, player.transform.Find ("Doll").collider.bounds.max.y).Length <= 1)
+			if(Physics.OverlapSphere(spawnLocation, player.transform.Find ("Doll").GetComponent<Collider>().bounds.max.y).Length <= 1)
 			{
 				break;
 			}
@@ -127,11 +127,11 @@ public class MapManager : BlockerObject
 			
 		}
 		//The player is a etheral entity, the "doll" is the body you see in game. It got updated a few times, the logical divide helps.
-		player.transform.Find ("Doll").rigidbody.velocity = new Vector3();
+		player.transform.Find ("Doll").GetComponent<Rigidbody>().velocity = new Vector3();
 		
 		player.transform.Find ("Doll").GetComponent<ObjectStats>().grav = down * 9.81f;
 		
-		networkView.RPC("setPlayerPos", RPCMode.All, name, spawnLocation, spawnRotation);
+		GetComponent<NetworkView>().RPC("setPlayerPos", RPCMode.All, name, spawnLocation, spawnRotation);
 		 
 	}
 	

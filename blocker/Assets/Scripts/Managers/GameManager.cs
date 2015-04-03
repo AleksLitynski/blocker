@@ -88,7 +88,7 @@ public class GameManager: BlockerObject
 								{
 									zoneVals.currentPoints++;
 									// find the player, get their netplayer component, and give em some points
-									networkView.RPC ("givePoints", RPCMode.All, zone.name, playerName);
+									GetComponent<NetworkView>().RPC ("givePoints", RPCMode.All, zone.name, playerName);
 								}
 							}
 						}
@@ -99,7 +99,7 @@ public class GameManager: BlockerObject
 							advanceIndex();
 							
 							// tell everyone about the new checkpoint.
-							networkView.RPC ("setCheckpoint", RPCMode.All, index);
+							GetComponent<NetworkView>().RPC ("setCheckpoint", RPCMode.All, index);
 							
 							// reset the hit detection
 							zoneVals.hitList = new List<string>();
@@ -124,7 +124,7 @@ public class GameManager: BlockerObject
 			case WinRule.MostPointsOverTime:
 				if (elapsedTime >= maxTime)
 				{
-					world.networkView.RPC ("ChangeState", RPCMode.All, MenuManager.LobbyCode);
+					world.GetComponent<NetworkView>().RPC ("ChangeState", RPCMode.All, MenuManager.LobbyCode);
 				}
 				break;
 			// the first player to reach the last checkpoint in the race.
@@ -137,7 +137,7 @@ public class GameManager: BlockerObject
 				{
 					if (player.playerStats.score >= scoreToWin && menuManager.gameState == MenuManager.GameState.Game)
 					{
-						world.networkView.RPC ("ChangeState", RPCMode.All, MenuManager.LobbyCode);	
+						world.GetComponent<NetworkView>().RPC ("ChangeState", RPCMode.All, MenuManager.LobbyCode);	
 					}
 				}
 				break;
@@ -202,7 +202,7 @@ public class GameManager: BlockerObject
 		advanceIndex();
 		if(Network.peerType != NetworkPeerType.Disconnected)
 		{
-			networkView.RPC ("setCheckpoint", RPCMode.All, index);
+			GetComponent<NetworkView>().RPC ("setCheckpoint", RPCMode.All, index);
 		}
 		
 		unpack = true;
@@ -212,7 +212,7 @@ public class GameManager: BlockerObject
 	{
 		if(Network.peerType != NetworkPeerType.Disconnected)
 		{
-			networkView.RPC ("changeHalo",RPCMode.All,index, false);
+			GetComponent<NetworkView>().RPC ("changeHalo",RPCMode.All,index, false);
 		}
 		
 		switch(winRule)
@@ -223,7 +223,7 @@ public class GameManager: BlockerObject
 			{
 				// if the win rule is set to first to finish, the game is over if someone reaches the final
 				// checkpoint
-				world.networkView.RPC ("ChangeState", RPCMode.All, MenuManager.LobbyCode);
+				world.GetComponent<NetworkView>().RPC ("ChangeState", RPCMode.All, MenuManager.LobbyCode);
 			}
 			break;
 		}
@@ -241,7 +241,7 @@ public class GameManager: BlockerObject
 				}
 				if(Network.peerType != NetworkPeerType.Disconnected)
 				{
-					networkView.RPC ("changeHalo", RPCMode.All, index, true);
+					GetComponent<NetworkView>().RPC ("changeHalo", RPCMode.All, index, true);
 				}
 				return;
 			}
@@ -272,17 +272,17 @@ public class GameManager: BlockerObject
 		}
 		if (Network.peerType != NetworkPeerType.Disconnected)
 		{
-			networkView.RPC ("changeHalo", RPCMode.All, index, true);
+			GetComponent<NetworkView>().RPC ("changeHalo", RPCMode.All, index, true);
 		}
 	}
 	
 	void OnPlayerConnected(NetworkPlayer player)
 	{
-		networkView.RPC("changeHalo", player, index, true);//actives players first checkpoint
+		GetComponent<NetworkView>().RPC("changeHalo", player, index, true);//actives players first checkpoint
 		
 		foreach(NetPlayer p in playerManager.players)
 		{
-			networkView.RPC ("setScore", player, p.gameObject.GetComponent<PlayerStats>().score, p.name);
+			GetComponent<NetworkView>().RPC ("setScore", player, p.gameObject.GetComponent<PlayerStats>().score, p.name);
 		}
 	}
 	

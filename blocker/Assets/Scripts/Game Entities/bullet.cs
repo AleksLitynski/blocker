@@ -15,7 +15,7 @@ public class bullet : NetObject {
 	void Update () 
 	{
 		//Just keep chugging along
-		rigidbody.velocity += velocity;
+		GetComponent<Rigidbody>().velocity += velocity;
 	}
 	
 	//When the bullet exits the map, destory the bullet.

@@ -32,7 +32,7 @@ public class ObjectManager : BlockerObject
 	[RPC]
 	void setBulletVelocity(Vector3 velo, string path)
 	{
-		GameObject.Find(path).rigidbody.AddForce(velo, ForceMode.Force);
+		GameObject.Find(path).GetComponent<Rigidbody>().AddForce(velo, ForceMode.Force);
 	}
 	
 	//Sets gravity.

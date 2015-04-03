@@ -15,7 +15,7 @@ public class playerAnimator : BlockerObject
 	void Update () 
 	{
 		
-		Vector3 localMotion = transform.InverseTransformDirection(rigidbody.velocity);
+		Vector3 localMotion = transform.InverseTransformDirection(GetComponent<Rigidbody>().velocity);
 		
 		
 		
@@ -23,8 +23,8 @@ public class playerAnimator : BlockerObject
 		if(localMotion.y > 5.0)
 		{
 			
-			model.animation.CrossFade("jump",0.4f);
-			model.animation.wrapMode = WrapMode.Once;
+			model.GetComponent<Animation>().CrossFade("jump",0.4f);
+			model.GetComponent<Animation>().wrapMode = WrapMode.Once;
 			//Debug.Log("motion is jumping");
 			//Debug.Log(localMotion.y);
 			
@@ -35,16 +35,16 @@ public class playerAnimator : BlockerObject
 		if(localMotion.z < 0.1 && localMotion.z >= 0.0)
 		{
 			
-			model.animation.CrossFade("idle",0.5f);
-			model.animation.wrapMode = WrapMode.Once;
+			model.GetComponent<Animation>().CrossFade("idle",0.5f);
+			model.GetComponent<Animation>().wrapMode = WrapMode.Once;
 			//Debug.Log("idle is running");
 			//Debug.Log(localMotion.z);
 			
 			if(localMotion.y > 5.0)
 			{
 				
-				model.animation.Blend("jump",1.0f,0.1f);
-				model.animation.wrapMode = WrapMode.Once;
+				model.GetComponent<Animation>().Blend("jump",1.0f,0.1f);
+				model.GetComponent<Animation>().wrapMode = WrapMode.Once;
 				//Debug.Log("motion is jumping");
 				//Debug.Log(localMotion.y);
 				
@@ -57,16 +57,16 @@ public class playerAnimator : BlockerObject
 		if(localMotion.z > 0.1)
 		{
 			
-			model.animation.CrossFade("run",0.4f);
-			model.animation.wrapMode = WrapMode.Once;
+			model.GetComponent<Animation>().CrossFade("run",0.4f);
+			model.GetComponent<Animation>().wrapMode = WrapMode.Once;
 			//Debug.Log("motion is running");
 			//Debug.Log(localMotion.z);
 			
 			if(localMotion.y > 5.0)
 			{
 				
-				model.animation.Blend("jump",1.0f,0.1f);
-				model.animation.wrapMode = WrapMode.Once;
+				model.GetComponent<Animation>().Blend("jump",1.0f,0.1f);
+				model.GetComponent<Animation>().wrapMode = WrapMode.Once;
 				//Debug.Log("motion is jumping");
 				//Debug.Log(localMotion.y);
 				
@@ -77,16 +77,16 @@ public class playerAnimator : BlockerObject
 		if(localMotion.z < -0.1)
 		{
 			
-			model.animation.CrossFade("run",0.4f);
-			model.animation.wrapMode = WrapMode.Once;
+			model.GetComponent<Animation>().CrossFade("run",0.4f);
+			model.GetComponent<Animation>().wrapMode = WrapMode.Once;
 			//Debug.Log("motion is running");
 			//Debug.Log(localMotion.z);
 			
 			if(localMotion.y > 5.0)
 			{
 				
-				model.animation.Blend("jump",1.0f,0.1f);
-				model.animation.wrapMode = WrapMode.Once;
+				model.GetComponent<Animation>().Blend("jump",1.0f,0.1f);
+				model.GetComponent<Animation>().wrapMode = WrapMode.Once;
 				//Debug.Log("motion is jumping");
 				//Debug.Log(localMotion.y);
 				
@@ -99,8 +99,8 @@ public class playerAnimator : BlockerObject
 		if(localMotion.x > 0.1)
 		{
 			
-			model.animation.CrossFade("run",0.4f);
-			model.animation.wrapMode = WrapMode.Once;
+			model.GetComponent<Animation>().CrossFade("run",0.4f);
+			model.GetComponent<Animation>().wrapMode = WrapMode.Once;
 			//Debug.Log("motion is running");
 			//Debug.Log(localMotion.z);
 			
@@ -109,8 +109,8 @@ public class playerAnimator : BlockerObject
 		if(localMotion.x < -0.1)
 		{
 			
-			model.animation.CrossFade("run",0.4f);
-			model.animation.wrapMode = WrapMode.Once;
+			model.GetComponent<Animation>().CrossFade("run",0.4f);
+			model.GetComponent<Animation>().wrapMode = WrapMode.Once;
 			//Debug.Log("motion is running");
 			//Debug.Log(localMotion.z);
 			

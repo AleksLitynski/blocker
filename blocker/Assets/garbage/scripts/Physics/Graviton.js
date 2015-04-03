@@ -21,9 +21,9 @@ function Awake()
 	rigidBody.isKinematic = true;
 	
 	Physics.gravity = Vector3.zero;
-	if(collider)
+	if(GetComponent.<Collider>())
 	{
-		plateGravity = !collider.isTrigger; //if the player can walk into it, its a point gravity
+		plateGravity = !GetComponent.<Collider>().isTrigger; //if the player can walk into it, its a point gravity
 		pointGravity = !plateGravity;
 	}
 }

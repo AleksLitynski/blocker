@@ -18,17 +18,17 @@ public class Graviton : BlockerObject
 	public void Awake()
 	{
 		//Prevent the graviton from moving in any way. This restricition could be lifted for hillarious effect
-		rigidbody.constraints = RigidbodyConstraints.FreezeAll;
-		rigidbody.drag = 0;
-		rigidbody.angularDrag = 0;
-		rigidbody.isKinematic = true;
-		rigidbody.useGravity = false;
-		rigidbody.mass = 10;
+		GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeAll;
+		GetComponent<Rigidbody>().drag = 0;
+		GetComponent<Rigidbody>().angularDrag = 0;
+		GetComponent<Rigidbody>().isKinematic = true;
+		GetComponent<Rigidbody>().useGravity = false;
+		GetComponent<Rigidbody>().mass = 10;
 		
 		
-		if(collider)
+		if(GetComponent<Collider>())
 		{
-			plateGravity = !collider.isTrigger; //if the player can walk into it, its a point gravity
+			plateGravity = !GetComponent<Collider>().isTrigger; //if the player can walk into it, its a point gravity
 			pointGravity = !plateGravity;
 		}
 		
@@ -70,9 +70,9 @@ public class Graviton : BlockerObject
 	{	
 		
 		//Calculates the magnitude of the force
-		var top = rigidbody.mass * other.rigidbody.mass;
+		var top = GetComponent<Rigidbody>().mass * other.GetComponent<Rigidbody>().mass;
 		var bottom = Mathf.Sqrt(Vector3.Distance(transform.position, other.transform.position));
-		var magnitude = bigG * other.rigidbody.mass * (top/bottom);
+		var magnitude = bigG * other.GetComponent<Rigidbody>().mass * (top/bottom);
 		
 		var direction = (other.transform.position - transform.position).normalized; //Direction of the force
 		
@@ -87,7 +87,7 @@ public class Graviton : BlockerObject
 	{
 		//Debug.Log(other.GetComponent<NetObject>().objectStats.grav + " " + surfaceNormal);
 		
-		other.GetComponent<ObjectStats>().grav = surfaceNormal * bigG * other.rigidbody.mass;
+		other.GetComponent<ObjectStats>().grav = surfaceNormal * bigG * other.GetComponent<Rigidbody>().mass;
 	}
 	
 	//This is clearly obsolete

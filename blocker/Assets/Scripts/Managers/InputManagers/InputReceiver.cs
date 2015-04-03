@@ -13,6 +13,7 @@ public class InputReceiver : BlockerObject
 	[RPC]
     public void AddInput(float f, float s, float tR, float tU, bool j, bool f1, bool f2, bool sp, bool c, int localNumber, NetworkMessageInfo info)
     {
+
 		if(menuManager.gameState == MenuManager.GameState.Game)//you can only move/shoot/etc durring the game
 		{
 	        foreach (NetPlayer player in playerManager.players)
@@ -21,16 +22,18 @@ public class InputReceiver : BlockerObject
 	            {
 	                player.move(new InputCollection(player, f, s, tR, tU, j, f1, f2, sp, c));
 					
-					networkView.RPC("setPlayerTransform", RPCMode.Others, player.transform.position, player.transform.rotation.eulerAngles, player.playerArms.rotation, player.player.name);
+					GetComponent<NetworkView>().RPC("setPlayerTransform", RPCMode.Others, player.transform.position, player.transform.rotation.eulerAngles, player.playerArms.rotation, player.player.name);
 					
 					// fire bullets
 					if(f1 && !player.GetComponent<PlayerStats>().FiredSinceMouseDown && menuManager.gameState == MenuManager.GameState.Game) //ummmm? Maybe this does something??????
 					{
-						Screen.lockCursor = true;
+						if(Cursor.lockState != CursorLockMode.Locked) Cursor.lockState = CursorLockMode.Locked;
+						if(Cursor.visible   != false)                 Cursor.visible = false;
+
 						string name = "testBullet" + Random.Range(0,1000000);
-						networkView.RPC("spawnObject", RPCMode.All, player.playerArms.Find("Hand").position + player.playerArms.forward * 1.5f , player.transform.rotation.eulerAngles, name, "testBullet", "World/Bullets");
-						networkView.RPC ("setBulletVelocity", RPCMode.All, player.playerArms.forward * 250000, "World/Bullets/"+name);
-						networkView.RPC ("setObjectGravity", RPCMode.All, player.objectStats.grav, "World/Bullets/"+name);
+						GetComponent<NetworkView>().RPC("spawnObject", RPCMode.All, player.playerArms.Find("Hand").position + player.playerArms.forward * 1.5f , player.transform.rotation.eulerAngles, name, "testBullet", "World/Bullets");
+						GetComponent<NetworkView>().RPC ("setBulletVelocity", RPCMode.All, player.playerArms.forward * 250000, "World/Bullets/"+name);
+						GetComponent<NetworkView>().RPC ("setObjectGravity", RPCMode.All, player.objectStats.grav, "World/Bullets/"+name);
 						player.GetComponent<PlayerStats>().FiredSinceMouseDown = true;
 						
 						Transform bullets = world.transform.Find("Bullets"); //Destroys old bullets if there are too many!
@@ -45,7 +48,7 @@ public class InputReceiver : BlockerObject
 									oldestBullet = current;	
 								}
 							}
-							networkView.RPC("removeObject", RPCMode.All, "World/Bullets/" + oldestBullet.name); //Removes the old bullet on all computers
+							GetComponent<NetworkView>().RPC("removeObject", RPCMode.All, "World/Bullets/" + oldestBullet.name); //Removes the old bullet on all computers
 						}
 						
 					}
@@ -55,11 +58,11 @@ public class InputReceiver : BlockerObject
 					}
 					if(f2)
 					{
-						networkView.RPC ("setScopedIn", RPCMode.All, true, player.player.name); //Alters everyone when a player has scoped in. 
+						GetComponent<NetworkView>().RPC ("setScopedIn", RPCMode.All, true, player.player.name); //Alters everyone when a player has scoped in. 
 					}
 					else
 					{
-						networkView.RPC ("setScopedIn", RPCMode.All, false, player.player.name);
+						GetComponent<NetworkView>().RPC ("setScopedIn", RPCMode.All, false, player.player.name);
 					}
 					
 	                break;

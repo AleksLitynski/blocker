@@ -5,7 +5,7 @@ var mapModel : Transform;
 //add new player
 function OnPlayerConnected(player: NetworkPlayer)
 {
-	networkView.RPC("startLoadingSelf",  RPCMode.AllBuffered, player.ToString());
+	GetComponent.<NetworkView>().RPC("startLoadingSelf",  RPCMode.AllBuffered, player.ToString());
 }
 @RPC
 function startLoadingSelf(player:String)
@@ -20,7 +20,7 @@ function startLoadingSelf(player:String)
 function OnServerInitialized()
 {
 	var newMapModel = Network.Instantiate(mapModel, transform.position, transform.rotation, 0);
-	networkView.RPC("renameObject", RPCMode.AllBuffered, newMapModel.name, "Map");
+	GetComponent.<NetworkView>().RPC("renameObject", RPCMode.AllBuffered, newMapModel.name, "Map");
 	
 	addNewPlayer("player " + Network.player.ToString());
 }
@@ -30,7 +30,7 @@ function addNewPlayer(playerName:String)
 {
 	var spawnPoint = GameObject.Find("Map/Spawn");
 	var newPlayerModel = Network.Instantiate(playerModel, spawnPoint.transform.position, spawnPoint.transform.rotation, 0);
-	networkView.RPC("renameObject", RPCMode.AllBuffered, newPlayerModel.name, playerName);
+	GetComponent.<NetworkView>().RPC("renameObject", RPCMode.AllBuffered, newPlayerModel.name, playerName);
 	GameObject.Find("/World/PlayerCamera").GetComponent("CameraStarter").FocusCameraOnObject(playerName + "/Arms", new Vector3(-1.5, 1.8, -3.0), 10.0);
 	
 }

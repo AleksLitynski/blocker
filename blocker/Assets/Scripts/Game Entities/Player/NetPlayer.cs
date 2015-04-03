@@ -75,11 +75,11 @@ public class NetPlayer : NetObject
 		if(Network.player == networkPlayer)//if it's a local player 
 		{
 			playerCompass.gameObject.layer = newLayer;
-			for(int i = 0; i < playerCompass.GetChildCount(); i++) //move the compass, and its child the arrow to the proper layer
+			for(int i = 0; i < playerCompass.childCount; i++) //move the compass, and its child the arrow to the proper layer
 			{
 				playerCompass.GetChild(i).gameObject.layer = newLayer;
 			}
-			for(int i = 0; i < playerArrow.GetChildCount(); i++)
+			for(int i = 0; i < playerArrow.childCount; i++)
 			{
 				playerArrow.GetChild(i).gameObject.layer = newLayer;
 			}
@@ -87,22 +87,22 @@ public class NetPlayer : NetObject
 		else
 		{
 			playerCompass.gameObject.layer = 20;
-			for(int i = 0; i < playerCompass.GetChildCount(); i++)
+			for(int i = 0; i < playerCompass.childCount; i++)
 			{
 				playerCompass.GetChild(i).gameObject.layer = 20;
 			}
-			for(int i = 0; i < playerArrow.GetChildCount(); i++)
+			for(int i = 0; i < playerArrow.childCount; i++)
 			{
 				playerArrow.GetChild(i).gameObject.layer = 20;
 			}
 		}
 		compassHasBeenInited = true;
 		
-		float x = (((Screen.width * playerCamera.camera.rect.width)/1.1f) + (Screen.width * playerCamera.camera.rect.x));
-		float y = (((Screen.height * playerCamera.camera.rect.height)/9) + (Screen.height * playerCamera.camera.rect.y));
+		float x = (((Screen.width * playerCamera.GetComponent<Camera>().rect.width)/1.1f) + (Screen.width * playerCamera.GetComponent<Camera>().rect.x));
+		float y = (((Screen.height * playerCamera.GetComponent<Camera>().rect.height)/9) + (Screen.height * playerCamera.GetComponent<Camera>().rect.y));
 		
 		
-		Ray ray = playerCamera.camera.ScreenPointToRay(new Vector3(x,y,0));//tweak this to position compass
+		Ray ray = playerCamera.GetComponent<Camera>().ScreenPointToRay(new Vector3(x,y,0));//tweak this to position compass
 		playerCompass.position = ray.GetPoint(5);
 		
 		
@@ -154,7 +154,7 @@ public class NetPlayer : NetObject
 			}
 		}
 		//applies the mask
-		playerCamera.camera.cullingMask = LayerMaskHelper.EverythingBut(toIgnore.ToArray()); 
+		playerCamera.GetComponent<Camera>().cullingMask = LayerMaskHelper.EverythingBut(toIgnore.ToArray()); 
 		
 		drawLaserPointer(laserOn); //draws the laser, if enabled. Really, fairly self documenting
 	}
@@ -240,7 +240,7 @@ public class NetPlayer : NetObject
 		//Gravity isn't always down. We cannot trust unitys built in "grounded" function, instead we use its "raycast" function to see what is below us.
 		if(col.jump)
 		{
-			if(Physics.Raycast(transform.position, -transform.up, ((collider.bounds.size.x + collider.bounds.size.y + collider.bounds.size.z)/3)  * 1.1f))
+			if(Physics.Raycast(transform.position, -transform.up, 1.0f))
 			{
 				playerMotion += playerStats.jump * Vector3.up;//objectStats.unitOppGrav; //JUMP IS NOT RELATIVE TO PLAYER
 			}
